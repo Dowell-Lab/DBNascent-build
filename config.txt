@@ -1,10 +1,10 @@
 [file_locations]
-metadata = /home/lsanford/Documents/data/repositories/dbnascent_build/db_subsample.tsv
-conditions = /home/lsanford/Documents/data/repositories/dbnascent_build/db_subsample_conditions.tsv
+metadata = /home/lsanford/Documents/data/repositories/DBnascent-build/db_subsample.tsv
+conditions = /home/lsanford/Documents/data/repositories/DBnascent-build/db_subsample_conditions.tsv
 database = /home/lsanford/sqlite/meta.db
 log_directory = /home/lsanford/Documents/data/repositories/db_build_logs/
-organism_table = /home/lsanford/Documents/data/repositories/dbnascent_build/organisms.txt
-data = /home/lsanford/Documents/data/repositories/dbnascent_build/qc/
+organism_table = /home/lsanford/Documents/data/repositories/DBnascent-build/organisms.txt
+data = /home/lsanford/Documents/data/repositories/DBnascent-build/qc/
 
 
 [organism keys]
