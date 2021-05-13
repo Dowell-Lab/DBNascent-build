@@ -1,0 +1,57 @@
+[file_locations]
+metadata = /home/lsanford/Documents/data/repositories/dbnascent_build/db_subsample.tsv
+conditions = /home/lsanford/Documents/data/repositories/dbnascent_build/db_subsample_conditions.tsv
+database = /home/lsanford/sqlite/meta.db
+log_directory = /home/lsanford/Documents/data/repositories/db_build_logs/
+organism_table = /home/lsanford/Documents/data/repositories/dbnascent_build/organisms.txt
+data = /home/lsanford/Documents/data/repositories/dbnascent_build/qc/
+
+
+[organism keys]
+organism = organism
+genome_build = build
+genome_bases = total_bases
+
+[expt keys]
+srp = srp
+protocol = protocol
+organism = organism
+library = library prep
+spikein = spike in
+paper_id = identifier
+published = published
+year = year
+first_author = author
+last_author = last author
+doi = doi
+curator1 = curator 1
+curator2 = curator 2
+other_sr_data = other data
+atac_seq = atac seq
+rna_seq = rna seq
+chip_seq = chip seq
+three_dim_seq = three d
+
+[sample keys]
+srr = srr
+sample_name = srz
+
+[genetic keys]
+organism = organism
+cell_type = cell type
+strain = strain
+genotype = genotype
+construct = construct
+
+[condition keys]
+condition_type = treatment type
+treatment = treatment
+conc_intens = conc int
+start_time = start time
+end_time = end time
+time_unit = time unit
+
+[accum keys]
+replicate = replicate
+single_paired = single_paired
+rcomp = rcomp

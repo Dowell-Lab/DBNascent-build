@@ -1,0 +1,3 @@
+organism	build	total_bases
+H. sapiens	hg38	3088269832
+M. musculus	mm10	2730855475
