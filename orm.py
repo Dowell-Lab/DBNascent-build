@@ -34,6 +34,16 @@ class organismInfo(Base):
     )
     genome_build = sql.Column(sql.String(length=50))
     genome_bases = sql.Column(sql.Integer)
+    
+class searchEq(Base):
+    __tablename__ = "searchEq"
+    search_term = sql.Column(
+        sql.String(length=250), 
+        primary_key = True, 
+        index = True, 
+        unique = True
+    )
+    db_term = sql.Column(sql.String(length=127))
 
 class exptMetadata(Base):
     __tablename__ = "exptMetadata"
@@ -64,6 +74,7 @@ class exptMetadata(Base):
     rna_seq = sql.Column(sql.Boolean)
     chip_seq = sql.Column(sql.Boolean)
     three_dim_seq = sql.Column(sql.Boolean)
+    other_seq = sql.Column(sql.Boolean)
     
 class sampleID(Base):
     __tablename__ = "sampleID"
@@ -88,7 +99,9 @@ class geneticInfo(Base):
         sql.String(length=127), 
         sql.ForeignKey("organismInfo.organism")
     )
+    sample_type = sql.Column(sql.String(length=127))
     cell_type = sql.Column(sql.String(length=127))
+    clone_individual = sql.Column(sql.String(length=127))
     strain = sql.Column(sql.String(length=127))
     genotype = sql.Column(sql.String(length=127))
     construct = sql.Column(sql.String(length=127))
@@ -108,6 +121,7 @@ class conditionInfo(Base):
     end_time = sql.Column(sql.Integer)
     duration = sql.Column(sql.Integer)
     time_unit = sql.Column(sql.String(length=50))
+    duration_unit = sql.Column(sql.String(length=50))
     
 exptCondition = sql.Table('exptCondition', Base.metadata,
     sql.Column('sample_id', 
@@ -148,6 +162,10 @@ class sampleAccum(Base):
     replicate = sql.Column(sql.Integer)
     single_paired = sql.Column(sql.String(length=50))
     rcomp = sql.Column(sql.Boolean)
+    expt_unusable = sql.Column(sql.Boolean)
+    timecourse = sql.Column(sql.Boolean)
+    baseline_control_expt = sql.Column(sql.String(length=50))
+    notes = sql.Column(sql.String(length=300))
     raw_read_depth = sql.Column(sql.Integer)
     trim_read_depth = sql.Column(sql.Integer)
     raw_read_length = sql.Column(sql.Integer)
