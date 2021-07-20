@@ -1,3 +1,21 @@
 organism	build	total_bases
 H. sapiens	hg38	3088269832
 M. musculus	mm10	2730855475
+Z. mays	AGPv4	
+A. thaliana	TAIR10	
+C. lupus familiaris	canFam4	
+C. elegans	ce10	
+C. griseus	criGriChoV2	
+D. melanogaster	dm6	
+E. coli	EB1	
+S. pombe	EF2	
+S. cerevisiae	R64-1-1	
+E. caballus	equCab3	
+M. esculenta	MEv6	
+M. velifer	myoLuc2	
+P. troglodytes	panTro6	
+P. falciparum	Pfalci	
+M. mulatta	rheMac8	
+R. norvegicus	rn6	
+S. scrofa	susScr11	
+T. thermophila	Ttherm	
