@@ -75,6 +75,8 @@ class exptMetadata(Base):
     chip_seq = sql.Column(sql.Boolean)
     three_dim_seq = sql.Column(sql.Boolean)
     other_seq = sql.Column(sql.Boolean)
+    paper_qc_score = sql.Column(sql.Float)
+    paper_data_score = sql.Column(sql.Float)
     
 class sampleID(Base):
     __tablename__ = "sampleID"
@@ -184,28 +186,64 @@ class sampleAccum(Base):
     distinct_tenmillion_prop = sql.Column(sql.Float)
     genome_prop_cov = sql.Column(sql.Float)
     avg_fold_cov = sql.Column(sql.Float)
+    samp_qc_score = sql.Column(sql.Integer)
+    samp_data_score = sql.Column(sql.Integer)
     
-class pipelineMetadata(Base):
-    __tablename__ = "pipelineMetadata"
+class nascentflowMetadata(Base):
+    __tablename__ = "nascentflowMetadata"
     sample_id = sql.Column(
         sql.Integer,
         sql.ForeignKey("sampleID.sample_id"),
         primary_key=True
     )
+    pipeline_version = sql.Column(sql.String(length=127))
+    pipeline_revision_hash = sql.Column(sql.String(length=127))
+    pipeline_date = sql.Column(sql.String(length=127))
+    nextflow_version = sql.Column(sql.String(length=127))
     fastqc_version = sql.Column(sql.String(length=127))
-    bbduk_version = sql.Column(sql.String(length=127))
+    bbmap_version = sql.Column(sql.String(length=127))
     hisat2_version = sql.Column(sql.String(length=127))
     samtools_version = sql.Column(sql.String(length=127))
-    fastq_dump_version = sql.Column(sql.String(length=127))
+    sratools_version = sql.Column(sql.String(length=127))
     pileup_version = sql.Column(sql.String(length=127))
     preseq_version = sql.Column(sql.String(length=127))
+    preseq_date = sql.Column(sql.String(length=127))
     rseqc_version = sql.Column(sql.String(length=127))
+    rseqc_date = sql.Column(sql.String(length=127))
+    java_version = sql.Column(sql.String(length=127))
+    picard_gc_version = sql.Column(sql.String(length=127))
+    picard_dup_version = sql.Column(sql.String(length=127))
+    picard_date = sql.Column(sql.String(length=127))
     bedtools_version = sql.Column(sql.String(length=127))
-    igv_tools_version = sql.Column(sql.String(length=127))
+    igvtools_version = sql.Column(sql.String(length=127))
+    seqkit_version = sql.Column(sql.String(length=127))
+    mpich_version = sql.Column(sql.String(length=127))
+    gcc_version = sql.Column(sql.String(length=127))
+    python_version = sql.Column(sql.String(length=127))
+    numpy_version = sql.Column(sql.String(length=127))
+
+class bidirflowMetadata(Base):
+    __tablename__ = "bidirflowMetadata"
+    sample_id = sql.Column(
+        sql.Integer,
+        sql.ForeignKey("sampleID.sample_id"),
+        primary_key=True
+    )
+    pipeline_version = sql.Column(sql.String(length=127))
+    pipeline_revision_hash = sql.Column(sql.String(length=127))
+    pipeline_date = sql.Column(sql.String(length=127))
+    nextflow_version = sql.Column(sql.String(length=127))
+    samtools_version = sql.Column(sql.String(length=127))
+    bedtools_version = sql.Column(sql.String(length=127))
+    mpich_version = sql.Column(sql.String(length=127))
+    openmpi_version = sql.Column(sql.String(length=127))
+    gcc_version = sql.Column(sql.String(length=127))
+    r_version = sql.Column(sql.String(length=127))
+    rsubread_version = sql.Column(sql.String(length=127))
+    boost_version = sql.Column(sql.String(length=127))
     fstitch_version = sql.Column(sql.String(length=127))
     tfit_version = sql.Column(sql.String(length=127))
     dreg_version = sql.Column(sql.String(length=127))
-
 
 # The following were created by Zach and we may or may not use...    
     
