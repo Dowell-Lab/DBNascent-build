@@ -2,7 +2,7 @@
 #
 # Filename: orm.py
 # Description: ORM for DBNascent
-# Author: Zach Maas and Lynn Sanford
+# Authors: Zach Maas and Lynn Sanford
 # Maintainer: Lynn Sanford <lynn.sanford@colorado.edu>
 # Created: Mon Jun 10 13:11:55 2019 (-0600)
 # URL:
@@ -27,37 +27,30 @@ Base = declarative_base()
 class organismInfo(Base):
     __tablename__ = "organismInfo"
     organism = sql.Column(
-        sql.String(length=127), 
-        primary_key = True, 
-        index = True, 
-        unique = True
+        sql.String(length=127), primary_key=True, index=True, unique=True
     )
     genome_build = sql.Column(sql.String(length=50))
     genome_bases = sql.Column(sql.Integer)
-    
+
+
 class searchEq(Base):
     __tablename__ = "searchEq"
     search_term = sql.Column(
-        sql.String(length=250), 
-        primary_key = True, 
-        index = True, 
-        unique = True
+        sql.String(length=250), primary_key=True, index=True, unique=True
     )
     db_term = sql.Column(sql.String(length=127))
 
+
 class exptMetadata(Base):
     __tablename__ = "exptMetadata"
-    expt_id = sql.Column(
-        sql.Integer, 
-        primary_key = True, 
-        index = True, 
-        unique = True
-    )
+    expt_id = sql.Column(sql.Integer,
+                         primary_key=True,
+                         index=True,
+                         unique=True)
     srp = sql.Column(sql.String(length=50))
     protocol = sql.Column(sql.String(length=50))
     organism = sql.Column(
-        sql.String(length=127), 
-        sql.ForeignKey("organismInfo.organism")
+        sql.String(length=127), sql.ForeignKey("organismInfo.organism")
     )
     library = sql.Column(sql.String(length=50))
     spikein = sql.Column(sql.String(length=127))
@@ -77,29 +70,26 @@ class exptMetadata(Base):
     other_seq = sql.Column(sql.Boolean)
     paper_qc_score = sql.Column(sql.Float)
     paper_data_score = sql.Column(sql.Float)
-    
+
+
 class sampleID(Base):
     __tablename__ = "sampleID"
-    srr = sql.Column(
-        sql.String(length=50), 
-        primary_key = True, 
-        index = True, 
-        unique = True
-    )
+    srr = sql.Column(sql.String(length=50),
+                     primary_key=True,
+                     index=True,
+                     unique=True)
     sample_name = sql.Column(sql.String(length=50))
     sample_id = sql.Column(sql.Integer)
-    
+
+
 class geneticInfo(Base):
     __tablename__ = "geneticInfo"
-    genetic_id = sql.Column(
-        sql.Integer, 
-        primary_key = True, 
-        index = True, 
-        unique = True
-    )
+    genetic_id = sql.Column(sql.Integer,
+                            primary_key=True,
+                            index=True,
+                            unique=True)
     organism = sql.Column(
-        sql.String(length=127), 
-        sql.ForeignKey("organismInfo.organism")
+        sql.String(length=127), sql.ForeignKey("organismInfo.organism")
     )
     sample_type = sql.Column(sql.String(length=127))
     cell_type = sql.Column(sql.String(length=127))
@@ -108,14 +98,13 @@ class geneticInfo(Base):
     genotype = sql.Column(sql.String(length=127))
     construct = sql.Column(sql.String(length=127))
 
+
 class conditionInfo(Base):
     __tablename__ = "conditionInfo"
-    condition_id = sql.Column(
-        sql.Integer, 
-        primary_key = True, 
-        index = True, 
-        unique = True
-    )
+    condition_id = sql.Column(sql.Integer,
+                              primary_key=True,
+                              index=True,
+                              unique=True)
     condition_type = sql.Column(sql.String(length=127))
     treatment = sql.Column(sql.String(length=127))
     conc_intens = sql.Column(sql.String(length=50))
@@ -124,42 +113,43 @@ class conditionInfo(Base):
     duration = sql.Column(sql.Integer)
     time_unit = sql.Column(sql.String(length=50))
     duration_unit = sql.Column(sql.String(length=50))
-    
-exptCondition = sql.Table('exptCondition', Base.metadata,
-    sql.Column('sample_id', 
-               sql.Integer, 
-               sql.ForeignKey('sampleID.sample_id')),
-    sql.Column('condition_id', 
-               sql.Integer, 
-               sql.ForeignKey('conditionInfo.condition_id'))
+
+
+exptCondition = sql.Table(
+    "exptCondition",
+    Base.metadata,
+    sql.Column("sample_id",
+               sql.Integer,
+               sql.ForeignKey("sampleID.sample_id")),
+    sql.Column("condition_id",
+               sql.Integer,
+               sql.ForeignKey("conditionInfo.condition_id")),
 )
-    
+
+
 class linkIDs(Base):
     __tablename__ = "linkIDs"
     sample_id = sql.Column(
         sql.Integer,
         sql.ForeignKey("sampleID.sample_id"),
         primary_key=True,
-        index = True,
-        unique = True
+        index=True,
+        unique=True,
     )
-    genetic_id = sql.Column(
-        sql.Integer,
-        sql.ForeignKey("geneticInfo.genetic_id")
-    )
-    expt_id = sql.Column(
-        sql.Integer, 
-        sql.ForeignKey("exptMetadata.expt_id")
-    )
-    
+    genetic_id = sql.Column(sql.Integer,
+                            sql.ForeignKey("geneticInfo.genetic_id"))
+    expt_id = sql.Column(sql.Integer,
+                         sql.ForeignKey("exptMetadata.expt_id"))
+
+
 class sampleAccum(Base):
     __tablename__ = "sampleAccum"
     sample_id = sql.Column(
         sql.Integer,
         sql.ForeignKey("sampleID.sample_id"),
         primary_key=True,
-        index = True,
-        unique = True
+        index=True,
+        unique=True,
     )
     replicate = sql.Column(sql.Integer)
     single_paired = sql.Column(sql.String(length=50))
@@ -188,17 +178,18 @@ class sampleAccum(Base):
     avg_fold_cov = sql.Column(sql.Float)
     samp_qc_score = sql.Column(sql.Integer)
     samp_data_score = sql.Column(sql.Integer)
-    
+
+
 class nascentflowMetadata(Base):
     __tablename__ = "nascentflowMetadata"
-    sample_id = sql.Column(
-        sql.Integer,
-        sql.ForeignKey("sampleID.sample_id"),
-        primary_key=True
+    nascentflow_version_id = sql.Column(
+        sql.Integer, primary_key=True, index=True, unique=True
     )
-    pipeline_version = sql.Column(sql.String(length=127))
+    sample_id = sql.Column(sql.Integer, sql.ForeignKey("sampleID.sample_id"))
+    nascentflow_version = sql.Column(sql.String(length=127))
     pipeline_revision_hash = sql.Column(sql.String(length=127))
-    pipeline_date = sql.Column(sql.String(length=127))
+    pipeline_hash = sql.Column(sql.String(length=127))
+    nascentflow_date = sql.Column(sql.DateTime)
     nextflow_version = sql.Column(sql.String(length=127))
     fastqc_version = sql.Column(sql.String(length=127))
     bbmap_version = sql.Column(sql.String(length=127))
@@ -207,13 +198,13 @@ class nascentflowMetadata(Base):
     sratools_version = sql.Column(sql.String(length=127))
     pileup_version = sql.Column(sql.String(length=127))
     preseq_version = sql.Column(sql.String(length=127))
-    preseq_date = sql.Column(sql.String(length=127))
+    preseq_date = sql.Column(sql.DateTime)
     rseqc_version = sql.Column(sql.String(length=127))
-    rseqc_date = sql.Column(sql.String(length=127))
+    rseqc_date = sql.Column(sql.DateTime)
     java_version = sql.Column(sql.String(length=127))
     picard_gc_version = sql.Column(sql.String(length=127))
     picard_dup_version = sql.Column(sql.String(length=127))
-    picard_date = sql.Column(sql.String(length=127))
+    picard_date = sql.Column(sql.DateTime)
     bedtools_version = sql.Column(sql.String(length=127))
     igvtools_version = sql.Column(sql.String(length=127))
     seqkit_version = sql.Column(sql.String(length=127))
@@ -222,16 +213,17 @@ class nascentflowMetadata(Base):
     python_version = sql.Column(sql.String(length=127))
     numpy_version = sql.Column(sql.String(length=127))
 
+
 class bidirflowMetadata(Base):
     __tablename__ = "bidirflowMetadata"
-    sample_id = sql.Column(
-        sql.Integer,
-        sql.ForeignKey("sampleID.sample_id"),
-        primary_key=True
+    bidirflow_version_id = sql.Column(
+        sql.Integer, primary_key=True, index=True, unique=True
     )
-    pipeline_version = sql.Column(sql.String(length=127))
+    sample_id = sql.Column(sql.Integer, sql.ForeignKey("sampleID.sample_id"))
+    bidirflow_version = sql.Column(sql.String(length=127))
     pipeline_revision_hash = sql.Column(sql.String(length=127))
-    pipeline_date = sql.Column(sql.String(length=127))
+    pipeline_hash = sql.Column(sql.String(length=127))
+    bidirflow_date = sql.Column(sql.DateTime)
     nextflow_version = sql.Column(sql.String(length=127))
     samtools_version = sql.Column(sql.String(length=127))
     bedtools_version = sql.Column(sql.String(length=127))
@@ -244,16 +236,20 @@ class bidirflowMetadata(Base):
     fstitch_version = sql.Column(sql.String(length=127))
     tfit_version = sql.Column(sql.String(length=127))
     dreg_version = sql.Column(sql.String(length=127))
+    dreg_date = sql.Column(sql.DateTime)
+    tfit_date = sql.Column(sql.DateTime)
+    fcgene_date = sql.Column(sql.DateTime)
 
-# The following were created by Zach and we may or may not use...    
-    
-#class tf(Base):
+
+# The following were created by Zach and we may or may not use...
+
+# class tf(Base):
 #    __tablename__ = "tf"
 #    tf_id = sql.Column(sql.String(length=127), primary_key=True)
 #    tf_alias = sql.Column(sql.String(length=127))
 
 
-#class pipeline_status(Base):
+# class pipeline_status(Base):
 #    __tablename__ = "pipeline_status"
 #    srr_id = sql.Column(
 #        sql.String(length=127),
@@ -274,7 +270,7 @@ class bidirflowMetadata(Base):
 #    tfit_complete = sql.Column(sql.Boolean)
 
 
-#class md_score(Base):
+# class md_score(Base):
 #    __tablename__ = "md_score"
 #    srr_id = sql.Column(
 #        sql.String(length=127),

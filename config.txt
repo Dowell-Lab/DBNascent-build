@@ -6,6 +6,7 @@ log_directory = /home/lsanford/Documents/data/repositories/db_build_logs/
 organism_table = /home/lsanford/Documents/data/repositories/DBNascent-build/organisms.txt
 searcheq_table = /home/lsanford/Documents/data/repositories/DBNascent-build/searcheq.txt
 data = /home/lsanford/Documents/data/repositories/DBNascent-build/qc/
+version_data = /home/lsanford/Documents/data/repositories/DBNascent-build/software_versions/
 
 [organism keys]
 organism = organism
@@ -72,3 +73,51 @@ notes = notes
 timecourse = timecourse
 baseline_control_expt = baseline_control_expt
 
+[nascentflow keys]
+nascentflow_version = nascentflow_version
+pipeline_revision_hash = pipeline_revision_hash
+pipeline_hash = pipeline_hash
+nascentflow_date = nascentflow_date
+nextflow_version = nextflow_version
+fastqc_version = fastqc_version
+bbmap_version = bbmap_version
+hisat2_version = hisat2_version
+samtools_version = samtools_version
+sratools_version = sratools_version
+pileup_version = pileup_version
+preseq_version = preseq_version
+preseq_date = preseq_date
+rseqc_version = rseqc_version
+rseqc_date = rseqc_date
+java_version = java_version
+picard_gc_version = picard_gc_version
+picard_dup_version = picard_dup_version
+picard_date = picard_date
+bedtools_version = bedtools_version
+igvtools_version = igvtools_version
+seqkit_version = seqkit_version
+mpich_version = mpich_version
+gcc_version = gcc_version
+python_version = python_version
+numpy_version = numpy_version
+
+[bidirectionalflow keys]
+bidirflow_version = bidirectionalflow_version
+pipeline_revision_hash = pipeline_revision_hash
+pipeline_hash = pipeline_hash
+bidirflow_date = bidirectionalflow_date
+nextflow_version = nextflow_version
+samtools_version = samtools_version
+bedtools_version = bedtools_version
+mpich_version = mpich_version
+openmpi_version = openmpi_version
+gcc_version = gcc_version
+r_version = r_version
+rsubread_version = rsubread_version
+boost_version = boost_version
+fstitch_version = fstitch_version
+tfit_version = tfit_version
+dreg_version = dreg_version
+dreg_date = dreg_date
+tfit_date = tfit_date
+fcgene_date = fcgene_date
