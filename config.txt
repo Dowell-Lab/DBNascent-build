@@ -78,20 +78,20 @@ nascentflow_version = nascentflow_version
 pipeline_revision_hash = pipeline_revision_hash
 pipeline_hash = pipeline_hash
 nascentflow_date = nascentflow_date
+nascentflow_redo_date = nascentflow_redo_date
 nextflow_version = nextflow_version
 fastqc_version = fastqc_version
 bbmap_version = bbmap_version
 hisat2_version = hisat2_version
 samtools_version = samtools_version
 sratools_version = sratools_version
-pileup_version = pileup_version
 preseq_version = preseq_version
 preseq_date = preseq_date
 rseqc_version = rseqc_version
 rseqc_date = rseqc_date
 java_version = java_version
 picard_gc_version = picard_gc_version
-picard_dup_version = picard_dup_version
+picard_dups_version = picard_dups_version
 picard_date = picard_date
 bedtools_version = bedtools_version
 igvtools_version = igvtools_version
@@ -101,7 +101,7 @@ gcc_version = gcc_version
 python_version = python_version
 numpy_version = numpy_version
 
-[bidirectionalflow keys]
+[bidirflow keys]
 bidirflow_version = bidirectionalflow_version
 pipeline_revision_hash = pipeline_revision_hash
 pipeline_hash = pipeline_hash
