@@ -121,3 +121,14 @@ dreg_version = dreg_version
 dreg_date = dreg_date
 tfit_date = tfit_date
 fcgene_date = fcgene_date
+
+[query_join keys]
+existing = [linkIDs, sampleID, exptMetadata]
+organismInfo =  inner join organismInfo on organismInfo.organism = exptMetadata.organism
+geneticInfo =  inner join geneticInfo on geneticInfo.genetic_id = linkIDs.genetic_id
+conditionInfo =  inner join exptCondition on exptCondition.sample_id = linkIDs.sample_id inner join conditionInfo on conditionInfo.condition_id = exptCondition.condition_id
+sampleAccum =  inner join sampleAccum on sampleAccum.sample_id = linkIDs.sample_id
+nascentflowMetadata =  inner join nascentflowMetadata on nascentflowMetadata.sample_id = linkIDs.sample_id
+bidirflowMetadata =  inner join bidirflowMetadata on bidirflowMetadata.sample_id = linkIDs.sample_id
+
+

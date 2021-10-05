@@ -26,6 +26,7 @@ Base = declarative_base()
 # MAIN TABLES
 class organismInfo(Base):
     __tablename__ = "organismInfo"
+#    metadata = MetaData()
     organism = sql.Column(
         sql.String(length=127), primary_key=True, index=True, unique=True
     )
@@ -35,6 +36,7 @@ class organismInfo(Base):
 
 class searchEq(Base):
     __tablename__ = "searchEq"
+#    metadata = MetaData()
     search_term = sql.Column(
         sql.String(length=250), primary_key=True, index=True, unique=True
     )
@@ -43,6 +45,7 @@ class searchEq(Base):
 
 class exptMetadata(Base):
     __tablename__ = "exptMetadata"
+#    metadata = MetaData()
     expt_id = sql.Column(sql.Integer,
                          primary_key=True,
                          index=True,
@@ -74,6 +77,7 @@ class exptMetadata(Base):
 
 class sampleID(Base):
     __tablename__ = "sampleID"
+#    metadata = MetaData()
     srr = sql.Column(sql.String(length=50),
                      primary_key=True,
                      index=True,
@@ -84,6 +88,7 @@ class sampleID(Base):
 
 class geneticInfo(Base):
     __tablename__ = "geneticInfo"
+#    metadata = MetaData()
     genetic_id = sql.Column(sql.Integer,
                             primary_key=True,
                             index=True,
@@ -101,6 +106,7 @@ class geneticInfo(Base):
 
 class conditionInfo(Base):
     __tablename__ = "conditionInfo"
+#    metadata = MetaData()
     condition_id = sql.Column(sql.Integer,
                               primary_key=True,
                               index=True,
@@ -129,6 +135,7 @@ exptCondition = sql.Table(
 
 class linkIDs(Base):
     __tablename__ = "linkIDs"
+#    metadata = MetaData()
     sample_id = sql.Column(
         sql.Integer,
         sql.ForeignKey("sampleID.sample_id"),
@@ -144,6 +151,7 @@ class linkIDs(Base):
 
 class sampleAccum(Base):
     __tablename__ = "sampleAccum"
+#    metadata = MetaData()
     sample_id = sql.Column(
         sql.Integer,
         sql.ForeignKey("sampleID.sample_id"),
@@ -182,6 +190,7 @@ class sampleAccum(Base):
 
 class nascentflowMetadata(Base):
     __tablename__ = "nascentflowMetadata"
+#    metadata = MetaData()
     nascentflow_version_id = sql.Column(
         sql.Integer, primary_key=True, index=True, unique=True
     )
@@ -216,6 +225,7 @@ class nascentflowMetadata(Base):
 
 class bidirflowMetadata(Base):
     __tablename__ = "bidirflowMetadata"
+#    metadata = MetaData()
     bidirflow_version_id = sql.Column(
         sql.Integer, primary_key=True, index=True, unique=True
     )
