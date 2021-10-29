@@ -124,11 +124,11 @@ fcgene_date = fcgene_date
 
 [query_join keys]
 existing = [linkIDs, sampleID, exptMetadata]
-organismInfo =  inner join organismInfo on organismInfo.organism = exptMetadata.organism
-geneticInfo =  inner join geneticInfo on geneticInfo.genetic_id = linkIDs.genetic_id
-conditionInfo =  inner join exptCondition on exptCondition.sample_id = linkIDs.sample_id inner join conditionInfo on conditionInfo.condition_id = exptCondition.condition_id
-sampleAccum =  inner join sampleAccum on sampleAccum.sample_id = linkIDs.sample_id
-nascentflowMetadata =  inner join nascentflowMetadata on nascentflowMetadata.sample_id = linkIDs.sample_id
-bidirflowMetadata =  inner join bidirflowMetadata on bidirflowMetadata.sample_id = linkIDs.sample_id
+organismInfo =  INNER JOIN organismInfo ON organismInfo.organism = exptMetadata.organism
+geneticInfo =  INNER JOIN geneticInfo ON geneticInfo.genetic_id = linkIDs.genetic_id
+conditionInfo =  INNER JOIN exptCondition ON exptCondition.sample_id = linkIDs.sample_id INNER JOIN conditionInfo ON conditionInfo.condition_id = exptCondition.condition_id
+sampleAccum =  INNER JOIN sampleAccum ON sampleAccum.sample_id = linkIDs.sample_id
+nascentflowMetadata =  INNER JOIN nascentflowMetadata ON nascentflowMetadata.sample_id = linkIDs.sample_id
+bidirflowMetadata =  INNER JOIN bidirflowMetadata ON bidirflowMetadata.sample_id = linkIDs.sample_id
 
 
