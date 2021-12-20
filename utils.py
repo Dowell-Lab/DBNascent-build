@@ -1,7 +1,7 @@
-"""Load functions for building and maintaining DBNascent.
+"""Functions for building and maintaining DBNascent.
 
 Filename: utils.py
-Author: Lynn Sanford <lynn.sanford@colorado.edu>
+Authors: Lynn Sanford <lynn.sanford@colorado.edu> and Zach Maas
 
 Commentary:
     This module contains utility functions and classes for
@@ -9,6 +9,8 @@ Commentary:
     updating the database
 
 Classes:
+    dbnascentConnection
+    Metatable
 
 Functions:
     load_config(file) -> object
@@ -18,6 +20,7 @@ Functions:
     get_unique_table(file, list) -> dict
     value_compare(object, dict, dict)
     object_as_dict(object)
+    scrape_fastqc(object) -> list of dicts
 
 Misc variables:
 """
@@ -26,6 +29,9 @@ import os
 import configparser
 import sqlalchemy as sql
 import csv
+import re
+import shutil
+import zipfile as zp
 from sqlalchemy.orm import sessionmaker
 from . import dborm
 
@@ -257,5 +263,314 @@ def object_as_dict(obj):
                in sql.inspect(obj).mapper.column_attrs}
     return db_dict
 
+
+def scrape_fastqc(paper_id, sample_name, data_path, db_sample, dbconfig):
+    """Scrape read length and depth from fastQC report.
+
+    Parameters:
+        paper_id (str) : paper identifier
+
+        sample_name (str) : sample name derived from db query
+
+        data_path (str) : path to database storage directory
+
+        db_sample (dict) : sample_accum entry dict from db query
+
+        dbconfig (configparser object) : config data
+
+    Returns:
+        fastqc_dict (dict) : scraped fastqc metadata in dict format
+    """
+    fastqc_dict = {}
+    
+    # Determine paths for raw fastQC file to scrape, depending on SE/PE
+    fqc_path = data_path + paper_id + "/qc/fastqc/zips/"
+    if db_sample[dbconfig["accum keys"]["single_paired"]] == "paired":
+        samp_zip = dirpath + sample + "_1_fastqc"
+    else:
+        samp_zip = dirpath + sample + "_fastqc"
+
+    # If fastQC files don't exist, return null values
+    if not (os.path.exists(samp_zip + ".zip")):
+        fastqc_dict["raw_read_depth"] = None
+        fastqc_dict["raw_read_length"] = None
+        fastqc_dict["trim_read_depth"] = None
+        return fastqc_dict
+
+    # Unzip fastQC report
+    with zp.ZipFile(samp_zip + ".zip", "r") as zp_ref:
+        zp_ref.extractall(dirpath)
+
+    # Extract raw depth and read length
+    fdata = open(samp_zip + "/fastqc_data.txt")
+    for line in fdata:
+        if re.compile("Total Sequences").search(line):
+            fastqc_dict["raw_read_depth"] = int(line.split()[2])
+        if re.compile("Sequence length").search(line):
+            fastqc_dict["raw_read_length"] = int(line.split()[2].split("-")[0])
+
+    # Remove unzipped file
+    shutil.rmtree(samp_zip)
+
+    # Determine paths for trimmed fastQC file to scrape, depending on SE/PE
+    # and whether reverse complemented or not
+    if db_sample[dbconfig["accum keys"]["rcomp"]] == 1:
+        if db_sample[dbconfig["accum keys"]["single_paired"]] == "paired":
+            samp_zip = dirpath + sample + "_1.flip.trim_fastqc"
+        else:
+            samp_zip = dirpath + sample + ".flip.trim_fastqc"
+    else:
+        if db_sample[dbconfig["accum keys"]["single_paired"]] == "paired":
+            samp_zip = dirpath + sample + "_1.trim_fastqc"
+        else:
+            samp_zip = dirpath + sample + ".trim_fastqc"
+
+    # If trimmed fastQC report doesn't exist, return null value for 
+    # trimmed read depth
+    if not (os.path.exists(samp_zip + ".zip")):
+        fastqc_dict["trim_read_depth"] = None
+        return fastqc_dict
+
+    # Unzip trimmed fastQC report
+    with zp.ZipFile(samp_zip + ".zip", "r") as zp_ref:
+        zp_ref.extractall(dirpath)
+
+    # Extract trimmed read depth
+    fdata = open(samp_zip + "/fastqc_data.txt")
+    for line in fdata:
+        if re.compile("Total Sequences").search(line):
+            fastqc_dict["trim_read_depth"] = int(line.split()[2])
+
+    # Remove unzipped file
+    shutil.rmtree(samp_zip)
+    
+    return fastqc_dict
+
+
+def scrape_picard(paper_id, sample_name, data_path):
+    """Scrape read length and depth from picard duplication report.
+
+    Parameters:
+        paper_id (str) : paper identifier
+
+        sample_name (str) : sample name derived from db query
+
+        data_path (str) : path to database storage directory
+
+    Returns:
+        picard_dict (dict) : scraped picard metadata in dict format
+    """
+    picard_dict = {}
+    
+    dirpath = data_path + paper_id + "/qc/picard/dups/"
+    filepath = dirpath + sample_name + ".marked_dup_metrics.txt"
+
+    # If picardtools data doesn't exist, return null value
+    if not (os.path.exists(filepath) and os.path.isfile(filepath)):
+        picard_dict["duplication_picard"] = None
+        return picard_dict
+
+    # Extract duplication data
+    fdata = open(filepath)
+    for line in fdata:
+        if re.compile("Unknown Library").search(line):
+            picard_dict["duplication_picard"] = float(line.split("\t")[8])
+
+
+def scrape_mapstats(paper_id, sample_name, data_path, db_sample, dbconfig):
+    """Scrape read length and depth from hisat2 mapstats report.
+
+    Parameters:
+        paper_id (str) : paper identifier
+
+        sample_name (str) : sample name derived from db query
+
+        data_path (str) : path to database storage directory
+
+        db_sample (dict) : sample_accum entry dict from db query
+
+        dbconfig (configparser object) : config data
+
+    Returns:
+        mapstats_dict (dict) : scraped hisat2 metadata in dict format
+    """
+    mapstats_dict = {}
+
+    dirpath = data_path + paper_id + "/qc/hisat2_mapstats/"
+    filepath = dirpath + sample_name + ".hisat2_mapstats.txt"
+
+    # If hisat mapping data doesn't exist, return null values
+    if not (os.path.exists(filepath) and os.path.isfile(filepath)):
+        mapstats_dict["single_map"] = None
+        mapstats_dict["multi_map"] = None
+        mapstats_dict["map_prop"] = None
+        return mapstats_dict
+
+    fdata = open(filepath)
+    
+    # Sum up and report mapped reads for paired end data
+    if db_sample[dbconfig["accum keys"]["single_paired"]] == "paired":
+        for line in fdata:
+            if re.compile("concordantly 1 time").search(line):
+                reads = int(line.split(": ")[1].split(" (")[0]) * 2
+            if re.compile("Aligned 1 time").search(line):
+                mapstats_dict["single_map"] = reads + int(
+                    line.split(": ")[1].split(" (")[0]
+                )
+            if re.compile("concordantly >1 times").search(line):
+                reads = int(line.split(": ")[1].split(" (")[0]) * 2
+            if re.compile("Aligned >1 times").search(line):
+                mapstats_dict["multi_map"] = reads + int(
+                    line.split(": ")[1].split(" (")[0]
+                )
+            if re.compile("Overall alignment rate").search(line):
+                mapstats_dict["map_prop"] = (
+                    float(line.split(": ")[1].split("%")[0]) / 100
+                )
+    # Report mapped reads for single end data
+    else:
+        for line in fdata:
+            if re.compile("Aligned 1 time").search(line):
+                mapstats_dict["single_map"] = int(line.split(": ")[1].split(" (")[0])
+            if re.compile("Aligned >1 times").search(line):
+                mapstats_dict["multi_map"] = int(line.split(": ")[1].split(" (")[0])
+            if re.compile("Overall alignment rate").search(line):
+                mapstats_dict["map_prop"] = (
+                    float(line.split(": ")[1].split("%")[0]) / 100
+                )
+
+
+def scrape_rseqc(paper_id, sample_name, data_path):
+    """Scrape read length and depth from RSeQC report.
+
+    Parameters:
+        paper_id (str) : paper identifier
+
+        sample_name (str) : sample name derived from db query
+
+        data_path (str) : path to database storage directory
+
+    Returns:
+        rseqc_dict (dict) : scraped RSeQC metadata in dict format
+    """
+    rseqc_dict = {}
+
+    dirpath = data_path + paper_id + "/qc/rseqc/read_distribution/"
+    filepath = dirpath + sample_name + ".read_distribution.txt"
+
+    # If rseqc read distribution data doesn't exist, return null values
+    if not (os.path.exists(filepath) and os.path.isfile(filepath)):
+        rseqc_dict["rseqc_tags"] = None
+        rseqc_dict["rseqc_cds"] = None
+        rseqc_dict["cds_rpk"] = None
+        rseqc_dict["rseqc_five_utr"] = None
+        rseqc_dict["rseqc_three_utr"] = None
+        rseqc_dict["rseqc_intron"] = None
+        rseqc_dict["intron_rpk"] = None
+        rseqc_dict["exint_ratio"] = None
+        return rseqc_dict
+
+    # Extract RSeQC data
+    fdata = open(filepath)
+    for line in fdata:
+        if re.compile("Total Assigned Tags").search(line):
+            rseqc_dict["rseqc_tags"] = int(line.split()[-1])
+        if re.compile("CDS_Exons").search(line):
+            rseqc_dict["rseqc_cds"] = int(line.split()[2])
+            rseqc_dict["cds_rpk"] = float(line.split()[-1])
+        if re.compile("5'UTR_Exons").search(line):
+            rseqc_dict["rseqc_five_utr"] = int(line.split()[2])
+        if re.compile("3'UTR_Exons").search(line):
+            rseqc_dict["rseqc_three_utr"] = int(line.split()[2])
+        if re.compile("Introns").search(line):
+            rseqc_dict["rseqc_intron"] = int(line.split()[2])
+            rseqc_dict["intron_rpk"] = float(line.split()[-1])
+
+    if rseqc_dict["intron_rpk"] > 0:
+        rseqc_dict["exint_ratio"] = (
+            rseqc_dict["cds_rpk"] / rseqc_dict["intron_rpk"]
+        )
+    else:
+        rseqc_dict["exint_ratio"] = None
+
+    return rseqc_dict
+
+
+def scrape_preseq(paper_id, sample_name, data_path):
+    """Scrape read length and depth from preseq complexity report.
+
+    Parameters:
+        paper_id (str) : paper identifier
+
+        sample_name (str) : sample name derived from db query
+
+        data_path (str) : path to database storage directory
+
+    Returns:
+        preseq_dict (dict) : scraped preseq metadata in dict format
+    """
+    preseq_dict = {}
+
+    dirpath = data_path + paper_id + "/qc/preseq/"
+    filepath = dirpath + sample_name + ".lc_extrap.txt"
+
+    # If preseq complexity data doesn't exist, return null value
+    if not (os.path.exists(filepath) and os.path.isfile(filepath)):
+        preseq_dict["distinct_tenmillion_prop"] = None
+        return preseq_dict
+
+    fdata = open(filepath)
+    for line in fdata:
+        if line.startswith("10000000.0"):
+            distinct = float(line.split()[1])
+
+    preseq_dict["distinct_tenmillion_prop"] = distinct / 10000000
+
+    return preseq_dict
+
+
+def scrape_pileup(paper_id, sample_name, data_path):
+    """Scrape read length and depth from pileup report.
+
+    Parameters:
+        paper_id (str) : paper identifier
+
+        sample_name (str) : sample name derived from db query
+
+        data_path (str) : path to database storage directory
+
+    Returns:
+        pileup_dict (dict) : scraped pileup metadata in dict format
+    """
+    pileup_dict = {}
+
+    dirpath = data_path + paper_id + "/qc/pileup/"
+    filepath = dirpath + sample_name + ".coverage.stats.txt"
+
+    # If pileup complexity data doesn't exist, return null value
+    if not (os.path.exists(filepath) and os.path.isfile(filepath)):
+        pileup_dict["genome_prop_cov"] = None
+        pileup_dict["avg_fold_cov"] = None
+        return pileup_dict
+
+    # Add up reads in different categories to calculate coverage
+    fdata = open(filepath)
+    x = 0
+    total = cov = fold = 0
+    for line in fdata:
+        if x == 0:
+            x = x + 1
+            continue
+        else:
+            x = x + 1
+            total = total + int(line.split("\t")[2])
+            cov = cov + int(line.split("\t")[5])
+            fold = fold + (float(line.split("\t")[1]) 
+                           * int(line.split("\t")[2]))
+
+    pileup_dict["genome_prop_cov"] = cov / total
+    pileup_dict["avg_fold_cov"] = fold / total
+
+    return pileup_dict
 #
 # utils.py ends here
