@@ -2,8 +2,7 @@
 #
 # Filename: orm.py
 # Description: ORM for DBNascent
-# Authors: Zach Maas and Lynn Sanford
-# Maintainer: Lynn Sanford <lynn.sanford@colorado.edu>
+# Authors: Lynn Sanford <lynn.sanford@colorado.edu> and Zach Maas
 # Created: Mon Jun 10 13:11:55 2019 (-0600)
 # URL:
 #
@@ -147,6 +146,10 @@ class linkIDs(Base):
                             sql.ForeignKey("geneticInfo.genetic_id"))
     expt_id = sql.Column(sql.Integer,
                          sql.ForeignKey("exptMetadata.expt_id"))
+    sample_name = sql.Column(sql.String(length=127),
+                         sql.ForeignKey("sampleID.sample_name"))
+    paper_id = sql.Column(sql.String(length=127),
+                         sql.ForeignKey("exptMetadata.paper_id"))
 
 
 class sampleAccum(Base):

@@ -264,6 +264,32 @@ def object_as_dict(obj):
     return db_dict
 
 
+def add_meta_columns(db_row, metatab, comp_keys, fields):
+    """Extract db columns to add to metatable.
+    
+    Parameters:
+        db_row (dict) : single row (entry) of a database query output
+
+        metatab (Metatable object) : table to which to add fields
+
+        comp_keys (dict) : specific keys for comparison as derived
+                           from config file (db cols as keys and
+                           metadata equivalent field names as values)
+
+        fields (list) : list of fields to add from db to table
+
+    Returns:
+        metatab (Metatable object) : input table with added field
+    """
+    db_row_dict = object_as_dict(db_row)
+    for entry in metatab:
+        if value_compare(db_row_dict, entry, comp_keys):
+            for field in fields:
+                entry[field] = db_row_dict[field]
+
+    return metatab
+
+
 def scrape_fastqc(paper_id, sample_name, data_path, db_sample, dbconfig):
     """Scrape read length and depth from fastQC report.
 
@@ -572,5 +598,116 @@ def scrape_pileup(paper_id, sample_name, data_path):
     pileup_dict["avg_fold_cov"] = fold / total
 
     return pileup_dict
+
+
+def sample_qc_calc(db_sample):
+    """Calculate sample qc and data scores.
+
+    Parameters:
+        db_sample (dict) : sample_accum entry dict from db query
+
+    Returns:
+        samp_score (int) : calculated sample scores in dict format
+    """
+    trimrd = db_sample["trim_read_depth"]
+    dup = db_sample["duplication_picard"]
+    mapped = db_sample["map_prop"]
+    complexity = db_sample["distinct_tenmillion_prop"]
+    genome = db_sample["genome_prop_cov"]
+    exint = db_sample["exint_ratio"]
+
+    # Determine sample QC score
+    if (trimrd == None 
+        or dup == None
+        or mapped == None 
+        or complexity == None):
+
+        samp_score["samp_qc_score"] = 0
+
+    elif (trimrd <= 5000000
+          or dup >= 0.95
+          or (mapped * trimrd) <= 4000000
+          or complexity < 0.05):
+
+        samp_score["samp_qc_score"] = 5
+
+    elif (trimrd <= 10000000
+          or dup >= 0.80
+          or (mapped * trimrd) <= 8000000
+          or complexity < 0.2):
+
+        samp_score["samp_qc_score"] = 4
+
+    elif (trimrd <= 15000000
+          or dup >= 0.65
+          or (mapped * trimrd) <= 12000000
+          or complexity < 0.35):
+
+        samp_score["samp_qc_score"] = 3
+
+    elif (trimrd <= 20000000
+          or dup >= 0.5
+          or (mapped * trimrd) <= 16000000
+          or complexity < 0.5):
+
+        samp_score["samp_qc_score"] = 2
+
+    else:
+        samp_score["samp_qc_score"] = 1
+
+    # Determine sample data score
+    if (genome == None
+        or exint == None):
+
+        samp_score["samp_data_score"] = 0
+
+    elif (genome <= 0.04
+          or exint >= 9):
+
+        samp_score["samp_data_score"] = 5
+
+    elif (genome <= 0.08
+          or exint >= 7):
+
+        samp_score["samp_data_score"] = 4
+
+    elif (genome <= 0.12
+          or exint >= 5):
+
+        samp_score["samp_data_score"] = 3
+
+    elif (genome <= 0.16
+          or exint >= 3):
+        samp_score["samp_data_score"] = 2
+
+    else:
+        samp_score["samp_data_score"] = 1
+
+    return samp_score
+
+
+def paper_qc_calc(db_samples):
+    """Calculate sample qc and data scores.
+
+    Parameters:
+        db_samples (list of dicts) : sample_accum entries from db query
+
+    Returns:
+        paper_scores (float) : calculated median scores in dict format
+    """
+    qc_scores = []
+    data_scores = []
+    paper_scores = {}
+    
+    for entry in db_samples:
+        qc_scores.append(entry["samp_qc_score"])
+        data_scores.append(entry["samp_data_score"])
+
+    paper_scores["paper_qc_score"] = median(qc_scores)
+    paper_scores["paper_data_score"] = median(data_scores)
+
+    return paper_scores
+
+#engine.execute(tablename.__table__.insert(),listofdicts)
 #
 # utils.py ends here
