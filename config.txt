@@ -7,6 +7,7 @@ organism_table = /home/lsanford/Documents/data/repositories/DBNascent-build/orga
 searcheq_table = /home/lsanford/Documents/data/repositories/DBNascent-build/searcheq.txt
 data = /home/lsanford/Documents/data/repositories/DBNascent-build/qc/
 version_data = /home/lsanford/Documents/data/repositories/DBNascent-build/software_versions/
+# db_data = /Shares/dbnascent/
 
 [organism keys]
 organism = organism
