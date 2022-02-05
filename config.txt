@@ -1,12 +1,15 @@
 [file_locations]
 metadata = /home/lsanford/Documents/data/repositories/DBNascent-build/db_full.tsv
 conditions = /home/lsanford/Documents/data/repositories/DBNascent-build/db_full_conditions.tsv
-database = /home/lsanford/sqlite/meta.db
+database = /var/lib/mysql/dbnascent
+credentials = /home/lsanford/.mysql_creds
 log_directory = /home/lsanford/Documents/data/repositories/db_build_logs/
+backup_dir = /home/lsanford/Documents/data/db_backups/
 organism_table = /home/lsanford/Documents/data/repositories/DBNascent-build/organisms.txt
 searcheq_table = /home/lsanford/Documents/data/repositories/DBNascent-build/searcheq.txt
 data = /home/lsanford/Documents/data/repositories/DBNascent-build/qc/
 version_data = /home/lsanford/Documents/data/repositories/DBNascent-build/software_versions/
+db_data = /home/lsanford/Documents/data/repositories/DBNascent-build/metadata/
 # db_data = /Shares/dbnascent/
 
 [organism keys]
@@ -56,6 +59,7 @@ construct = construct
 condition_type = treatment type
 treatment = treatment
 times = times
+sample_name = srz
 
 [condition keys]
 condition_type = condition_type
@@ -64,6 +68,8 @@ conc_intens = conc_intens
 start_time = start_time
 end_time = end_time
 time_unit = time_unit
+duration = duration
+duration_unit = duration_unit
 
 [accum keys]
 replicate = replicate

@@ -1,6 +1,6 @@
 """Functions for building and maintaining DBNascent.
 
-Filename: utils.py
+Filename: dbutils.py
 Authors: Lynn Sanford <lynn.sanford@colorado.edu> and Zach Maas
 
 Commentary:
@@ -30,6 +30,7 @@ import csv
 import numpy as np
 import os
 import re
+import pymysql
 import sqlalchemy as sql
 from sqlalchemy.ext.serializer import loads, dumps
 from sqlalchemy.orm import sessionmaker
@@ -72,10 +73,11 @@ class dbnascentConnection:
         if cred_path:
             with open(cred_path) as f:
                 cred = next(f).split("\t")
-            self.engine = sql.create_engine("mysql://" + cred[0] + ":"
-                                            + cred[1] + db_url, echo=False)
+            self.engine = sql.create_engine("mysql+pymysql://" + str(cred[0]) + ":"
+                                            + str(cred[1].split("\n")[0])
+                                            + "@localhost" + db_url, echo=False)
         elif db_url:
-            self.engine = sql.create_engine("mysql://" + db_url, echo=False)
+            self.engine = sql.create_engine("mysql+pymysql://" + db_url, echo=False)
         else:
             raise FileNotFoundError(
                 "Database url must be provided"
@@ -96,7 +98,25 @@ class dbnascentConnection:
         """
         Base.metadata.create_all(self.engine)
 
-    def backup(self, out_path, tables):
+    def reflect_table(self, table) -> list:
+        """Query all records from a specific table.
+
+        Parameters:
+            table (str) : string of table name from ORM
+
+        Returns:
+            query_data (list of dicts) : all data in table
+        """
+        query_data = []
+        query_str = "SELECT * FROM " + table
+        sqlquery = self.session.execute(sql.text(query_str)).fetchall()
+
+        for entry in sqlquery:
+            query_data.append(dict(entry))
+
+        return query_data
+
+    def backup(self, out_path, tables=False):
         """Backup database (whole or specific tables).
 
         Parameters:
@@ -109,13 +129,13 @@ class dbnascentConnection:
             none
         """
         if not tables:
-            Base.metadata.reflect(bind=engine)
-            tables = Base.metadata.tables.keys()
+            Base.metadata.reflect(bind=self.engine)
+            tables = list(Base.metadata.tables.keys())
         for table in tables:
             outfile = out_path + "/" + table + ".dbdump"
             q = self.session.query(table)
             serialized_data = dumps(q.all())
-            with open(outfile,'w') as out: 
+            with open(outfile, 'w') as out:
                 out.write(str(serialized_data))
 
     def restore(self, in_path, tables):
@@ -140,7 +160,6 @@ class dbnascentConnection:
             with open(infile) as f:
                 serialized_data = dict(f)
             self.session.merge(serialized_data)
-            
 
 #    def __enter__(self):
 #        return self.session
@@ -161,19 +180,25 @@ class Metatable:
         load_file :
     """
 
-    def __init__(self, meta_path):
+    def __init__(self, meta_path, dictlist=None):
         """Initialize metatable object.
 
         Parameters:
             meta_path (str) : path to metadata file
                 file must be tab-delimited with field names as header
+
+            dictlist (list of dicts) : if not path, list of dicts
+                this can convert a list of dicts into the self.data of
+                a metatable object
         """
         self.data = []
 
         if meta_path:
             self.load_file(meta_path)
+        elif dictlist:
+            self.data = dictlist
 
-    def load_file(meta_path):
+    def load_file(self, meta_path):
         """Load metatable object.
 
         Parameters:
@@ -190,7 +215,7 @@ class Metatable:
                 "Metadata file does not exist at the provided path")
 
         with open(meta_path, newline="") as metatab:
-            full_table = csv.DictReader(metatab, delimiter="\t")
+            full_table = list(csv.DictReader(metatab, delimiter="\t"))
             if len(full_table[0]) == 1:
                 raise IndexError(
                     "Input must be tab-delimited. Double check input."
@@ -199,7 +224,7 @@ class Metatable:
                 for entry in full_table:
                     self.data.append(dict(entry))
 
-    def key_grab(self, key_list) -> list:
+    def value_grab(self, key_list) -> list:
         """Extract values for specific keys from metatable data.
 
         Parameters:
@@ -211,6 +236,9 @@ class Metatable:
         """
         # Load in file as a list of dicts
         value_list = []
+
+        if len(self.data) == 0:
+            return value_list
 
         # Check if keys are valid
         for key in key_list:
@@ -227,18 +255,55 @@ class Metatable:
 
         return value_list
 
-    def unique(self, extract_keys) -> dict:
+    def key_grab(self, key_list) -> list:
+        """Extract dicts with specific keys from metatable data.
+
+        Parameters:
+            key_list (list) : desired keys from dicts in table_list
+
+        Returns:
+            dict_list (list of dicts) : each entry containing the dicts
+                                        with only the given keys
+        """
+        dict_list = []
+
+        if len(self.data) == 0:
+            return dict_list
+
+        # Check if keys are valid
+        for key in key_list:
+            if key not in self.data[0]:
+                raise KeyError(
+                    "Key(s) not present in metatable object."
+                )
+
+        for entry in self.data:
+            newentry = dict()
+            for key in key_list:
+                newentry[key] = entry[key]
+            dict_list.append(newentry)
+
+        return dict_list
+
+    def unique(self, extract_keys, label_keys) -> list:
         """Extract values for specific keys from a metatable filepath.
 
         Parameters:
             extract_keys (list) : list containing desired keys in
                                   metatable data for value extraction
 
+            label_keys (list) : list containing db key labels for binding
+
         Returns:
             unique_metatable (list of dicts) : each entry contains the values
                                                of the extract keys; only
                                                returns unique sets of values
         """
+        unique_metatable = []
+
+        if len(self.data) == 0:
+            return unique_metatable
+
         # Check if keys are valid
         for key in extract_keys:
             if key not in self.data[0]:
@@ -246,12 +311,11 @@ class Metatable:
                     "Key(s) not present in metatable object."
                 )
 
-        full_table_list = np.array(self.key_grab(extract_keys))
+        full_table_list = np.array(self.value_grab(extract_keys))
         unique_list = np.unique(full_table_list, axis=0)
 
-        unique_metatable = []
         for entry in unique_list:
-            new_dict = dict(zip(extract_keys, entry))
+            new_dict = dict(zip(label_keys, entry))
             unique_metatable.append(new_dict)
 
         return unique_metatable
@@ -300,6 +364,37 @@ def value_compare(db_row, metatable_row, key_dict) -> bool:
     return 1
 
 
+def listdict_compare(comp_dict, db_dict, db_keys) -> list:
+    """Compare two lists of dicts and take any rows not already in db.
+    Converts all values to strings for comparison purposes
+
+    Parameters:
+        comp_dict (list of dicts) : list of dicts from metatable object
+
+        db_dict (list of dicts) : list of dicts extracted from db query
+
+        db_keys (list) : specific keys for comparison
+
+    Returns:
+        data_to_add (list of dicts) : any dicts in comp_dict not in db_dict
+    """
+    data_to_add = []
+
+    for entry in comp_dict:
+        for key in db_keys:
+            entry[key] = str(entry[key])
+
+    for entry in db_dict:
+        for key in db_keys:
+            entry[key] = str(entry[key])
+
+    for comp_entry in comp_dict:
+        if comp_entry not in db_dict:
+            data_to_add.append(comp_entry)
+
+    return data_to_add
+
+
 def object_as_dict(obj):
     """Convert queried database entry into dict.
 
@@ -316,7 +411,7 @@ def object_as_dict(obj):
 
 def add_meta_columns(db_row, metatab, comp_keys, fields):
     """Extract db columns to add to metatable.
-    
+
     Parameters:
         db_row (dict) : single row (entry) of a database query output
 
@@ -358,7 +453,7 @@ def scrape_fastqc(paper_id, sample_name, data_path, db_sample, dbconfig):
         fastqc_dict (dict) : scraped fastqc metadata in dict format
     """
     fastqc_dict = {}
-    
+
     # Determine paths for raw fastQC file to scrape, depending on SE/PE
     fqc_path = data_path + paper_id + "/qc/fastqc/zips/"
     if db_sample[dbconfig["accum keys"]["single_paired"]] == "paired":
@@ -401,7 +496,7 @@ def scrape_fastqc(paper_id, sample_name, data_path, db_sample, dbconfig):
         else:
             samp_zip = dirpath + sample + ".trim_fastqc"
 
-    # If trimmed fastQC report doesn't exist, return null value for 
+    # If trimmed fastQC report doesn't exist, return null value for
     # trimmed read depth
     if not (os.path.exists(samp_zip + ".zip")):
         fastqc_dict["trim_read_depth"] = None
@@ -419,7 +514,7 @@ def scrape_fastqc(paper_id, sample_name, data_path, db_sample, dbconfig):
 
     # Remove unzipped file
     shutil.rmtree(samp_zip)
-    
+
     return fastqc_dict
 
 
@@ -437,7 +532,7 @@ def scrape_picard(paper_id, sample_name, data_path):
         picard_dict (dict) : scraped picard metadata in dict format
     """
     picard_dict = {}
-    
+
     dirpath = data_path + paper_id + "/qc/picard/dups/"
     filepath = dirpath + sample_name + ".marked_dup_metrics.txt"
 
@@ -483,7 +578,7 @@ def scrape_mapstats(paper_id, sample_name, data_path, db_sample, dbconfig):
         return mapstats_dict
 
     fdata = open(filepath)
-    
+
     # Sum up and report mapped reads for paired end data
     if db_sample[dbconfig["accum keys"]["single_paired"]] == "paired":
         for line in fdata:
@@ -641,7 +736,7 @@ def scrape_pileup(paper_id, sample_name, data_path):
             x = x + 1
             total = total + int(line.split("\t")[2])
             cov = cov + int(line.split("\t")[5])
-            fold = fold + (float(line.split("\t")[1]) 
+            fold = fold + (float(line.split("\t")[1])
                            * int(line.split("\t")[2]))
 
     pileup_dict["genome_prop_cov"] = cov / total
@@ -667,10 +762,10 @@ def sample_qc_calc(db_sample):
     exint = db_sample["exint_ratio"]
 
     # Determine sample QC score
-    if (trimrd == None 
-        or dup == None
-        or mapped == None 
-        or complexity == None):
+    if (trimrd is None
+       or dup is None
+       or mapped is None
+       or complexity is None):
 
         samp_score["samp_qc_score"] = 0
 
@@ -706,8 +801,8 @@ def sample_qc_calc(db_sample):
         samp_score["samp_qc_score"] = 1
 
     # Determine sample data score
-    if (genome == None
-        or exint == None):
+    if (genome is None
+       or exint is None):
 
         samp_score["samp_data_score"] = 0
 
@@ -748,7 +843,7 @@ def paper_qc_calc(db_samples):
     qc_scores = []
     data_scores = []
     paper_scores = {}
-    
+
     for entry in db_samples:
         qc_scores.append(entry["samp_qc_score"])
         data_scores.append(entry["samp_data_score"])
@@ -811,13 +906,13 @@ def paper_add_update(db, config, identifier, basedir):
     # Read in expt metadata and make sure entries are unique
     exptmeta = utils.Metatable(exptmeta_path + "metadata/expt_metadata.txt")
     expt_unique = exptmeta.unique(expt_keys)
-    
+
     # Add expt metadata to database
     db.engine.execute(exptMetadata.__table__.insert(), expt_unique.data())
 
     # Add sample ids
-    
+
 
 #engine.execute(tablename.__table__.insert(),listofdicts)
 #
-# utils.py ends here
+# dbutils.py ends here
