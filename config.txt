@@ -59,7 +59,6 @@ construct = construct
 condition_type = treatment type
 treatment = treatment
 times = times
-sample_name = srz
 
 [condition keys]
 condition_type = condition_type
@@ -71,7 +70,7 @@ time_unit = time_unit
 duration = duration
 duration_unit = duration_unit
 
-[accum keys]
+[metatable accum keys]
 replicate = replicate
 single_paired = single_paired
 rcomp = rcomp
@@ -79,6 +78,36 @@ expt_unusable = experimentally not usable
 notes = notes
 timecourse = timecourse
 baseline_control_expt = baseline_control_expt
+
+[accum keys]
+sample_id = sample_id
+replicate = replicate
+single_paired = single_paired
+rcomp = rcomp
+expt_unusable = expt_unusable
+timecourse = timecourse
+baseline_control_expt = baseline_control_expt
+notes = notes
+raw_read_depth = raw_read_depth
+trim_read_depth = trim_read_depth
+raw_read_length = raw_read_length
+duplication_picard = duplication_picard
+single_map = single_map
+multi_map = multi_map
+map_prop = map_prop
+rseqc_tags = rseqc_tags
+rseqc_cds = rseqc_cds
+rseqc_five_utr = rseqc_five_utr
+rseqc_three_utr = rseqc_three_utr
+rseqc_intron = rseqc_intron
+cds_rpk = cds_rpk
+intron_rpk = intron_rpk
+exint_ratio = exint_ratio
+distinct_tenmillion_prop = distinct_tenmillion_prop
+genome_prop_cov = genome_prop_cov
+avg_fold_cov = avg_fold_cov
+samp_qc_score = samp_qc_score
+samp_data_score = samp_data_score
 
 [nascentflow keys]
 nascentflow_version = nascentflow_version

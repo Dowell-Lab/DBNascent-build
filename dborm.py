@@ -165,7 +165,7 @@ class sampleAccum(Base):
         index=True,
         unique=True,
     )
-    replicate = sql.Column(sql.Integer)
+    replicate = sql.Column(sql.String(length=50))
     single_paired = sql.Column(sql.String(length=50))
     rcomp = sql.Column(sql.Boolean)
     expt_unusable = sql.Column(sql.Boolean)
@@ -197,10 +197,9 @@ class sampleAccum(Base):
 class nascentflowMetadata(Base):
     __tablename__ = "nascentflowMetadata"
 #    metadata = MetaData()
-    nascentflow_version_id = sql.Column(
+    nascentflow_id = sql.Column(
         sql.Integer, primary_key=True, index=True, unique=True
     )
-    sample_id = sql.Column(sql.Integer, sql.ForeignKey("sampleID.sample_id"))
     nascentflow_version = sql.Column(sql.String(length=127))
     pipeline_revision_hash = sql.Column(sql.String(length=127))
     pipeline_hash = sql.Column(sql.String(length=127))
@@ -229,13 +228,24 @@ class nascentflowMetadata(Base):
     numpy_version = sql.Column(sql.String(length=127))
 
 
+exptNascentflow = sql.Table(
+    "exptNascentflow",
+    Base.metadata,
+    sql.Column("sample_id",
+               sql.Integer,
+               sql.ForeignKey("sampleID.sample_id")),
+    sql.Column("nascentflow_id",
+               sql.Integer,
+               sql.ForeignKey("nascentflowMetadata.nascentflow_id")),
+)
+
+
 class bidirflowMetadata(Base):
     __tablename__ = "bidirflowMetadata"
 #    metadata = MetaData()
-    bidirflow_version_id = sql.Column(
+    bidirflow_id = sql.Column(
         sql.Integer, primary_key=True, index=True, unique=True
     )
-    sample_id = sql.Column(sql.Integer, sql.ForeignKey("sampleID.sample_id"))
     bidirflow_version = sql.Column(sql.String(length=127))
     pipeline_revision_hash = sql.Column(sql.String(length=127))
     pipeline_hash = sql.Column(sql.String(length=127))
@@ -256,6 +266,17 @@ class bidirflowMetadata(Base):
     tfit_date = sql.Column(sql.Date)
     fcgene_date = sql.Column(sql.Date)
 
+
+exptBidirflow = sql.Table(
+    "exptBidirflow",
+    Base.metadata,
+    sql.Column("sample_id",
+               sql.Integer,
+               sql.ForeignKey("sampleID.sample_id")),
+    sql.Column("bidirflow_id",
+               sql.Integer,
+               sql.ForeignKey("bidirflowMetadata.bidirflow_id")),
+)
 
 # The following were created by Zach and we may or may not use...
 

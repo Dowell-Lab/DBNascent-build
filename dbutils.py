@@ -98,17 +98,35 @@ class dbnascentConnection:
         """
         Base.metadata.create_all(self.engine)
 
-    def reflect_table(self, table) -> list:
+    def reflect_table(self, table, filter_crit=None) -> list:
         """Query all records from a specific table.
+
+        Can optionally add filtering criteria.
 
         Parameters:
             table (str) : string of table name from ORM
 
+            filter_crit (dict) : filter criteria for table
+
         Returns:
             query_data (list of dicts) : all data in table
+                                         matching filter criteria
         """
         query_data = []
+
         query_str = "SELECT * FROM " + table
+        if filter_crit is not None:
+            query_str = query_str + " WHERE "
+            i = 0
+            for key in filter_crit:
+                if i == 0:
+                    query_str = (query_str + str(key) +
+                                 ' = "' + str(filter_crit[key]) + '"')
+                    i = (i + 1)
+                else:
+                    query_str = (query_str + " AND " + str(key) +
+                                 ' = "' + str(filter_crit[key]) + '"')
+
         sqlquery = self.session.execute(sql.text(query_str)).fetchall()
 
         for entry in sqlquery:
@@ -224,6 +242,29 @@ class Metatable:
                 for entry in full_table:
                     self.data.append(dict(entry))
 
+    def key_replace(self, file_keys, db_keys):
+        """Replace file keys with database keys.
+
+        Parameters:
+            file_keys (list) : list of keys in file
+
+            db_keys (list) : list of keys in database
+                Must be equivalent in length to file_keys
+
+        Returns:
+            self.data (list of dicts)
+        """
+        # Check if keys are valid
+        for key in file_keys:
+            if key not in self.data[0]:
+                raise KeyError(
+                    "Key(s) not present in metatable object."
+                )
+
+        for entry in self.data:
+            for i in range(len(file_keys)):
+                entry[db_keys[i]] = entry.pop(file_keys[i])
+
     def value_grab(self, key_list) -> list:
         """Extract values for specific keys from metatable data.
 
@@ -285,14 +326,11 @@ class Metatable:
 
         return dict_list
 
-    def unique(self, extract_keys, label_keys) -> list:
+    def unique(self, extract_keys) -> list:
         """Extract values for specific keys from a metatable filepath.
 
         Parameters:
-            extract_keys (list) : list containing desired keys in
-                                  metatable data for value extraction
-
-            label_keys (list) : list containing db key labels for binding
+            extract_keys (list) : list containing db key labels for binding
 
         Returns:
             unique_metatable (list of dicts) : each entry contains the values
@@ -315,7 +353,7 @@ class Metatable:
         unique_list = np.unique(full_table_list, axis=0)
 
         for entry in unique_list:
-            new_dict = dict(zip(label_keys, entry))
+            new_dict = dict(zip(extract_keys, entry))
             unique_metatable.append(new_dict)
 
         return unique_metatable
@@ -366,6 +404,7 @@ def value_compare(db_row, metatable_row, key_dict) -> bool:
 
 def listdict_compare(comp_dict, db_dict, db_keys) -> list:
     """Compare two lists of dicts and take any rows not already in db.
+
     Converts all values to strings for comparison purposes
 
     Parameters:
@@ -395,6 +434,39 @@ def listdict_compare(comp_dict, db_dict, db_keys) -> list:
     return data_to_add
 
 
+def key_store_compare(comp_dict, db_dict, db_keys, store_keys) -> list:
+    """Compare two lists of dicts and take any rows not already in db.
+
+    Converts all values to strings for comparison purposes
+
+    Parameters:
+        comp_dict (dict) : single dict from metatable object
+
+        db_dict (list of dicts) : list of dicts extracted from db query
+
+        db_keys (list) : specific keys for comparison
+
+        store_keys (list) : key(s) for adding to dict
+
+    Returns:
+        new_dict (dict) : dict with new value added
+    """
+    for dbentry in db_dict:
+        comp = 0
+        for key in db_keys:
+            if str(comp_dict[key]) != str(dbentry[key]):
+                if str(comp_dict[key]) == "":
+                    if dbentry[key] != None:
+                        comp = 1
+                else:
+                    comp = 1
+        if comp == 0:
+            for stkey in store_keys:
+                comp_dict[stkey] = dbentry[stkey]
+
+    return comp_dict
+
+
 def object_as_dict(obj):
     """Convert queried database entry into dict.
 
@@ -409,45 +481,39 @@ def object_as_dict(obj):
     return db_dict
 
 
-def add_meta_columns(db_row, metatab, comp_keys, fields):
-    """Extract db columns to add to metatable.
+def entry_update(dbtable, dbkeys, comp_table) -> list:
+    """Find entries not already in database.
 
     Parameters:
-        db_row (dict) : single row (entry) of a database query output
+        dbtable (str) : Which db table to search for entries
 
-        metatab (Metatable object) : table to which to add fields
+        dbkeys (list) : list of keys to use for comparison
 
-        comp_keys (dict) : specific keys for comparison as derived
-                           from config file (db cols as keys and
-                           metadata equivalent field names as values)
-
-        fields (list) : list of fields to add from db to table
+        comp_table (list of dicts) : Entries to match (or not)
+                                     to db entries
 
     Returns:
-        metatab (Metatable object) : input table with added field
+        to_add (list of dicts) : New entries not in db to add
     """
-    db_row_dict = object_as_dict(db_row)
-    for entry in metatab:
-        if value_compare(db_row_dict, entry, comp_keys):
-            for field in fields:
-                entry[field] = db_row_dict[field]
+    db_dump = dbconnect.reflect_table(dbtable)
+    dbtab = Metatable(meta_path=None, dictlist=db_dump)
+    dbtab_data = dbtab.key_grab(dbkeys)
+    to_add = listdict_compare(comp_table, dbtab_data, dbkeys)
 
-    return metatab
+    return to_add
 
 
-def scrape_fastqc(paper_id, sample_name, data_path, db_sample, dbconfig):
+def scrape_fastqc(paper_id, sample_name, data_path, db_sample) -> dict:
     """Scrape read length and depth from fastQC report.
 
     Parameters:
         paper_id (str) : paper identifier
 
-        sample_name (str) : sample name derived from db query
+        sample_name (str) : sample name
 
         data_path (str) : path to database storage directory
 
         db_sample (dict) : sample_accum entry dict from db query
-
-        dbconfig (configparser object) : config data
 
     Returns:
         fastqc_dict (dict) : scraped fastqc metadata in dict format
@@ -456,10 +522,10 @@ def scrape_fastqc(paper_id, sample_name, data_path, db_sample, dbconfig):
 
     # Determine paths for raw fastQC file to scrape, depending on SE/PE
     fqc_path = data_path + paper_id + "/qc/fastqc/zips/"
-    if db_sample[dbconfig["accum keys"]["single_paired"]] == "paired":
-        samp_zip = dirpath + sample + "_1_fastqc"
+    if db_sample["single_paired"] == "paired":
+        samp_zip = fqc_path + sample_name + "_1_fastqc"
     else:
-        samp_zip = dirpath + sample + "_fastqc"
+        samp_zip = fqc_path + sample_name + "_fastqc"
 
     # If fastQC files don't exist, return null values
     if not (os.path.exists(samp_zip + ".zip")):
@@ -470,7 +536,7 @@ def scrape_fastqc(paper_id, sample_name, data_path, db_sample, dbconfig):
 
     # Unzip fastQC report
     with zp.ZipFile(samp_zip + ".zip", "r") as zp_ref:
-        zp_ref.extractall(dirpath)
+        zp_ref.extractall(fqc_path)
 
     # Extract raw depth and read length
     fdata = open(samp_zip + "/fastqc_data.txt")
@@ -485,16 +551,16 @@ def scrape_fastqc(paper_id, sample_name, data_path, db_sample, dbconfig):
 
     # Determine paths for trimmed fastQC file to scrape, depending on SE/PE
     # and whether reverse complemented or not
-    if db_sample[dbconfig["accum keys"]["rcomp"]] == 1:
-        if db_sample[dbconfig["accum keys"]["single_paired"]] == "paired":
-            samp_zip = dirpath + sample + "_1.flip.trim_fastqc"
+    if db_sample["rcomp"] == 1:
+        if db_sample["single_paired"] == "paired":
+            samp_zip = fqc_path + sample_name + "_1.flip.trim_fastqc"
         else:
-            samp_zip = dirpath + sample + ".flip.trim_fastqc"
+            samp_zip = fqc_path + sample_name + ".flip.trim_fastqc"
     else:
-        if db_sample[dbconfig["accum keys"]["single_paired"]] == "paired":
-            samp_zip = dirpath + sample + "_1.trim_fastqc"
+        if db_sample["single_paired"] == "paired":
+            samp_zip = fqc_path + sample_name + "_1.trim_fastqc"
         else:
-            samp_zip = dirpath + sample + ".trim_fastqc"
+            samp_zip = fqc_path + sample_name + ".trim_fastqc"
 
     # If trimmed fastQC report doesn't exist, return null value for
     # trimmed read depth
@@ -504,7 +570,7 @@ def scrape_fastqc(paper_id, sample_name, data_path, db_sample, dbconfig):
 
     # Unzip trimmed fastQC report
     with zp.ZipFile(samp_zip + ".zip", "r") as zp_ref:
-        zp_ref.extractall(dirpath)
+        zp_ref.extractall(fqc_path)
 
     # Extract trimmed read depth
     fdata = open(samp_zip + "/fastqc_data.txt")
@@ -545,10 +611,13 @@ def scrape_picard(paper_id, sample_name, data_path):
     fdata = open(filepath)
     for line in fdata:
         if re.compile("Unknown Library").search(line):
-            picard_dict["duplication_picard"] = float(line.split("\t")[8])
+            dup = float(line.split("\t")[8])
+            picard_dict["duplication_picard"] = round(dup, 5)
+
+    return picard_dict
 
 
-def scrape_mapstats(paper_id, sample_name, data_path, db_sample, dbconfig):
+def scrape_mapstats(paper_id, sample_name, data_path, db_sample):
     """Scrape read length and depth from hisat2 mapstats report.
 
     Parameters:
@@ -559,8 +628,6 @@ def scrape_mapstats(paper_id, sample_name, data_path, db_sample, dbconfig):
         data_path (str) : path to database storage directory
 
         db_sample (dict) : sample_accum entry dict from db query
-
-        dbconfig (configparser object) : config data
 
     Returns:
         mapstats_dict (dict) : scraped hisat2 metadata in dict format
@@ -580,7 +647,7 @@ def scrape_mapstats(paper_id, sample_name, data_path, db_sample, dbconfig):
     fdata = open(filepath)
 
     # Sum up and report mapped reads for paired end data
-    if db_sample[dbconfig["accum keys"]["single_paired"]] == "paired":
+    if db_sample["single_paired"] == "paired":
         for line in fdata:
             if re.compile("concordantly 1 time").search(line):
                 reads = int(line.split(": ")[1].split(" (")[0]) * 2
@@ -595,9 +662,8 @@ def scrape_mapstats(paper_id, sample_name, data_path, db_sample, dbconfig):
                     line.split(": ")[1].split(" (")[0]
                 )
             if re.compile("Overall alignment rate").search(line):
-                mapstats_dict["map_prop"] = (
-                    float(line.split(": ")[1].split("%")[0]) / 100
-                )
+                alrate = float(line.split(": ")[1].split("%")[0]) / 100
+                mapstats_dict["map_prop"] = round(alrate, 5)
     # Report mapped reads for single end data
     else:
         for line in fdata:
@@ -606,9 +672,10 @@ def scrape_mapstats(paper_id, sample_name, data_path, db_sample, dbconfig):
             if re.compile("Aligned >1 times").search(line):
                 mapstats_dict["multi_map"] = int(line.split(": ")[1].split(" (")[0])
             if re.compile("Overall alignment rate").search(line):
-                mapstats_dict["map_prop"] = (
-                    float(line.split(": ")[1].split("%")[0]) / 100
-                )
+                alrate = float(line.split(": ")[1].split("%")[0]) / 100
+                mapstats_dict["map_prop"] = round(alrate, 5)
+
+    return mapstats_dict
 
 
 def scrape_rseqc(paper_id, sample_name, data_path):
@@ -648,19 +715,20 @@ def scrape_rseqc(paper_id, sample_name, data_path):
             rseqc_dict["rseqc_tags"] = int(line.split()[-1])
         if re.compile("CDS_Exons").search(line):
             rseqc_dict["rseqc_cds"] = int(line.split()[2])
-            rseqc_dict["cds_rpk"] = float(line.split()[-1])
+            cds = float(line.split()[-1])
+            rseqc_dict["cds_rpk"] = round(cds, 5)
         if re.compile("5'UTR_Exons").search(line):
             rseqc_dict["rseqc_five_utr"] = int(line.split()[2])
         if re.compile("3'UTR_Exons").search(line):
             rseqc_dict["rseqc_three_utr"] = int(line.split()[2])
         if re.compile("Introns").search(line):
             rseqc_dict["rseqc_intron"] = int(line.split()[2])
-            rseqc_dict["intron_rpk"] = float(line.split()[-1])
+            intron = float(line.split()[-1])
+            rseqc_dict["intron_rpk"] = round(intron, 5)
 
     if rseqc_dict["intron_rpk"] > 0:
-        rseqc_dict["exint_ratio"] = (
-            rseqc_dict["cds_rpk"] / rseqc_dict["intron_rpk"]
-        )
+        exint_ratio = rseqc_dict["cds_rpk"] / rseqc_dict["intron_rpk"]
+        rseqc_dict["exint_ratio"] = round(exint_ratio, 5)
     else:
         rseqc_dict["exint_ratio"] = None
 
@@ -693,9 +761,9 @@ def scrape_preseq(paper_id, sample_name, data_path):
     fdata = open(filepath)
     for line in fdata:
         if line.startswith("10000000.0"):
-            distinct = float(line.split()[1])
+            distinct = float(line.split()[1]) / 10000000
 
-    preseq_dict["distinct_tenmillion_prop"] = distinct / 10000000
+    preseq_dict["distinct_tenmillion_prop"] = round(distinct, 5)
 
     return preseq_dict
 
@@ -739,8 +807,8 @@ def scrape_pileup(paper_id, sample_name, data_path):
             fold = fold + (float(line.split("\t")[1])
                            * int(line.split("\t")[2]))
 
-    pileup_dict["genome_prop_cov"] = cov / total
-    pileup_dict["avg_fold_cov"] = fold / total
+    pileup_dict["genome_prop_cov"] = round((cov / total), 5)
+    pileup_dict["avg_fold_cov"] = round((fold / total), 5)
 
     return pileup_dict
 
@@ -754,6 +822,7 @@ def sample_qc_calc(db_sample):
     Returns:
         samp_score (int) : calculated sample scores in dict format
     """
+    samp_score = dict()
     trimrd = db_sample["trim_read_depth"]
     dup = db_sample["duplication_picard"]
     mapped = db_sample["map_prop"]
@@ -845,13 +914,57 @@ def paper_qc_calc(db_samples):
     paper_scores = {}
 
     for entry in db_samples:
-        qc_scores.append(entry["samp_qc_score"])
-        data_scores.append(entry["samp_data_score"])
+        qc_scores.append(int(entry["samp_qc_score"]))
+        data_scores.append(int(entry["samp_data_score"]))
 
     paper_scores["paper_qc_score"] = median(qc_scores)
     paper_scores["paper_data_score"] = median(data_scores)
 
     return paper_scores
+
+
+def add_version_info(paper_id, data_path, vertype, dbver_keys):
+    """Find nascentflow/bidirflow version info for a paper.
+
+    Parameters:
+        paper_id (str) : paper identifier
+
+        data_path (str) : path to dbnascent data
+
+        vertype (str) : {"nascent", "bidir"} : Which nextflow type
+
+        dbver_keys (list) : list of keys for version tables
+
+    Returns:
+        ver_table (list of dicts) : all relevant version info for
+                                      entry into db
+    """
+    ver_table = []
+
+    dblink_dump = dbconnect.reflect_table("linkIDs", {"paper_id": paper_id})
+    for entry in dblink_dump:
+        del entry["genetic_id"]
+        del entry["expt_id"]
+        ver_path = (data_path + paper_id + "/software_versions/" +
+                    entry["sample_name"] + "_" + vertype + ".yaml")
+
+        if not (os.path.exists(ver_path) and os.path.isfile(ver_path)):
+            for key in dbver_keys:
+                entry.update({key: None})
+            ver_table.append(entry)
+            continue
+
+        with open(ver_path) as f:
+            for run in yaml.safe_load_all(f):
+                add_entry = dict()
+                add_entry.update(entry)
+                add_entry.update(run)
+                for key in dbver_keys:
+                    if not key in add_entry.keys():
+                        add_entry.update({key: None})
+                ver_table.append(add_entry)
+
+    return ver_table
 
 
 def dbnascent_backup(db, basedir, tables):
