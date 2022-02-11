@@ -38,7 +38,7 @@ import shutil
 from statistics import median
 import yaml
 import zipfile as zp
-from . import dborm
+import dborm
 
 
 # Database Connection Handler
@@ -75,7 +75,7 @@ class dbnascentConnection:
                 cred = next(f).split("\t")
             self.engine = sql.create_engine("mysql+pymysql://" + str(cred[0]) + ":"
                                             + str(cred[1].split("\n")[0])
-                                            + "@localhost" + db_url, echo=False)
+                                            + "@" + db_url, echo=False)
         elif db_url:
             self.engine = sql.create_engine("mysql+pymysql://" + db_url, echo=False)
         else:
@@ -96,7 +96,7 @@ class dbnascentConnection:
         Returns:
             none
         """
-        Base.metadata.create_all(self.engine)
+        dborm.Base.metadata.create_all(self.engine)
 
     def reflect_table(self, table, filter_crit=None) -> list:
         """Query all records from a specific table.
@@ -147,8 +147,8 @@ class dbnascentConnection:
             none
         """
         if not tables:
-            Base.metadata.reflect(bind=self.engine)
-            tables = list(Base.metadata.tables.keys())
+            dborm.Base.metadata.reflect(bind=self.engine)
+            tables = list(dborm.Base.metadata.tables.keys())
         for table in tables:
             outfile = out_path + "/" + table + ".dbdump"
             q = self.session.query(table)
@@ -481,10 +481,12 @@ def object_as_dict(obj):
     return db_dict
 
 
-def entry_update(dbtable, dbkeys, comp_table) -> list:
+def entry_update(dbconn, dbtable, dbkeys, comp_table) -> list:
     """Find entries not already in database.
 
     Parameters:
+        dbconn (dbnascentConnection object) : curr db connection
+
         dbtable (str) : Which db table to search for entries
 
         dbkeys (list) : list of keys to use for comparison
@@ -495,7 +497,7 @@ def entry_update(dbtable, dbkeys, comp_table) -> list:
     Returns:
         to_add (list of dicts) : New entries not in db to add
     """
-    db_dump = dbconnect.reflect_table(dbtable)
+    db_dump = dbconn.reflect_table(dbtable)
     dbtab = Metatable(meta_path=None, dictlist=db_dump)
     dbtab_data = dbtab.key_grab(dbkeys)
     to_add = listdict_compare(comp_table, dbtab_data, dbkeys)
@@ -547,11 +549,11 @@ def scrape_fastqc(paper_id, sample_name, data_path, db_sample) -> dict:
             fastqc_dict["raw_read_length"] = int(line.split()[2].split("-")[0])
 
     # Remove unzipped file
-    shutil.rmtree(samp_zip)
+    shutil.rmtree((samp_zip + "/"), ignore_errors=True)
 
     # Determine paths for trimmed fastQC file to scrape, depending on SE/PE
     # and whether reverse complemented or not
-    if db_sample["rcomp"] == 1:
+    if str(db_sample["rcomp"]) == '1':
         if db_sample["single_paired"] == "paired":
             samp_zip = fqc_path + sample_name + "_1.flip.trim_fastqc"
         else:
@@ -579,7 +581,7 @@ def scrape_fastqc(paper_id, sample_name, data_path, db_sample) -> dict:
             fastqc_dict["trim_read_depth"] = int(line.split()[2])
 
     # Remove unzipped file
-    shutil.rmtree(samp_zip)
+    shutil.rmtree((samp_zip + "/"), ignore_errors=True)
 
     return fastqc_dict
 
@@ -716,7 +718,18 @@ def scrape_rseqc(paper_id, sample_name, data_path):
         if re.compile("CDS_Exons").search(line):
             rseqc_dict["rseqc_cds"] = int(line.split()[2])
             cds = float(line.split()[-1])
-            rseqc_dict["cds_rpk"] = round(cds, 5)
+            if cds > 99999:
+                rseqc_dict["cds_rpk"] = round(cds, 0)
+            elif cds > 9999:
+                rseqc_dict["cds_rpk"] = round(cds, 1)
+            elif cds > 999:
+                rseqc_dict["cds_rpk"] = round(cds, 2)
+            elif cds > 99:
+                rseqc_dict["cds_rpk"] = round(cds, 3)
+            elif cds > 9:
+                rseqc_dict["cds_rpk"] = round(cds, 4)
+            else:
+                rseqc_dict["cds_rpk"] = round(cds, 5)
         if re.compile("5'UTR_Exons").search(line):
             rseqc_dict["rseqc_five_utr"] = int(line.split()[2])
         if re.compile("3'UTR_Exons").search(line):
@@ -724,11 +737,33 @@ def scrape_rseqc(paper_id, sample_name, data_path):
         if re.compile("Introns").search(line):
             rseqc_dict["rseqc_intron"] = int(line.split()[2])
             intron = float(line.split()[-1])
-            rseqc_dict["intron_rpk"] = round(intron, 5)
+            if intron > 99999:
+                rseqc_dict["intron_rpk"] = round(intron, 0)
+            elif intron > 9999:
+                rseqc_dict["intron_rpk"] = round(intron, 1)
+            elif intron > 999:
+                rseqc_dict["intron_rpk"] = round(intron, 2)
+            elif intron > 99:
+                rseqc_dict["intron_rpk"] = round(intron, 3)
+            elif intron > 9:
+                rseqc_dict["intron_rpk"] = round(intron, 4)
+            else:
+                rseqc_dict["intron_rpk"] = round(intron, 5)
 
     if rseqc_dict["intron_rpk"] > 0:
         exint_ratio = rseqc_dict["cds_rpk"] / rseqc_dict["intron_rpk"]
-        rseqc_dict["exint_ratio"] = round(exint_ratio, 5)
+        if exint_ratio > 99999:
+            rseqc_dict["exint_ratio"] = round(exint_ratio, 0)
+        elif exint_ratio > 9999:
+            rseqc_dict["exint_ratio"] = round(exint_ratio, 1)
+        elif exint_ratio > 999:
+            rseqc_dict["exint_ratio"] = round(exint_ratio, 2)
+        elif exint_ratio > 99:
+            rseqc_dict["exint_ratio"] = round(exint_ratio, 3)
+        elif exint_ratio > 9:
+            rseqc_dict["exint_ratio"] = round(exint_ratio, 4)
+        else:
+            rseqc_dict["exint_ratio"] = round(exint_ratio, 5)
     else:
         rseqc_dict["exint_ratio"] = None
 
@@ -808,7 +843,19 @@ def scrape_pileup(paper_id, sample_name, data_path):
                            * int(line.split("\t")[2]))
 
     pileup_dict["genome_prop_cov"] = round((cov / total), 5)
-    pileup_dict["avg_fold_cov"] = round((fold / total), 5)
+    fold_cov = fold / total
+    if fold_cov > 99999:
+        pileup_dict["avg_fold_cov"] = round(fold_cov, 0)
+    elif fold_cov > 9999:
+        pileup_dict["avg_fold_cov"] = round(fold_cov, 1)
+    elif fold_cov > 999:
+        pileup_dict["avg_fold_cov"] = round(fold_cov, 2)
+    elif fold_cov > 99:
+        pileup_dict["avg_fold_cov"] = round(fold_cov, 3)
+    elif fold_cov > 9:
+        pileup_dict["avg_fold_cov"] = round(fold_cov, 4)
+    else:
+        pileup_dict["avg_fold_cov"] = round(fold_cov, 5)
 
     return pileup_dict
 
@@ -923,10 +970,12 @@ def paper_qc_calc(db_samples):
     return paper_scores
 
 
-def add_version_info(paper_id, data_path, vertype, dbver_keys):
+def add_version_info(dbconn, paper_id, data_path, vertype, dbver_keys):
     """Find nascentflow/bidirflow version info for a paper.
 
     Parameters:
+        dbconn (dbnascentConnection object) : curr db connection
+
         paper_id (str) : paper identifier
 
         data_path (str) : path to dbnascent data
@@ -941,7 +990,7 @@ def add_version_info(paper_id, data_path, vertype, dbver_keys):
     """
     ver_table = []
 
-    dblink_dump = dbconnect.reflect_table("linkIDs", {"paper_id": paper_id})
+    dblink_dump = dbconn.reflect_table("linkIDs", {"paper_id": paper_id})
     for entry in dblink_dump:
         del entry["genetic_id"]
         del entry["expt_id"]

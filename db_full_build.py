@@ -4,13 +4,13 @@
 # Script for adding and updating DBNascent values
 
 # Import
-from . import dbutils
-from . import dborm
+import dbutils
+import dborm
 import datetime
 
 # Load config file
 config = dbutils.load_config(
-    "/home/lsanford/Documents/data/repositories/dbnascent_build/config.txt")
+    "/scratch/Shares/dowell/dbnascent/db_build/config.txt")
 
 # Create database connection object and database schema
 # This creates tables that do not already exist
@@ -30,10 +30,17 @@ orgtable_path = config["file_locations"]["organism_table"]
 
 # Read in organism table and make sure entries are unique
 orgs = dbutils.Metatable(orgtable_path)
-orgs_unique = orgs.unique(organism_keys, dborg_keys)
+orgs.key_replace(organism_keys, dborg_keys)
+orgs_unique = orgs.unique(dborg_keys)
 
-# Add data to database
-dbconnect.engine.execute(organismInfo.__table__.insert(), orgs_unique)
+# If not already present, add data to database
+orgs_to_add = dbutils.entry_update(dbconnect,
+                                   "organismInfo",
+                                   dborg_keys,
+                                   orgs_unique)
+if len(orgs_to_add) > 0:
+    dbconnect.engine.execute(
+        dborm.organismInfo.__table__.insert(), orgs_to_add)
 
 # Add/update search equivalencies table
 search_keys = list(dict(config["searcheq keys"]).values())
@@ -41,8 +48,15 @@ dbsearch_keys = list(dict(config["searcheq keys"]).keys())
 searchtable_path = config["file_locations"]["searcheq_table"]
 
 # Read in search equivalencies table and make sure entries are unique
-eqs = utils.Metatable(searchtable_path)
-eqs_unique = eqs.unique(search_keys, dbsearch_keys)
+eqs = dbutils.Metatable(searchtable_path)
+eqs.key_replace(search_keys, dbsearch_keys)
+eqs_unique = eqs.unique(dbsearch_keys)
 
-# Add data to database
-dbconnect.engine.execute(searchEq.__table__.insert(), eqs_unique)
+# If not already present, add data to database
+eqs_to_add = dbutils.entry_update(dbconnect,
+                                  "searchEq",
+                                  dbsearch_keys,
+                                  eqs_unique)
+if len(eqs_to_add) > 0:
+    dbconnect.engine.execute(
+        dborm.searchEq.__table__.insert(), eqs_to_add)

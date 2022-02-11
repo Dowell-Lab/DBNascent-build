@@ -123,8 +123,8 @@ class conditionInfo(Base):
     duration_unit = sql.Column(sql.String(length=50))
 
 
-exptCondition = sql.Table(
-    "exptCondition",
+sampleCondition = sql.Table(
+    "sampleCondition",
     Base.metadata,
     sql.Column("sample_id",
                sql.Integer,
@@ -228,8 +228,8 @@ class nascentflowMetadata(Base):
     numpy_version = sql.Column(sql.String(length=127))
 
 
-exptNascentflow = sql.Table(
-    "exptNascentflow",
+sampleNascentflow = sql.Table(
+    "sampleNascentflow",
     Base.metadata,
     sql.Column("sample_id",
                sql.Integer,
@@ -267,8 +267,8 @@ class bidirflowMetadata(Base):
     fcgene_date = sql.Column(sql.Date)
 
 
-exptBidirflow = sql.Table(
-    "exptBidirflow",
+sampleBidirflow = sql.Table(
+    "sampleBidirflow",
     Base.metadata,
     sql.Column("sample_id",
                sql.Integer,

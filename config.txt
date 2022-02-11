@@ -1,16 +1,10 @@
 [file_locations]
-metadata = /home/lsanford/Documents/data/repositories/DBNascent-build/db_full.tsv
-conditions = /home/lsanford/Documents/data/repositories/DBNascent-build/db_full_conditions.tsv
-database = /var/lib/mysql/dbnascent
-credentials = /home/lsanford/.mysql_creds
-log_directory = /home/lsanford/Documents/data/repositories/db_build_logs/
-backup_dir = /home/lsanford/Documents/data/db_backups/
-organism_table = /home/lsanford/Documents/data/repositories/DBNascent-build/organisms.txt
-searcheq_table = /home/lsanford/Documents/data/repositories/DBNascent-build/searcheq.txt
-data = /home/lsanford/Documents/data/repositories/DBNascent-build/qc/
-version_data = /home/lsanford/Documents/data/repositories/DBNascent-build/software_versions/
-db_data = /home/lsanford/Documents/data/repositories/DBNascent-build/metadata/
-# db_data = /Shares/dbnascent/
+database = socotra.int.colorado.edu/dbnascent
+credentials = /Users/lysa8537/.mysql_creds
+backup_dir = /Shares/dbnascent/db_backups/
+organism_table = /scratch/Shares/dowell/dbnascent/db_build/organisms.txt
+searcheq_table = /scratch/Shares/dowell/dbnascent/db_build/searcheq.txt
+db_data = /Shares/dbnascent/
 
 [organism keys]
 organism = organism
