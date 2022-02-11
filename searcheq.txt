@@ -724,8 +724,7 @@ starvation	starvation
 dimethyloxalylglycine	dimethyloxalylglycine
 DMOG	dimethyloxalylglycine
 trichostatin A	trichostatin A
-phorbol 12-myristate 13-acetate	phorbol 12-myristate 13-acetate
-PMA	phorbol 12-myristate 13-acetate
+phorbol 12-myristate 13-acetate	phorbol myristate acetate
 ionomycin	ionomycin
 THZ531	THZ531
 THZ-531	THZ531
