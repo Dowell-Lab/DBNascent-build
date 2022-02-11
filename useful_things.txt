@@ -1,3 +1,0 @@
-# grabbing all keys in a table - only the table_name is user input
-
-keys = table_name.__table__.c.keys()

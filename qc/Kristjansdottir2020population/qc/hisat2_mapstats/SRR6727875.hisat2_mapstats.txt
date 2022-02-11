@@ -1,6 +1,0 @@
-HISAT2 summary stats:
-	Total reads: 27889087
-		Aligned 0 time: 1119081 (4.01%)
-		Aligned 1 time: 25386374 (91.03%)
-		Aligned >1 times: 1383632 (4.96%)
-	Overall alignment rate: 95.99%
