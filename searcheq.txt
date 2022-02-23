@@ -1,773 +1,772 @@
-search_term	db_term
-GRO-seq	GRO-seq
-GROseq	GRO-seq
-GRO seq	GRO-seq
-PRO-seq	PRO-seq
-PROseq	PRO-seq
-PRO seq	PRO-seq
-GRO-cap	GRO-cap
-GROcap	GRO-cap
-GRO cap	GRO-cap
-PRO-cap	PRO-cap
-PROcap	PRO-cap
-PRO cap	PRO-cap
-NET-seq	NET-seq
-NETseq	NET-seq
-NET seq	NET-seq
-H. sapiens	H. sapiens
-H sapiens	H. sapiens
-human	H. sapiens
-M. musculus	M. musculus
-M musculus	M. musculus
-mouse	M. musculus
-D. melanogaster	D. melanogaster
-D melanogaster	D. melanogaster
-fruit fly	D. melanogaster
-fly	D. melanogaster
-A. thaliana	A. thaliana
-A thaliana	A. thaliana
-Arabidopsis	A. thaliana
-Z. mays	Z. mays
-Z mays	Z. mays
-corn	Z. mays
-M. esculenta	M. esculenta
-M esculenta	M. esculenta
-cassava	M. esculenta
-E. coli	E. coli
-E coli	E. coli
-C. elegans	C. elegans
-C elegans	C. elegans
-worm	C. elegans
-S. pombe	S. pombe
-S pombe	S. pombe
-S. Cerevisiae	S. Cerevisiae
-S Cerevisiae	S. Cerevisiae
-P. falciparum	P. falciparum
-P falciparum	P. falciparum
-Plasmodium	P. falciparum
-R. norvegicus	R. norvegicus
-R norvegicus	R. norvegicus
-rat	R. norvegicus
-S. scrofa	S. scrofa
-S scrofa	S. scrofa
-pig	S. scrofa
-T. thermophila	T. thermophila
-T thermophila	T. thermophila
-Tetrahymena	T. thermophila
-C. griseus	C. griseus
-C griseus	C. griseus
-Chinese hamster	C. griseus
-C. lupus familiaris	C. lupus familiaris
-C lupus familiaris	C. lupus familiaris
-C lupus	C. lupus familiaris
-dog	C. lupus familiaris
-P. troglodytes	P. troglodytes
-P troglodytes	P. troglodytes
-chimpanzee	P. troglodytes
-M. mulatta	M. mulatta
-M mulatta	M. mulatta
-macaque	M. mulatta
-rhesus	M. mulatta
-rhesus macaque	M. mulatta
-M. velifer	M. velifer
-M velifer	M. velifer
-bat	M. velifer
-HCT116	HCT116
-HCT-116	HCT116
-HCT 116	HCT116
-IMR90	IMR90
-IMR-90	IMR90
-MEF	MEF
-mouse embryonic fibroblast	MEF
-Nalm6	Nalm6
-Nalm-6	Nalm6
-S2	S2
-whole fly	whole fly
-adult fly	whole fly
-B cell	B cell
-B-cell	B cell
-Jurkat T cell	Jurkat T cell
-Jurkat T-cell	Jurkat T cell
-epididymal white adipose tissue	epididymal white adipose tissue
-brown adipose tissue	brown adipose tissue
-inguinal white adipose tissue	inguinal white adipose tissue
-MCF7	MCF7
-MCF-7	MCF7
-HeLa	HeLa
-HEK293T	HEK293T
-HEK-293T	HEK293T
-HEK293-T	HEK293T
-HEK-293-T	HEK293T
-HEK293	HEK293
-HEK-293	HEK293
-HeLa S3	HeLa S3
-MRC5VA	MRC5VA
-MRC-5VA	MRC5VA
-MRC5-VA	MRC5VA
-MRC-5-VA	MRC5VA
-MRC5	MRC5
-MRC-5	MRC5
-peritoneal macrophage	peritoneal macrophage
-cardiomyocyte	cardiomyocyte
-quadriceps muscle	quadriceps muscle
-cortical neuron	cortical neuron
-ESC	ESC
-embryonic stem cell	ESC
-K562	K562
-K-562	K562
-bone marrow derived macrophage	bone marrow derived macrophage
-HF1	HF1
-HF-1	HF1
-skin fibroblast	skin fibroblast
-intestinal organoid	intestinal organoid
-AtT20	AtT20
-AtT-20	AtT20
-splenic B cell	splenic B cell
-splenic B-cell	splenic B cell
-head	head
-splenic germinal center B cell	splenic germinal center B cell
-splenic germinal center B-cell	splenic germinal center B cell
-Ramos	Ramos
-Ramos B cell	Ramos
-Ramos B-cell	Ramos
-hematopoietic progenitor cell	hematopoietic progenitor cell
-CD34+ progenitor cell	hematopoietic progenitor cell
-HSPC	hematopoietic progenitor cell
-CD34+ erythroblast	CD34+ erythroblast
-C2C12	C2C12
-LNCaP	LNCaP
-VCaP	VCaP
-REH	REH
-ovary	ovary
-SUDHL4	SUDHL4
-NUDUL1	NUDUL1
-OCILY1	OCILY1
-forebrain	forebrain
-A549	A549
-A-549	A549
-HEp2	HEp2
-HEp-2	HEp2
-RMG1	RMG1
-RMG-1	RMG1
-seed	seed
-HUVEC	HUVEC
-shoot	shoot
-MEL624	MEL624
-MEL-624	MEL624
-pre pro B cell	pre pro B cell
-pre pro B-cell	pre pro B cell
-pre pro-B cell	pre pro B cell
-pre pro-B-cell	pre pro B cell
-pre-pro-B-cell	pre pro B cell
-pro B cell	pro B cell
-pro B-cell	pro B cell
-pro-B cell	pro B cell
-pro-B-cell	pro B cell
-NTera2/D1	NTera2/D1
-NTera2	NTera2/D1
-MHT	MHT
-liver	liver
-yolk sac	yolk sac
-NSPC	NSPC
-neural stem cell	NSPC
-neural progenitor cell	NSPC
-neural stem progenitor cell	NSPC
-neural stem/progenitor cell	NSPC
-A375	A375
-A-375	A375
-GM12878	GM12878
-GM-12878	GM12878
-RAW264.7	RAW264.7
-RAW-264.7	RAW264.7
-Kasumi-1	Kasumi-1
-Kasumi 1	Kasumi-1
-Kasumi	Kasumi-1
-acute myeloid leukemia cell	acute myeloid leukemia cell
-HAEC	HAEC
-human aortic endothelial cells	HAEC
-aortic endothelial cells	HAEC
-SHEP	SHEP
-whole bacteria	whole bacteria
-bacteria	whole bacteria
-3T3-L1	3T3-L1
-3T3L1	3T3-L1
-3T3 L1	3T3-L1
-Ly-1	Ly-1
-Ly 1	Ly-1
-Ly1	Ly-1
-MV4-11	MV4-11
-MV(4;11)	MV4-11
-MV-4-11	MV4-11
-MV411	MV4-11
-U936	U936
-U-936	U936
-whole worm	whole worm
-KBM7	KBM7
-KBM-7	KBM7
-CUTLL1	CUTLL1
-whole yeast	whole yeast
-hepatocyte	hepatocyte
-iPSC	iPSC
-induced pluripotent stem cell	iPSC
-pluripotent stem cell	iPSC
-HEK293T Flp-in	HEK293T Flp-in
-HEK-293T Flp-in	HEK293T Flp-in
-HEK-293-T Flp-in	HEK293T Flp-in
-HEK293T Flpin	HEK293T Flp-in
-HEK293T Flp in	HEK293T Flp-in
-HEK293-T Flp-in	HEK293T Flp-in
-HEK293 Flp-in	HEK293 Flp-in
-HEK293 Flpin	HEK293 Flp-in
-HEK-293 Flp-in	HEK293 Flp-in
-HEK293 Flp in	HEK293 Flp-in
-HCEC	HCEC
-seedling	seedling
-HepG2	HepG2
-Hep-G2	HepG2
-HepG-2	HepG2
-BEAS-2B	BEAS-2B
-B2B	BEAS-2B
-BEAS2B	BEAS-2B
-BEAS 2B	BEAS-2B
-foreskin fibroblast	foreskin fibroblast
-HFF	foreskin fibroblast
-inflorescence and meristem	inflorescence and meristem
-AC16	AC16
-AC-16	AC16
-CH12F3	CH12F3
-CH12-F3	CH12F3
-CH-12F3	CH12F3
-CH-12-F3	CH12F3
-CH12F-3	CH12F3
-DL1	DL1
-DL-1	DL1
-MDA-MB-231	MDA-MB-231
-MDA-MB231	MDA-MB-231
-MDAMB231	MDA-MB-231
-MDAMB-231	MDA-MB-231
-MDA-MB-361	MDA-MB-361
-MDA-MB361	MDA-MB-361
-MDAMB361	MDA-MB-361
-MDAMB-361	MDA-MB-361
-MDA-MB-468	MDA-MB-468
-MDA-MB468	MDA-MB-468
-MDAMB468	MDA-MB-468
-MDAMB-468	MDA-MB-468
-MDA-MB-436	MDA-MB-436
-MDA-MB436	MDA-MB-436
-MDAMB436	MDA-MB-436
-MDAMB-436	MDA-MB-436
-myoblast	myoblast
-embryo	embryo
-HCC1806	HCC1806
-HCC-1806	HCC1806
-SEM	SEM
-CD4+ T cell	CD4+ T cell
-CD4+ T-cell	CD4+ T cell
-CD4 T cell	CD4+ T cell
-CD4 T-cell	CD4+ T cell
-U2OS	U2OS
-U-2 OS	U2OS
-U-2OS	U2OS
-U2 OS	U2OS
-ECOMG	ECOMG
-ECOM-G	ECOMG
-ECO-MG	ECOMG
-THP1	THP1
-THP-1	THP1
-leaf	leaf
-ovarian somatic cell	ovarian somatic cell
-SJSA	SJSA
-SJSA1	SJSA
-SJSA-1	SJSA
-T47D	T47D
-T-47D	T47D
-ARPE-19	ARPE-19
-ARPE19	ARPE-19
-ARPE 19	ARPE-19
-NHA	NHA
-normal human astrocyte	NHA
-SKOV3	SKOV3
-SKOV-3	SKOV3
-T98G	T98G
-T-98G	T98G
-T98-G	T98G
-U87	U87
-U-87	U87
-BJ	BJ
-BJ5ta	BJ5ta
-BJ-5ta	BJ5ta
-TIG-3	TIG-3
-TIG3	TIG-3
-76NF2V	76NF2V
-76NF-2V	76NF2V
-76-NF2V	76NF2V
-MCF10A	MCF10A
-MCF-10A	MCF10A
-MCF10-A	MCF10A
-ZR751	ZR751
-ZR-75-1	ZR751
-ZR75-1	ZR751
-ZR-751	ZR751
-UACC812	UACC812
-UACC-812	UACC812
-SKBR3	SKBR3
-SK-BR-3	SKBR3
-SKBR-3	SKBR3
-AU565	AU565
-AU-565	AU565
-HCC1954	HCC1954
-HCC-1954	HCC1954
-HCC1937	HCC1937
-HCC-1937	HCC1937
-HASM	HASM
-human airway smooth muscle cell	HASM
-airway smooth muscle cell	HASM
-human umbilical vein endothelial cell	HUVEC
-umbilical vein endothelial cell	HUVEC
-CD14+ macrophage	CD14+ macrophage
-CD14 macrophage	CD14+ macrophage
-A2780	A2780
-A-2780	A2780
-TRExBCBL1	TRExBCBL1
-SW480	SW480
-SW-480	SW480
-v-Abl pro B cell	v-Abl pro B cell
-vAbl pro B cell	v-Abl pro B cell
-v-Abl pro-B cell	v-Abl pro B cell
-v-Abl pro B-cell	v-Abl pro B cell
-v-Abl pro-B-cell	v-Abl pro B cell
-vAbl pro-B cell	v-Abl pro B cell
-vAbl pro B-cell	v-Abl pro B cell
-cortex	cortex
-N2a	N2a
-PCT 7134	PCT 7134
-PCT7134	PCT 7134
-PCT-7134	PCT 7134
-early ring parasite	early ring parasite
-late ring parasite	late ring parasite
-early trophozoite parasite	early trophozoite parasite
-late trophozoite parasite	late trophozoite parasite
-early schizont parasite	early schizont parasite
-late schizont parasite	late schizont parasite
-gametoyte stage III parasite	gametoyte stage III parasite
-GC pituitary cell	GC pituitary cell
-myocardium	myocardium
-micronucleus	micronucleus
-brain	brain
-CHO-K1	CHO-K1
-CHOK1	CHO-K1
-kidney	kidney
-lung	lung
-spleen hemangiosarcoma	spleen hemangiosarcoma
-spleen	spleen
-lymphoblast	lymphoblast
-LBL	lymphoblast
-embryonic gonad	embryonic gonad
-ML-DmBG3-c2	ML-DmBG3-c2
-LC-2/ad	LC-2/ad
-LC2/ad	LC-2/ad
-HAP1	HAP1
-HAP-1	HAP1
-S2VP10	S2VP10
-S2-VP10	S2VP10
-G401	G401
-G-401	G401
-embryonic fibroblast	embryonic fibroblast
-DLD1 Flp-In	DLD1 Flp-In
-DLD-1 Flp-In	DLD1 Flp-In
-DLD1 Flp In	DLD1 Flp-In
-DLD-1 Flp In	DLD1 Flp-In
-DMSO	DMSO
-dimethyl sulfoxide	DMSO
-adeno-Cre virus	adeno-Cre virus
-adeno-Cre	adeno-Cre virus
-adeno Cre virus	adeno-Cre virus
-adeno Cre	adeno-Cre virus
-PBS	PBS
-phosphate buffered saline	PBS
-phosphate-buffered saline	PBS
-3MB-PP1	3MB-PP1
-3-MB-PP1	3MB-PP1
-1-Tert-Butyl-3-(3-Methylbenzyl)-1h-Pyrazolo[3,4-D]pyrimidin-4-Amine	3MB-PP1
-17-beta-estradiol	17-beta-estradiol
-beta-estradiol	17-beta-estradiol
-E2	17-beta-estradiol
-estrogen	17-beta-estradiol
-17-beta-estradiol withdrawal	17-beta-estradiol withdrawal
-beta estradiol withdrawal	17-beta-estradiol withdrawal
-E2 withdrawal	17-beta-estradiol withdrawal
-estrogen withdrawal	17-beta-estradiol withdrawal
-ethynyl uridine	ethynyl uridine
-EU	ethynyl uridine
-5EU	ethynyl uridine
-5-ethynyl uridine	ethynyl uridine
-doxycycline	doxycycline
-dox	doxycycline
-4-hydroxytamoxifen	hydroxytamoxifen
-tam	hydroxytamoxifen
-tamoxifen	hydroxytamoxifen
-hydroxytamoxifen	hydroxytamoxifen
-IFN-gamma	IFN-gamma
-IFNg	IFN-gamma
-IFNgamma	IFN-gamma
-interferon gamma	IFN-gamma
-interferon-gamma	IFN-gamma
-interferon	IFN
-TNF-alpha	TNF-alpha
-TNFa	TNF-alpha
-TNFalpha	TNF-alpha
-TNF alpha	TNF-alpha
-tumor necrosis factor alpha	TNF-alpha
-ultraviolet C	ultraviolet C
-UVC	ultraviolet C
-DRB	DRB
-5,6-dichlorobenzimidazole 1-beta-D-ribofuranoside	DRB
-lipopolysaccharide	lipopolysaccharide
-LPS	lipopolysaccharide
-bromouridine	bromouridine
-BU	bromouridine
-5-bromouridine	bromouridine
-actinomycin D	actinomycin D
-actD	actinomycin D
-actinomycin	actinomycin D
-nutlin-3	nutlin-3
-nutlin	nutlin-3
-nutlin-3a	nutlin-3
-anti-CD40	anti-CD40
-antiCD40	anti-CD40
-interleukin-4	interleukin-4
-IL-4	interleukin-4
-IL4	interleukin-4
-Kdo2-Lipid A	Kdo2-Lipid A
-KLA	Kdo2-Lipid A
-ethanol	ethanol
-EtOH	ethanol
-dihydrotestosterone	dihydrotestosterone
-DHT	dihydrotestosterone
-interleukin-1b	interleukin-1b
-IL1b	interleukin-1b
-IL-1b	interleukin-1b
-LIF	LIF
-leukaemia inhibitory factor	LIF
-KL-2	KL-2
-(2Z)-N-(5-chloro-2-methylphenyl)-4-(4-fluorophenyl)-2-hydroxy-4-oxo-2-butenamide	KL-2
-KL-1	KL-1
-(2Z)-N-(5-chloro-2-methylphenyl)-2-hydroxy-4-(3-methoxyphenyl)-4-oxo-2-butenamide	KL-1
-leflunomide	leflunomide
-lef	leflunomide
-rosiglitazone	rosiglitazone
-rosi	rosiglitazone
-gamma-secretase inhibitor	gamma-secretase inhibitor
-gammaSI	gamma-secretase inhibitor
-antisense	antisense
-anti-sense	antisense
-oxPAPC	oxPAPC
-oxidized 1-palmitoyl-2-archidonoyl-sn-glycero-3-phophocholine	oxPAPC
-nitro-octadec-9-enoic acid	nitro-octadec-9-enoic acid
-OA-NO2	nitro-octadec-9-enoic acid
-cortistatin A	cortistatin A
-cortistatin	cortistatin A
-low fat diet	low fat diet
-pladienolides B	pladienolides B
-pladienolides	pladienolides B
-flavopiridol	flavopiridol
-flavo	flavopiridol
-treadmill exercise	treadmill exercise
-exercise	treadmill exercise
-tetrodotoxin	tetrodotoxin
-TTX	tetrodotoxin
-KCl	KCl
-potassium chloride	KCl
-cell sorting HV-	cell sorting HV-
-cell sorting HV negative	cell sorting HV-
-cell sorting HV+	cell sorting HV+
-cell sorting HV positive	cell sorting HV+
-HV-	cell sorting HV-
-HV negative	cell sorting HV-
-HV+	cell sorting HV+
-HV positive	cell sorting HV+
-heat shock	heat shock
-heat	heat shock
-camptothecin	camptothecin
-CPT	camptothecin
-nocodazole	nocodazole
-cell sorting EGFP+	cell sorting EGFP+
-EGFP+	cell sorting EGFP+
-cell sorting EGFP-	cell sorting EGFP-
-EGFP-	cell sorting EGFP-
-cell sorting EGFP positive	cell sorting EGFP+
-EGFP positive	cell sorting EGFP+
-cell sorting EGFP negative	cell sorting EGFP-
-EGFP negative	cell sorting EGFP-
-cell sorting GFP+	cell sorting EGFP+
-GFP+	cell sorting EGFP+
-cell sorting GFP-	cell sorting EGFP-
-GFP-	cell sorting EGFP-
-cell sorting GFP positive	cell sorting EGFP+
-GFP positive	cell sorting EGFP+
-cell sorting GFP negative	cell sorting EGFP-
-GFP negative	cell sorting EGFP-
-serum starvation	serum starvation
-rEGF	EGF
-recombinant EGF	EGF
-epidermal growth factor	EGF
-EGF	EGF
-recombinant epidermal growth factor	EGF
-IBET151	IBET151
-IBET 151	IBET151
-IBET-151	IBET151
-triptolide	triptolide
-alpha-amanitin	alpha-amanitin
-alpha amanitin	alpha-amanitin
-amanitin	alpha-amanitin
-stromal cell co-culture	stromal cell co-culture
-stromal cells	stromal cell co-culture
-differentiated (A) stromal cell co-culture	differentiated (A) stromal cell co-culture
-differentiated (O) stromal cell co-culture	differentiated (O) stromal cell co-culture
-AKTi-1/2	AKTi-1/2
-AKT inhibitor-1/2	AKTi-1/2
-AKT inhibitor 1/2	AKTi-1/2
-RGFP966	RGFP966
-RGFP 966	RGFP966
-RGFP-966	RGFP966
-HDAC3 inhibitor RGFP966	RGFP966
-GDNF	GDNF
-glial cell line-derived neurotrophic factor	GDNF
-glial cell line derived neurotrophic factor	GDNF
-glial cell derived neurotrophic factor	GDNF
-glial cell-derived neurotrophic factor	GDNF
-influenza A virus Flag-NS1	influenza A virus Flag-NS1
-influenza A virus Flag-deltaPAF	influenza A virus Flag-deltaPAF
-HSV-1	HSV-1
-HSV1	HSV-1
-HSV 1	HSV-1
-herpes simplex virus 1	HSV-1
-mock infection medium	mock infection medium
-mock infection	mock infection medium
-doxycycline withdrawal	doxycycline withdrawal
-celastrol	celastrol
-hypoxia	hypoxia
-retinoic acid	retinoic acid
-Nedd4 intronic antisense oligonucleotide 2	Nedd4 intronic antisense oligonucleotide 2
-Nedd4 exonic antisense oligonucleotide 2	Nedd4 exonic antisense oligonucleotide 2
-Nedd4 exonic antisense oligonucleotide 3	Nedd4 exonic antisense oligonucleotide 3
-control antisense oligonucleotide	control antisense oligonucleotide
-Atxn10 intronic antisense oligonucleotide 1	Atxn10 intronic antisense oligonucleotide 1
-Atxn10 exonic antisense oligonucleotide 1	Atxn10 exonic antisense oligonucleotide 1
-7SK antisense oligonucleotide	7SK antisense oligonucleotide
-influenza virus strain PR8-delta-NS1	influenza virus strain PR8-delta-NS1
-reelin	reelin
-RELN	reelin
-leflunomide	leflunomide
-A771726	A771726
-teriflunomide	A771726
-JQ1	JQ1
-JQ-1	JQ1
-BET bromodomain inhibitor JQ1	JQ1
-MS417	MS417
-MS-417	MS417
-PJ34	PJ34
-PJ 34	PJ34
-PJ-34	PJ34
-charcoal-stripped FBS	charcoal-stripped FBS
-thymidine	thymidine
-activin A	activin A
-activin	activin
-Wnt3a	Wnt3a
-VEGF-A165	VEGF-A165
-VEGFA	VEGF-A
-VEGF-A	VEGF-A
-vascular endothelial growth factor A	VEGF-A
-vascular endothelial growth factor-A	VEGF-A
-vascular endothelial growth factor-A165	VEGF-A165
-vascular endothelial growth factor A165	VEGF-A165
-various	various
-RPMI/B27	RPMI/B27
-B27 supplement	RPMI/B27
-G-CSF	G-CSF
-GCSF	G-CSF
-granulocyte colony stimulating factor	G-CSF
-auxin	auxin
-aux	auxin
-gamma-secretase inhibitor	gamma-secretase inhibitor
-GSI	gamma-secretase inhibitor
-cold stress	cold stress
-cold	cold stress
-light cycle	light cycle
-light	light cycle
-5-aza-2'-deoxycytidine	5-aza-2'-deoxycytidine
-5-aza-CdR	5-aza-2'-deoxycytidine
-replicatively passaging until senescent	replicatively passaging until senescent
-dexamethasone	dexamethasone
-dex	dexamethasone
-HCMV strain TB40/E	HCMV strain TB40/E
-HCMV strain Towne varS	HCMV strain Towne varS
-HCMV strain Towne BAC	HCMV strain Towne BAC
-HCMV strain Towne IE2 BAC	HCMV strain Towne IE2 BAC
-HCMV strain Towne IE2F BAC	HCMV strain Towne IE2F BAC
-HCMV strain TB40/E IE2F	HCMV strain TB40/E IE2F
-HCMV strain TB40/E IE2	HCMV strain TB40/E IE2
-thapsigargin	thapsigargin
-glucose-free media	glucose-free media
-TGF-beta	TGF-beta
-transforming growth factor beta	TGF-beta
-TGF beta	TGF-beta
-TGFb	TGF-beta
-TGFbeta	TGF-beta
-cycloheximide	cycloheximide
-phosphonoacetic acid	phosphonoacetic acid
-acyclovir	acyclovir
-dsRNA beta-galactosidase	dsRNA beta-galactosidase
-dsRNA beta-Gal	dsRNA beta-galactosidase
-dsRNA IntS9	dsRNA IntS9
-dsRNA LacZ	dsRNA LacZ
-dsRNA LacI	dsRNA LacI
-dsRNA Taf1	dsRNA Taf1
-dsRNA Gaf	dsRNA Gaf
-dsRNA Hsf	dsRNA Hsf
-dsRNA M1bp	dsRNA M1bp
-dsRNA Fcp1	dsRNA Fcp1
-dsRNA EGFP	dsRNA EGFP
-dsRNA Msl2	dsRNA Msl2
-dsRNA Bap170	dsRNA Bap170
-dsRNA Nurf301	dsRNA Nurf301
-dsRNA Rad21	dsRNA Rad21
-dsRNA Nipped-B	dsRNA Nipped-B
-dsRNA IntS8	dsRNA IntS8
-enterocyte differentiation protocol	enterocyte differentiation protocol
-myotube differentiation protocol	myotube differentiation protocol
-embryoid body differentiation protocol	embryoid body differentiation protocol
-hepatocyte differentiation protocol 2	hepatocyte differentiation protocol 2
-hepatocyte differentiation protocol 1	hepatocyte differentiation protocol 1
-pancreatic differentiation protocol	pancreatic differentiation protocol
-ICI 182,780	ICI 182,780
-ICI 182780	ICI 182,780
-ICI182780	ICI 182,780
-ICI182,780	ICI 182,780
-2,5-hexanediol	2,5-hexanediol
-2,5 hexanediol	2,5-hexanediol
-1,6-hexanediol	1,6-hexanediol
-1,6 hexanediol	1,6-hexanediol
-cell sorting CD23+	cell sorting CD23+
-CD23+	cell sorting CD23+
-cell sorting CD23 positive	cell sorting CD23+
-CD23 positive	cell sorting CD23+
-cell sorting CD19+	cell sorting CD19+
-CD19+	cell sorting CD19+
-cell sorting CD19 positive	cell sorting CD19+
-CD19 positive	cell sorting CD19+
-C37 control drug	C37 control drug
-C37	C37 control drug
-C646 CBP inhibitor	C646 CBP inhibitor
-C646	C646 CBP inhibitor
-FCCP	FCCP
-Trifluoromethoxy carbonylcyanide phenylhydrazone	FCCP
-Carbonyl cyanide-p-trifluoromethoxyphenylhydrazone	FCCP
-Spt5-Pol II small-molecule inhibitor 21	Spt5-Pol II small-molecule inhibitor 21
-R1881	R1881
-metribolone	R1881
-C3	C3
-high fat diet	high fat diet
-pinometostat	pinometostat
-DMSO/ethanol	DMSO/ethanol
-SD70	SD70
-SD-70	SD70
-idelalisib	idelalisib
-duvelisib	duvelisib
-KM05283	KM05283
-KM-05283	KM05283
-adipocyte differentiation protocol	adipocyte differentiation protocol
-romidepsin	romidepsin
-heat pretreatment	heat pretreatment
-gestation	gestation
-GC-1	GC-1
-GC1	GC-1
-growth media	growth media
-methanol	methanol
-MeOH	methanol
-nitro-octadec-9-enoic acid	nitro-octadec-9-enoic acid
-9E-nitro-octadec-9-enoic acid	nitro-octadec-9-enoic acid
-9-nitro-9E-octadecenoic acid	nitro-octadec-9-enoic acid
-9E-9-nitrooctadecenoic acid	nitro-octadec-9-enoic acid
-(9E)-9-nitrooctadecenoic acid	nitro-octadec-9-enoic acid
-cisplatin	cisplatin
-vehicle	vehicle
-STI-571	STI-571
-STI571	STI-571
-imatinib	STI-571
-indoleacetic acid	indoleacetic acid
-IAA	indoleacetic acid
-thermoneutrality	thermoneutrality
-PD0325901	PD0325901
-PD 0325901	PD0325901
-PD-0325901	PD0325901
-CH99021	CH99021
-CH-99021	CH99021
-CH 99021	CH99021
-anti-CD180	anti-CD180
-antiCD180	anti-CD180
-anti-IgD-dextran	anti-IgD-dextran
-antiIgD dextran	anti-IgD-dextran
-antiIgD-dextran	anti-IgD-dextran
-anti-IgD dextran	anti-IgD-dextran
-A23187	A23187
-A-23187	A23187
-calcimycin	A23187
-permissive temperature	permissive temperature
-non-permissive temperature	non-permissive temperature
-non permissive temperature	non-permissive temperature
-nonpermissive temperature	non-permissive temperature
-mating	mating
-estradiol	estradiol
-starvation	starvation
-dimethyloxalylglycine	dimethyloxalylglycine
-DMOG	dimethyloxalylglycine
-trichostatin A	trichostatin A
-phorbol 12-myristate 13-acetate	phorbol 12-myristate 13-acetate
-PMA	phorbol 12-myristate 13-acetate
-ionomycin	ionomycin
-THZ531	THZ531
-THZ-531	THZ531
-1-NM-PP1	1-NM-PP1
-1NM-PP1	1-NM-PP1
-4-thiouridine	4-thiouridine
-4SU	4-thiouridine
-4 thiouridine	4-thiouridine
-4-SU	4-thiouridine
-AZ'5576	AZ'5576
-AZ5576	AZ'5576
-anti-TAF1 C413 antibody	anti-TAF1 C413 antibody
-antiTAF1 C413 antibody	anti-TAF1 C413 antibody
-anti-TAF1 C413	anti-TAF1 C413 antibody
-anti-TAF1	anti-TAF1 C413 antibody
-antiTAF1	anti-TAF1 C413 antibody
-mock treatment	mock treatment
-copper sulfate	copper sulfate
-CuSO4	copper sulfate
-dTAG7	dTAG7
-dTAG-7	dTAG7
-dTAG47	dTAG47
-dTAG-47	dTAG47
-NVP2	NVP2
-NVP 2	NVP2
-NVP-2	NVP2
-dTAGV-1	dTAGV-1
-dTAGV1	dTAGV-1
-INCB059872	INCB059872
-INCB-059872	INCB059872
-INCB 059872	INCB059872
-phosphonoformic acid	phosphonoformic acid
-PFA	phosphonoformic acid
-phorbol myristate acetate	phorbol myristate acetate
-PMA	phorbol myristate acetate
-TPA	phorbol myristate acetate
-tetradecanoylphorbol acetate	phorbol myristate acetate
-nucleotides	nucleotides
-BRM014	BRM014
-BRM-014	BRM014
-BRM 014	BRM014
-GSK2879552	GSK2879552
-LBH589	LBH589
-panobinostat	LBH589
-phenylephrine	phenylephrine
+search_term	db_term	term_category
+GRO-seq	GRO-seq	protocol
+GROseq	GRO-seq	protocol
+GRO seq	GRO-seq	protocol
+PRO-seq	PRO-seq	protocol
+PROseq	PRO-seq	protocol
+PRO seq	PRO-seq	protocol
+GRO-cap	GRO-cap	protocol
+GROcap	GRO-cap	protocol
+GRO cap	GRO-cap	protocol
+PRO-cap	PRO-cap	protocol
+PROcap	PRO-cap	protocol
+PRO cap	PRO-cap	protocol
+NET-seq	NET-seq	protocol
+NETseq	NET-seq	protocol
+NET seq	NET-seq	protocol
+H. sapiens	H. sapiens	organism
+H sapiens	H. sapiens	organism
+human	H. sapiens	organism
+M. musculus	M. musculus	organism
+M musculus	M. musculus	organism
+mouse	M. musculus	organism
+D. melanogaster	D. melanogaster	organism
+D melanogaster	D. melanogaster	organism
+fruit fly	D. melanogaster	organism
+fly	D. melanogaster	organism
+A. thaliana	A. thaliana	organism
+A thaliana	A. thaliana	organism
+Arabidopsis	A. thaliana	organism
+Z. mays	Z. mays	organism
+Z mays	Z. mays	organism
+corn	Z. mays	organism
+M. esculenta	M. esculenta	organism
+M esculenta	M. esculenta	organism
+cassava	M. esculenta	organism
+E. coli	E. coli	organism
+E coli	E. coli	organism
+C. elegans	C. elegans	organism
+C elegans	C. elegans	organism
+worm	C. elegans	organism
+S. pombe	S. pombe	organism
+S pombe	S. pombe	organism
+S. Cerevisiae	S. Cerevisiae	organism
+S Cerevisiae	S. Cerevisiae	organism
+P. falciparum	P. falciparum	organism
+P falciparum	P. falciparum	organism
+Plasmodium	P. falciparum	organism
+R. norvegicus	R. norvegicus	organism
+R norvegicus	R. norvegicus	organism
+rat	R. norvegicus	organism
+S. scrofa	S. scrofa	organism
+S scrofa	S. scrofa	organism
+pig	S. scrofa	organism
+T. thermophila	T. thermophila	organism
+T thermophila	T. thermophila	organism
+Tetrahymena	T. thermophila	organism
+C. griseus	C. griseus	organism
+C griseus	C. griseus	organism
+Chinese hamster	C. griseus	organism
+C. lupus familiaris	C. lupus familiaris	organism
+C lupus familiaris	C. lupus familiaris	organism
+C lupus	C. lupus familiaris	organism
+dog	C. lupus familiaris	organism
+P. troglodytes	P. troglodytes	organism
+P troglodytes	P. troglodytes	organism
+chimpanzee	P. troglodytes	organism
+M. mulatta	M. mulatta	organism
+M mulatta	M. mulatta	organism
+macaque	M. mulatta	organism
+rhesus	M. mulatta	organism
+rhesus macaque	M. mulatta	organism
+M. velifer	M. velifer	organism
+M velifer	M. velifer	organism
+bat	M. velifer	organism
+HCT116	HCT116	sample type
+HCT-116	HCT116	sample type
+HCT 116	HCT116	sample type
+IMR90	IMR90	sample type
+IMR-90	IMR90	sample type
+MEF	MEF	sample type
+mouse embryonic fibroblast	MEF	sample type
+Nalm6	Nalm6	sample type
+Nalm-6	Nalm6	sample type
+S2	S2	sample type
+whole fly	whole fly	sample type
+adult fly	whole fly	sample type
+B cell	B cell	sample type
+B-cell	B cell	sample type
+Jurkat T cell	Jurkat T cell	sample type
+Jurkat T-cell	Jurkat T cell	sample type
+epididymal white adipose tissue	epididymal white adipose tissue	sample type
+brown adipose tissue	brown adipose tissue	sample type
+inguinal white adipose tissue	inguinal white adipose tissue	sample type
+MCF7	MCF7	sample type
+MCF-7	MCF7	sample type
+HeLa	HeLa	sample type
+HEK293T	HEK293T	sample type
+HEK-293T	HEK293T	sample type
+HEK293-T	HEK293T	sample type
+HEK-293-T	HEK293T	sample type
+HEK293	HEK293	sample type
+HEK-293	HEK293	sample type
+HeLa S3	HeLa S3	sample type
+MRC5VA	MRC5VA	sample type
+MRC-5VA	MRC5VA	sample type
+MRC5-VA	MRC5VA	sample type
+MRC-5-VA	MRC5VA	sample type
+MRC5	MRC5	sample type
+MRC-5	MRC5	sample type
+peritoneal macrophage	peritoneal macrophage	sample type
+cardiomyocyte	cardiomyocyte	sample type
+quadriceps muscle	quadriceps muscle	sample type
+cortical neuron	cortical neuron	sample type
+ESC	ESC	sample type
+embryonic stem cell	ESC	sample type
+K562	K562	sample type
+K-562	K562	sample type
+bone marrow derived macrophage	bone marrow derived macrophage	sample type
+HF1	HF1	sample type
+HF-1	HF1	sample type
+skin fibroblast	skin fibroblast	sample type
+intestinal organoid	intestinal organoid	sample type
+AtT20	AtT20	sample type
+AtT-20	AtT20	sample type
+splenic B cell	splenic B cell	sample type
+splenic B-cell	splenic B cell	sample type
+head	head	sample type
+splenic germinal center B cell	splenic germinal center B cell	sample type
+splenic germinal center B-cell	splenic germinal center B cell	sample type
+Ramos	Ramos	sample type
+Ramos B cell	Ramos	sample type
+Ramos B-cell	Ramos	sample type
+hematopoietic progenitor cell	hematopoietic progenitor cell	sample type
+CD34+ progenitor cell	hematopoietic progenitor cell	sample type
+HSPC	hematopoietic progenitor cell	sample type
+CD34+ erythroblast	CD34+ erythroblast	sample type
+C2C12	C2C12	sample type
+LNCaP	LNCaP	sample type
+VCaP	VCaP	sample type
+REH	REH	sample type
+ovary	ovary	sample type
+SUDHL4	SUDHL4	sample type
+NUDUL1	NUDUL1	sample type
+OCILY1	OCILY1	sample type
+forebrain	forebrain	sample type
+A549	A549	sample type
+A-549	A549	sample type
+HEp2	HEp2	sample type
+HEp-2	HEp2	sample type
+RMG1	RMG1	sample type
+RMG-1	RMG1	sample type
+seed	seed	sample type
+HUVEC	HUVEC	sample type
+shoot	shoot	sample type
+MEL624	MEL624	sample type
+MEL-624	MEL624	sample type
+pre pro B cell	pre pro B cell	sample type
+pre pro B-cell	pre pro B cell	sample type
+pre pro-B cell	pre pro B cell	sample type
+pre pro-B-cell	pre pro B cell	sample type
+pre-pro-B-cell	pre pro B cell	sample type
+pro B cell	pro B cell	sample type
+pro B-cell	pro B cell	sample type
+pro-B cell	pro B cell	sample type
+pro-B-cell	pro B cell	sample type
+NTera2/D1	NTera2/D1	sample type
+NTera2	NTera2/D1	sample type
+MHT	MHT	sample type
+liver	liver	sample type
+yolk sac	yolk sac	sample type
+NSPC	NSPC	sample type
+neural stem cell	NSPC	sample type
+neural progenitor cell	NSPC	sample type
+neural stem progenitor cell	NSPC	sample type
+neural stem/progenitor cell	NSPC	sample type
+A375	A375	sample type
+A-375	A375	sample type
+GM12878	GM12878	sample type
+GM-12878	GM12878	sample type
+RAW264.7	RAW264.7	sample type
+RAW-264.7	RAW264.7	sample type
+Kasumi-1	Kasumi-1	sample type
+Kasumi 1	Kasumi-1	sample type
+Kasumi	Kasumi-1	sample type
+acute myeloid leukemia cell	acute myeloid leukemia cell	sample type
+HAEC	HAEC	sample type
+human aortic endothelial cells	HAEC	sample type
+aortic endothelial cells	HAEC	sample type
+SHEP	SHEP	sample type
+whole bacteria	whole bacteria	sample type
+bacteria	whole bacteria	sample type
+3T3-L1	3T3-L1	sample type
+3T3L1	3T3-L1	sample type
+3T3 L1	3T3-L1	sample type
+Ly-1	Ly-1	sample type
+Ly 1	Ly-1	sample type
+Ly1	Ly-1	sample type
+MV4-11	MV4-11	sample type
+MV(4;11)	MV4-11	sample type
+MV-4-11	MV4-11	sample type
+MV411	MV4-11	sample type
+U936	U936	sample type
+U-936	U936	sample type
+whole worm	whole worm	sample type
+KBM7	KBM7	sample type
+KBM-7	KBM7	sample type
+CUTLL1	CUTLL1	sample type
+whole yeast	whole yeast	sample type
+hepatocyte	hepatocyte	sample type
+iPSC	iPSC	sample type
+induced pluripotent stem cell	iPSC	sample type
+pluripotent stem cell	iPSC	sample type
+HEK293T Flp-in	HEK293T Flp-in	sample type
+HEK-293T Flp-in	HEK293T Flp-in	sample type
+HEK-293-T Flp-in	HEK293T Flp-in	sample type
+HEK293T Flpin	HEK293T Flp-in	sample type
+HEK293T Flp in	HEK293T Flp-in	sample type
+HEK293-T Flp-in	HEK293T Flp-in	sample type
+HEK293 Flp-in	HEK293 Flp-in	sample type
+HEK293 Flpin	HEK293 Flp-in	sample type
+HEK-293 Flp-in	HEK293 Flp-in	sample type
+HEK293 Flp in	HEK293 Flp-in	sample type
+HCEC	HCEC	sample type
+seedling	seedling	sample type
+HepG2	HepG2	sample type
+Hep-G2	HepG2	sample type
+HepG-2	HepG2	sample type
+BEAS-2B	BEAS-2B	sample type
+B2B	BEAS-2B	sample type
+BEAS2B	BEAS-2B	sample type
+BEAS 2B	BEAS-2B	sample type
+foreskin fibroblast	foreskin fibroblast	sample type
+HFF	foreskin fibroblast	sample type
+inflorescence and meristem	inflorescence and meristem	sample type
+AC16	AC16	sample type
+AC-16	AC16	sample type
+CH12F3	CH12F3	sample type
+CH12-F3	CH12F3	sample type
+CH-12F3	CH12F3	sample type
+CH-12-F3	CH12F3	sample type
+CH12F-3	CH12F3	sample type
+DL1	DL1	sample type
+DL-1	DL1	sample type
+MDA-MB-231	MDA-MB-231	sample type
+MDA-MB231	MDA-MB-231	sample type
+MDAMB231	MDA-MB-231	sample type
+MDAMB-231	MDA-MB-231	sample type
+MDA-MB-361	MDA-MB-361	sample type
+MDA-MB361	MDA-MB-361	sample type
+MDAMB361	MDA-MB-361	sample type
+MDAMB-361	MDA-MB-361	sample type
+MDA-MB-468	MDA-MB-468	sample type
+MDA-MB468	MDA-MB-468	sample type
+MDAMB468	MDA-MB-468	sample type
+MDAMB-468	MDA-MB-468	sample type
+MDA-MB-436	MDA-MB-436	sample type
+MDA-MB436	MDA-MB-436	sample type
+MDAMB436	MDA-MB-436	sample type
+MDAMB-436	MDA-MB-436	sample type
+myoblast	myoblast	sample type
+embryo	embryo	sample type
+HCC1806	HCC1806	sample type
+HCC-1806	HCC1806	sample type
+SEM	SEM	sample type
+CD4+ T cell	CD4+ T cell	sample type
+CD4+ T-cell	CD4+ T cell	sample type
+CD4 T cell	CD4+ T cell	sample type
+CD4 T-cell	CD4+ T cell	sample type
+U2OS	U2OS	sample type
+U-2 OS	U2OS	sample type
+U-2OS	U2OS	sample type
+U2 OS	U2OS	sample type
+ECOMG	ECOMG	sample type
+ECOM-G	ECOMG	sample type
+ECO-MG	ECOMG	sample type
+THP1	THP1	sample type
+THP-1	THP1	sample type
+leaf	leaf	sample type
+ovarian somatic cell	ovarian somatic cell	sample type
+SJSA	SJSA	sample type
+SJSA1	SJSA	sample type
+SJSA-1	SJSA	sample type
+T47D	T47D	sample type
+T-47D	T47D	sample type
+ARPE-19	ARPE-19	sample type
+ARPE19	ARPE-19	sample type
+ARPE 19	ARPE-19	sample type
+NHA	NHA	sample type
+normal human astrocyte	NHA	sample type
+SKOV3	SKOV3	sample type
+SKOV-3	SKOV3	sample type
+T98G	T98G	sample type
+T-98G	T98G	sample type
+T98-G	T98G	sample type
+U87	U87	sample type
+U-87	U87	sample type
+BJ	BJ	sample type
+BJ5ta	BJ5ta	sample type
+BJ-5ta	BJ5ta	sample type
+TIG-3	TIG-3	sample type
+TIG3	TIG-3	sample type
+76NF2V	76NF2V	sample type
+76NF-2V	76NF2V	sample type
+76-NF2V	76NF2V	sample type
+MCF10A	MCF10A	sample type
+MCF-10A	MCF10A	sample type
+MCF10-A	MCF10A	sample type
+ZR751	ZR751	sample type
+ZR-75-1	ZR751	sample type
+ZR75-1	ZR751	sample type
+ZR-751	ZR751	sample type
+UACC812	UACC812	sample type
+UACC-812	UACC812	sample type
+SKBR3	SKBR3	sample type
+SK-BR-3	SKBR3	sample type
+SKBR-3	SKBR3	sample type
+AU565	AU565	sample type
+AU-565	AU565	sample type
+HCC1954	HCC1954	sample type
+HCC-1954	HCC1954	sample type
+HCC1937	HCC1937	sample type
+HCC-1937	HCC1937	sample type
+HASM	HASM	sample type
+human airway smooth muscle cell	HASM	sample type
+airway smooth muscle cell	HASM	sample type
+human umbilical vein endothelial cell	HUVEC	sample type
+umbilical vein endothelial cell	HUVEC	sample type
+CD14+ macrophage	CD14+ macrophage	sample type
+CD14 macrophage	CD14+ macrophage	sample type
+A2780	A2780	sample type
+A-2780	A2780	sample type
+TRExBCBL1	TRExBCBL1	sample type
+SW480	SW480	sample type
+SW-480	SW480	sample type
+v-Abl pro B cell	v-Abl pro B cell	sample type
+vAbl pro B cell	v-Abl pro B cell	sample type
+v-Abl pro-B cell	v-Abl pro B cell	sample type
+v-Abl pro B-cell	v-Abl pro B cell	sample type
+v-Abl pro-B-cell	v-Abl pro B cell	sample type
+vAbl pro-B cell	v-Abl pro B cell	sample type
+vAbl pro B-cell	v-Abl pro B cell	sample type
+cortex	cortex	sample type
+N2a	N2a	sample type
+PCT 7134	PCT 7134	sample type
+PCT7134	PCT 7134	sample type
+PCT-7134	PCT 7134	sample type
+early ring parasite	early ring parasite	sample type
+late ring parasite	late ring parasite	sample type
+early trophozoite parasite	early trophozoite parasite	sample type
+late trophozoite parasite	late trophozoite parasite	sample type
+early schizont parasite	early schizont parasite	sample type
+late schizont parasite	late schizont parasite	sample type
+gametoyte stage III parasite	gametoyte stage III parasite	sample type
+GC pituitary cell	GC pituitary cell	sample type
+myocardium	myocardium	sample type
+micronucleus	micronucleus	sample type
+brain	brain	sample type
+CHO-K1	CHO-K1	sample type
+CHOK1	CHO-K1	sample type
+kidney	kidney	sample type
+lung	lung	sample type
+spleen hemangiosarcoma	spleen hemangiosarcoma	sample type
+spleen	spleen	sample type
+lymphoblast	lymphoblast	sample type
+LBL	lymphoblast	sample type
+embryonic gonad	embryonic gonad	sample type
+ML-DmBG3-c2	ML-DmBG3-c2	sample type
+LC-2/ad	LC-2/ad	sample type
+LC2/ad	LC-2/ad	sample type
+HAP1	HAP1	sample type
+HAP-1	HAP1	sample type
+S2VP10	S2VP10	sample type
+S2-VP10	S2VP10	sample type
+G401	G401	sample type
+G-401	G401	sample type
+embryonic fibroblast	embryonic fibroblast	sample type
+DLD1 Flp-In	DLD1 Flp-In	sample type
+DLD-1 Flp-In	DLD1 Flp-In	sample type
+DLD1 Flp In	DLD1 Flp-In	sample type
+DLD-1 Flp In	DLD1 Flp-In	sample type
+DMSO	DMSO	treatment
+dimethyl sulfoxide	DMSO	treatment
+adeno-Cre virus	adeno-Cre virus	treatment
+adeno-Cre	adeno-Cre virus	treatment
+adeno Cre virus	adeno-Cre virus	treatment
+adeno Cre	adeno-Cre virus	treatment
+PBS	PBS	treatment
+phosphate buffered saline	PBS	treatment
+phosphate-buffered saline	PBS	treatment
+3MB-PP1	3MB-PP1	treatment
+3-MB-PP1	3MB-PP1	treatment
+1-Tert-Butyl-3-(3-Methylbenzyl)-1h-Pyrazolo[3,4-D]pyrimidin-4-Amine	3MB-PP1	treatment
+17-beta-estradiol	17-beta-estradiol	treatment
+beta-estradiol	17-beta-estradiol	treatment
+E2	17-beta-estradiol	treatment
+estrogen	17-beta-estradiol	treatment
+17-beta-estradiol withdrawal	17-beta-estradiol withdrawal	treatment
+beta estradiol withdrawal	17-beta-estradiol withdrawal	treatment
+E2 withdrawal	17-beta-estradiol withdrawal	treatment
+estrogen withdrawal	17-beta-estradiol withdrawal	treatment
+ethynyl uridine	ethynyl uridine	treatment
+EU	ethynyl uridine	treatment
+5EU	ethynyl uridine	treatment
+5-ethynyl uridine	ethynyl uridine	treatment
+doxycycline	doxycycline	treatment
+dox	doxycycline	treatment
+4-hydroxytamoxifen	hydroxytamoxifen	treatment
+tam	hydroxytamoxifen	treatment
+tamoxifen	hydroxytamoxifen	treatment
+hydroxytamoxifen	hydroxytamoxifen	treatment
+IFN-gamma	IFN-gamma	treatment
+IFNg	IFN-gamma	treatment
+IFNgamma	IFN-gamma	treatment
+interferon gamma	IFN-gamma	treatment
+interferon-gamma	IFN-gamma	treatment
+interferon	IFN	treatment
+TNF-alpha	TNF-alpha	treatment
+TNFa	TNF-alpha	treatment
+TNFalpha	TNF-alpha	treatment
+TNF alpha	TNF-alpha	treatment
+tumor necrosis factor alpha	TNF-alpha	treatment
+ultraviolet C	ultraviolet C	treatment
+UVC	ultraviolet C	treatment
+DRB	DRB	treatment
+5,6-dichlorobenzimidazole 1-beta-D-ribofuranoside	DRB	treatment
+lipopolysaccharide	lipopolysaccharide	treatment
+LPS	lipopolysaccharide	treatment
+bromouridine	bromouridine	treatment
+BU	bromouridine	treatment
+5-bromouridine	bromouridine	treatment
+actinomycin D	actinomycin D	treatment
+actD	actinomycin D	treatment
+actinomycin	actinomycin D	treatment
+nutlin-3	nutlin-3	treatment
+nutlin	nutlin-3	treatment
+nutlin-3a	nutlin-3	treatment
+anti-CD40	anti-CD40	treatment
+antiCD40	anti-CD40	treatment
+interleukin-4	interleukin-4	treatment
+IL-4	interleukin-4	treatment
+IL4	interleukin-4	treatment
+Kdo2-Lipid A	Kdo2-Lipid A	treatment
+KLA	Kdo2-Lipid A	treatment
+ethanol	ethanol	treatment
+EtOH	ethanol	treatment
+dihydrotestosterone	dihydrotestosterone	treatment
+DHT	dihydrotestosterone	treatment
+interleukin-1b	interleukin-1b	treatment
+IL1b	interleukin-1b	treatment
+IL-1b	interleukin-1b	treatment
+LIF	LIF	treatment
+leukaemia inhibitory factor	LIF	treatment
+KL-2	KL-2	treatment
+(2Z)-N-(5-chloro-2-methylphenyl)-4-(4-fluorophenyl)-2-hydroxy-4-oxo-2-butenamide	KL-2	treatment
+KL-1	KL-1	treatment
+(2Z)-N-(5-chloro-2-methylphenyl)-2-hydroxy-4-(3-methoxyphenyl)-4-oxo-2-butenamide	KL-1	treatment
+leflunomide	leflunomide	treatment
+lef	leflunomide	treatment
+rosiglitazone	rosiglitazone	treatment
+rosi	rosiglitazone	treatment
+gamma-secretase inhibitor	gamma-secretase inhibitor	treatment
+gammaSI	gamma-secretase inhibitor	treatment
+antisense	antisense	treatment
+anti-sense	antisense	treatment
+oxPAPC	oxPAPC	treatment
+oxidized 1-palmitoyl-2-archidonoyl-sn-glycero-3-phophocholine	oxPAPC	treatment
+nitro-octadec-9-enoic acid	nitro-octadec-9-enoic acid	treatment
+OA-NO2	nitro-octadec-9-enoic acid	treatment
+cortistatin A	cortistatin A	treatment
+cortistatin	cortistatin A	treatment
+low fat diet	low fat diet	treatment
+pladienolides B	pladienolides B	treatment
+pladienolides	pladienolides B	treatment
+flavopiridol	flavopiridol	treatment
+flavo	flavopiridol	treatment
+treadmill exercise	treadmill exercise	treatment
+exercise	treadmill exercise	treatment
+tetrodotoxin	tetrodotoxin	treatment
+TTX	tetrodotoxin	treatment
+KCl	KCl	treatment
+potassium chloride	KCl	treatment
+cell sorting HV-	cell sorting HV-	treatment
+cell sorting HV negative	cell sorting HV-	treatment
+cell sorting HV+	cell sorting HV+	treatment
+cell sorting HV positive	cell sorting HV+	treatment
+HV-	cell sorting HV-	treatment
+HV negative	cell sorting HV-	treatment
+HV+	cell sorting HV+	treatment
+HV positive	cell sorting HV+	treatment
+heat shock	heat shock	treatment
+heat	heat shock	treatment
+camptothecin	camptothecin	treatment
+CPT	camptothecin	treatment
+nocodazole	nocodazole	treatment
+cell sorting EGFP+	cell sorting EGFP+	treatment
+EGFP+	cell sorting EGFP+	treatment
+cell sorting EGFP-	cell sorting EGFP-	treatment
+EGFP-	cell sorting EGFP-	treatment
+cell sorting EGFP positive	cell sorting EGFP+	treatment
+EGFP positive	cell sorting EGFP+	treatment
+cell sorting EGFP negative	cell sorting EGFP-	treatment
+EGFP negative	cell sorting EGFP-	treatment
+cell sorting GFP+	cell sorting EGFP+	treatment
+GFP+	cell sorting EGFP+	treatment
+cell sorting GFP-	cell sorting EGFP-	treatment
+GFP-	cell sorting EGFP-	treatment
+cell sorting GFP positive	cell sorting EGFP+	treatment
+GFP positive	cell sorting EGFP+	treatment
+cell sorting GFP negative	cell sorting EGFP-	treatment
+GFP negative	cell sorting EGFP-	treatment
+serum starvation	serum starvation	treatment
+rEGF	EGF	treatment
+recombinant EGF	EGF	treatment
+epidermal growth factor	EGF	treatment
+EGF	EGF	treatment
+recombinant epidermal growth factor	EGF	treatment
+IBET151	IBET151	treatment
+IBET 151	IBET151	treatment
+IBET-151	IBET151	treatment
+triptolide	triptolide	treatment
+alpha-amanitin	alpha-amanitin	treatment
+alpha amanitin	alpha-amanitin	treatment
+amanitin	alpha-amanitin	treatment
+stromal cell co-culture	stromal cell co-culture	treatment
+stromal cells	stromal cell co-culture	treatment
+differentiated (A) stromal cell co-culture	differentiated (A) stromal cell co-culture	treatment
+differentiated (O) stromal cell co-culture	differentiated (O) stromal cell co-culture	treatment
+AKTi-1/2	AKTi-1/2	treatment
+AKT inhibitor-1/2	AKTi-1/2	treatment
+AKT inhibitor 1/2	AKTi-1/2	treatment
+RGFP966	RGFP966	treatment
+RGFP 966	RGFP966	treatment
+RGFP-966	RGFP966	treatment
+HDAC3 inhibitor RGFP966	RGFP966	treatment
+GDNF	GDNF	treatment
+glial cell line-derived neurotrophic factor	GDNF	treatment
+glial cell line derived neurotrophic factor	GDNF	treatment
+glial cell derived neurotrophic factor	GDNF	treatment
+glial cell-derived neurotrophic factor	GDNF	treatment
+influenza A virus Flag-NS1	influenza A virus Flag-NS1	treatment
+influenza A virus Flag-deltaPAF	influenza A virus Flag-deltaPAF	treatment
+HSV-1	HSV-1	treatment
+HSV1	HSV-1	treatment
+HSV 1	HSV-1	treatment
+herpes simplex virus 1	HSV-1	treatment
+mock infection medium	mock infection medium	treatment
+mock infection	mock infection medium	treatment
+doxycycline withdrawal	doxycycline withdrawal	treatment
+celastrol	celastrol	treatment
+hypoxia	hypoxia	treatment
+retinoic acid	retinoic acid	treatment
+Nedd4 intronic antisense oligonucleotide 2	Nedd4 intronic antisense oligonucleotide 2	treatment
+Nedd4 exonic antisense oligonucleotide 2	Nedd4 exonic antisense oligonucleotide 2	treatment
+Nedd4 exonic antisense oligonucleotide 3	Nedd4 exonic antisense oligonucleotide 3	treatment
+control antisense oligonucleotide	control antisense oligonucleotide	treatment
+Atxn10 intronic antisense oligonucleotide 1	Atxn10 intronic antisense oligonucleotide 1	treatment
+Atxn10 exonic antisense oligonucleotide 1	Atxn10 exonic antisense oligonucleotide 1	treatment
+7SK antisense oligonucleotide	7SK antisense oligonucleotide	treatment
+influenza virus strain PR8-delta-NS1	influenza virus strain PR8-delta-NS1	treatment
+reelin	reelin	treatment
+RELN	reelin	treatment
+leflunomide	leflunomide	treatment
+A771726	A771726	treatment
+teriflunomide	A771726	treatment
+JQ1	JQ1	treatment
+JQ-1	JQ1	treatment
+BET bromodomain inhibitor JQ1	JQ1	treatment
+MS417	MS417	treatment
+MS-417	MS417	treatment
+PJ34	PJ34	treatment
+PJ 34	PJ34	treatment
+PJ-34	PJ34	treatment
+charcoal-stripped FBS	charcoal-stripped FBS	treatment
+thymidine	thymidine	treatment
+activin A	activin A	treatment
+activin	activin	treatment
+Wnt3a	Wnt3a	treatment
+VEGF-A165	VEGF-A165	treatment
+VEGFA	VEGF-A	treatment
+VEGF-A	VEGF-A	treatment
+vascular endothelial growth factor A	VEGF-A	treatment
+vascular endothelial growth factor-A	VEGF-A	treatment
+vascular endothelial growth factor-A165	VEGF-A165	treatment
+vascular endothelial growth factor A165	VEGF-A165	treatment
+various	various	treatment
+RPMI/B27	RPMI/B27	treatment
+B27 supplement	RPMI/B27	treatment
+G-CSF	G-CSF	treatment
+GCSF	G-CSF	treatment
+granulocyte colony stimulating factor	G-CSF	treatment
+auxin	auxin	treatment
+aux	auxin	treatment
+gamma-secretase inhibitor	gamma-secretase inhibitor	treatment
+GSI	gamma-secretase inhibitor	treatment
+cold stress	cold stress	treatment
+cold	cold stress	treatment
+light cycle	light cycle	treatment
+light	light cycle	treatment
+5-aza-2'-deoxycytidine	5-aza-2'-deoxycytidine	treatment
+5-aza-CdR	5-aza-2'-deoxycytidine	treatment
+replicatively passaging until senescent	replicatively passaging until senescent	treatment
+dexamethasone	dexamethasone	treatment
+dex	dexamethasone	treatment
+HCMV strain TB40/E	HCMV strain TB40/E	treatment
+HCMV strain Towne varS	HCMV strain Towne varS	treatment
+HCMV strain Towne BAC	HCMV strain Towne BAC	treatment
+HCMV strain Towne IE2 BAC	HCMV strain Towne IE2 BAC	treatment
+HCMV strain Towne IE2F BAC	HCMV strain Towne IE2F BAC	treatment
+HCMV strain TB40/E IE2F	HCMV strain TB40/E IE2F	treatment
+HCMV strain TB40/E IE2	HCMV strain TB40/E IE2	treatment
+thapsigargin	thapsigargin	treatment
+glucose-free media	glucose-free media	treatment
+TGF-beta	TGF-beta	treatment
+transforming growth factor beta	TGF-beta	treatment
+TGF beta	TGF-beta	treatment
+TGFb	TGF-beta	treatment
+TGFbeta	TGF-beta	treatment
+cycloheximide	cycloheximide	treatment
+phosphonoacetic acid	phosphonoacetic acid	treatment
+acyclovir	acyclovir	treatment
+dsRNA beta-galactosidase	dsRNA beta-galactosidase	treatment
+dsRNA beta-Gal	dsRNA beta-galactosidase	treatment
+dsRNA IntS9	dsRNA IntS9	treatment
+dsRNA LacZ	dsRNA LacZ	treatment
+dsRNA LacI	dsRNA LacI	treatment
+dsRNA Taf1	dsRNA Taf1	treatment
+dsRNA Gaf	dsRNA Gaf	treatment
+dsRNA Hsf	dsRNA Hsf	treatment
+dsRNA M1bp	dsRNA M1bp	treatment
+dsRNA Fcp1	dsRNA Fcp1	treatment
+dsRNA EGFP	dsRNA EGFP	treatment
+dsRNA Msl2	dsRNA Msl2	treatment
+dsRNA Bap170	dsRNA Bap170	treatment
+dsRNA Nurf301	dsRNA Nurf301	treatment
+dsRNA Rad21	dsRNA Rad21	treatment
+dsRNA Nipped-B	dsRNA Nipped-B	treatment
+dsRNA IntS8	dsRNA IntS8	treatment
+enterocyte differentiation protocol	enterocyte differentiation protocol	treatment
+myotube differentiation protocol	myotube differentiation protocol	treatment
+embryoid body differentiation protocol	embryoid body differentiation protocol	treatment
+hepatocyte differentiation protocol 2	hepatocyte differentiation protocol 2	treatment
+hepatocyte differentiation protocol 1	hepatocyte differentiation protocol 1	treatment
+pancreatic differentiation protocol	pancreatic differentiation protocol	treatment
+ICI 182,780	ICI 182,780	treatment
+ICI 182780	ICI 182,780	treatment
+ICI182780	ICI 182,780	treatment
+ICI182,780	ICI 182,780	treatment
+2,5-hexanediol	2,5-hexanediol	treatment
+2,5 hexanediol	2,5-hexanediol	treatment
+1,6-hexanediol	1,6-hexanediol	treatment
+1,6 hexanediol	1,6-hexanediol	treatment
+cell sorting CD23+	cell sorting CD23+	treatment
+CD23+	cell sorting CD23+	treatment
+cell sorting CD23 positive	cell sorting CD23+	treatment
+CD23 positive	cell sorting CD23+	treatment
+cell sorting CD19+	cell sorting CD19+	treatment
+CD19+	cell sorting CD19+	treatment
+cell sorting CD19 positive	cell sorting CD19+	treatment
+CD19 positive	cell sorting CD19+	treatment
+C37 control drug	C37 control drug	treatment
+C37	C37 control drug	treatment
+C646 CBP inhibitor	C646 CBP inhibitor	treatment
+C646	C646 CBP inhibitor	treatment
+FCCP	FCCP	treatment
+Trifluoromethoxy carbonylcyanide phenylhydrazone	FCCP	treatment
+Carbonyl cyanide-p-trifluoromethoxyphenylhydrazone	FCCP	treatment
+Spt5-Pol II small-molecule inhibitor 21	Spt5-Pol II small-molecule inhibitor 21	treatment
+R1881	R1881	treatment
+metribolone	R1881	treatment
+C3	C3	treatment
+high fat diet	high fat diet	treatment
+pinometostat	pinometostat	treatment
+DMSO/ethanol	DMSO/ethanol	treatment
+SD70	SD70	treatment
+SD-70	SD70	treatment
+idelalisib	idelalisib	treatment
+duvelisib	duvelisib	treatment
+KM05283	KM05283	treatment
+KM-05283	KM05283	treatment
+adipocyte differentiation protocol	adipocyte differentiation protocol	treatment
+romidepsin	romidepsin	treatment
+heat pretreatment	heat pretreatment	treatment
+gestation	gestation	treatment
+GC-1	GC-1	treatment
+GC1	GC-1	treatment
+growth media	growth media	treatment
+methanol	methanol	treatment
+MeOH	methanol	treatment
+nitro-octadec-9-enoic acid	nitro-octadec-9-enoic acid	treatment
+9E-nitro-octadec-9-enoic acid	nitro-octadec-9-enoic acid	treatment
+9-nitro-9E-octadecenoic acid	nitro-octadec-9-enoic acid	treatment
+9E-9-nitrooctadecenoic acid	nitro-octadec-9-enoic acid	treatment
+(9E)-9-nitrooctadecenoic acid	nitro-octadec-9-enoic acid	treatment
+cisplatin	cisplatin	treatment
+vehicle	vehicle	treatment
+STI-571	STI-571	treatment
+STI571	STI-571	treatment
+imatinib	STI-571	treatment
+indoleacetic acid	indoleacetic acid	treatment
+IAA	indoleacetic acid	treatment
+thermoneutrality	thermoneutrality	treatment
+PD0325901	PD0325901	treatment
+PD 0325901	PD0325901	treatment
+PD-0325901	PD0325901	treatment
+CH99021	CH99021	treatment
+CH-99021	CH99021	treatment
+CH 99021	CH99021	treatment
+anti-CD180	anti-CD180	treatment
+antiCD180	anti-CD180	treatment
+anti-IgD-dextran	anti-IgD-dextran	treatment
+antiIgD dextran	anti-IgD-dextran	treatment
+antiIgD-dextran	anti-IgD-dextran	treatment
+anti-IgD dextran	anti-IgD-dextran	treatment
+A23187	A23187	treatment
+A-23187	A23187	treatment
+calcimycin	A23187	treatment
+permissive temperature	permissive temperature	treatment
+non-permissive temperature	non-permissive temperature	treatment
+non permissive temperature	non-permissive temperature	treatment
+nonpermissive temperature	non-permissive temperature	treatment
+mating	mating	treatment
+estradiol	estradiol	treatment
+starvation	starvation	treatment
+dimethyloxalylglycine	dimethyloxalylglycine	treatment
+DMOG	dimethyloxalylglycine	treatment
+trichostatin A	trichostatin A	treatment
+phorbol 12-myristate 13-acetate	phorbol myristate acetate	treatment
+ionomycin	ionomycin	treatment
+THZ531	THZ531	treatment
+THZ-531	THZ531	treatment
+1-NM-PP1	1-NM-PP1	treatment
+1NM-PP1	1-NM-PP1	treatment
+4-thiouridine	4-thiouridine	treatment
+4SU	4-thiouridine	treatment
+4 thiouridine	4-thiouridine	treatment
+4-SU	4-thiouridine	treatment
+AZ'5576	AZ'5576	treatment
+AZ5576	AZ'5576	treatment
+anti-TAF1 C413 antibody	anti-TAF1 C413 antibody	treatment
+antiTAF1 C413 antibody	anti-TAF1 C413 antibody	treatment
+anti-TAF1 C413	anti-TAF1 C413 antibody	treatment
+anti-TAF1	anti-TAF1 C413 antibody	treatment
+antiTAF1	anti-TAF1 C413 antibody	treatment
+mock treatment	mock treatment	treatment
+copper sulfate	copper sulfate	treatment
+CuSO4	copper sulfate	treatment
+dTAG7	dTAG7	treatment
+dTAG-7	dTAG7	treatment
+dTAG47	dTAG47	treatment
+dTAG-47	dTAG47	treatment
+NVP2	NVP2	treatment
+NVP 2	NVP2	treatment
+NVP-2	NVP2	treatment
+dTAGV-1	dTAGV-1	treatment
+dTAGV1	dTAGV-1	treatment
+INCB059872	INCB059872	treatment
+INCB-059872	INCB059872	treatment
+INCB 059872	INCB059872	treatment
+phosphonoformic acid	phosphonoformic acid	treatment
+PFA	phosphonoformic acid	treatment
+phorbol myristate acetate	phorbol myristate acetate	treatment
+PMA	phorbol myristate acetate	treatment
+TPA	phorbol myristate acetate	treatment
+tetradecanoylphorbol acetate	phorbol myristate acetate	treatment
+nucleotides	nucleotides	treatment
+BRM014	BRM014	treatment
+BRM-014	BRM014	treatment
+BRM 014	BRM014	treatment
+GSK2879552	GSK2879552	treatment
+LBH589	LBH589	treatment
+panobinostat	LBH589	treatment
+phenylephrine	phenylephrine	treatment

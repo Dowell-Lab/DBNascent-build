@@ -1,21 +1,21 @@
 organism	build	total_bases
-H. sapiens	hg38	3088269832
-M. musculus	mm10	2730855475
-Z. mays	AGPv4	
-A. thaliana	TAIR10	
-C. lupus familiaris	canFam4	
-C. elegans	ce10	
-C. griseus	criGriChoV2	
-D. melanogaster	dm6	
-E. coli	EB1	
-S. pombe	EF2	
-S. cerevisiae	R64-1-1	
-E. caballus	equCab3	
-M. esculenta	MEv6	
-M. velifer	myoLuc2	
-P. troglodytes	panTro6	
-P. falciparum	Pfalci	
-M. mulatta	rheMac8	
-R. norvegicus	rn6	
-S. scrofa	susScr11	
-T. thermophila	Ttherm	
+H. sapiens	hg38	3099922541
+M. musculus	mm10	2730871774
+Z. mays	AGPv4	2107048131
+A. thaliana	TAIR10	119146348
+C. lupus familiaris	canFam4	2482000080
+C. elegans	ce10	100286070
+C. griseus	criGriChoV2	2358167390
+D. melanogaster	dm6	143726002
+E. coli	EB1	4686137
+S. pombe	EF2	12631379
+S. cerevisiae	R64-1-1	12157105
+E. caballus	equCab3	2506966135
+M. esculenta	MEv6	582278977
+M. velifer	myoLuc2	2034575300
+P. troglodytes	panTro6	3050398082
+P. falciparum	Pfalci	23333268
+M. mulatta	rheMac8	3236224332
+R. norvegicus	rn6	2782028915
+S. scrofa	susScr11	2501912388
+T. thermophila	Ttherm	103014375
