@@ -17,7 +17,7 @@ else:
 
 # Load config file
 config = dbutils.load_config(
-    "/scratch/Shares/dowell/dbnascent/db_build/config.txt")
+    "/scratch/Shares/dowell/dbnascent/DBNascent-build/config.txt")
 
 # Define database location and (optionally) back up database
 db_url = config["file_locations"]["database"]

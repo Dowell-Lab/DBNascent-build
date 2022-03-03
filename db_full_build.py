@@ -10,7 +10,7 @@ import datetime
 
 # Load config file
 config = dbutils.load_config(
-    "/scratch/Shares/dowell/dbnascent/db_build/config.txt")
+    "/scratch/Shares/dowell/dbnascent/DBNascent-build/config.txt")
 
 # Create database connection object and database schema
 # This creates tables that do not already exist
@@ -21,7 +21,7 @@ backupdir = config["file_locations"]["backup_dir"]
 
 dbconnect = dbutils.dbnascentConnection(db_url, creds)
 dbconnect.add_tables()
-# dbconnect.backup(backupdir, False)
+dbconnect.backup(backupdir, False)
 
 # Add/update organism table
 organism_keys = list(dict(config["organism keys"]).values())
