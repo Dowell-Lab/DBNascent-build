@@ -25,7 +25,7 @@ creds = config["file_locations"]["credentials"]
 backupdir = config["file_locations"]["backup_dir"]
 
 dbconnect = dbutils.dbnascentConnection(db_url, creds)
-# dbconnect.backup(backupdir, False)
+#dbutils.dbnascent_backup(dbconnect, backupdir, False)
 
 # Add/update organism table
 org_keys = list(dict(config["organism keys"]).values())

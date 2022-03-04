@@ -27,6 +27,7 @@ Misc variables:
 
 import configparser
 import csv
+import datetime
 import numpy as np
 import os
 import re
@@ -134,7 +135,7 @@ class dbnascentConnection:
 
         return query_data
 
-    def backup(self, out_path, tables=False):
+    def backup(self, out_path, tables=False) -> None:
         """Backup database (whole or specific tables).
 
         Parameters:
@@ -151,12 +152,12 @@ class dbnascentConnection:
             tables = list(dborm.Base.metadata.tables.keys())
         for table in tables:
             outfile = out_path + "/" + table + ".dbdump"
-            q = self.session.query(table)
+            q = self.session.query(eval('dborm.' + table))
             serialized_data = dumps(q.all())
-            with open(outfile, 'w') as out:
-                out.write(str(serialized_data))
+            with open(outfile, 'wb') as out:
+                out.write(serialized_data)
 
-    def restore(self, in_path, tables):
+    def restore(self, in_path, tables) -> None:
         """Restore database (whole or specific tables).
 
         Parameters:
@@ -175,9 +176,10 @@ class dbnascentConnection:
                 tables.append(file.split(".")[0])
         for table in tables:
             infile = in_path + "/" + table + ".dbdump"
-            with open(infile) as f:
-                serialized_data = dict(f)
-            self.session.merge(serialized_data)
+            with open(infile, 'rb') as table_backup:
+                for entry in loads(table_backup.read()):
+                    self.session.merge(entry)
+            self.session.commit()
 
 #    def __enter__(self):
 #        return self.session
@@ -1073,8 +1075,5 @@ def paper_add_update(db, config, identifier, basedir):
     db.engine.execute(exptMetadata.__table__.insert(), expt_unique.data())
 
     # Add sample ids
-
-
-#engine.execute(tablename.__table__.insert(),listofdicts)
 #
 # dbutils.py ends here

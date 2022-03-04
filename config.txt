@@ -14,6 +14,7 @@ genome_bases = total_bases
 [searcheq keys]
 search_term = search_term
 db_term = db_term
+term_category = term_category
 
 [expt keys]
 srp = srp
@@ -82,6 +83,7 @@ expt_unusable = expt_unusable
 timecourse = timecourse
 baseline_control_expt = baseline_control_expt
 notes = notes
+processing_notes = processing_notes
 raw_read_depth = raw_read_depth
 trim_read_depth = trim_read_depth
 raw_read_length = raw_read_length

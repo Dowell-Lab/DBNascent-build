@@ -21,7 +21,7 @@ backupdir = config["file_locations"]["backup_dir"]
 
 dbconnect = dbutils.dbnascentConnection(db_url, creds)
 dbconnect.add_tables()
-dbconnect.backup(backupdir, False)
+dbutils.dbnascent_backup(dbconnect, backupdir, False)
 
 # Add/update organism table
 organism_keys = list(dict(config["organism keys"]).values())
@@ -54,9 +54,9 @@ eqs_unique = eqs.unique(dbsearch_keys)
 
 # If not already present, add data to database
 eqs_to_add = dbutils.entry_update(dbconnect,
-                                  "searchEq",
+                                  "searchEquiv",
                                   dbsearch_keys,
                                   eqs_unique)
 if len(eqs_to_add) > 0:
     dbconnect.engine.execute(
-        dborm.searchEq.__table__.insert(), eqs_to_add)
+        dborm.searchEquiv.__table__.insert(), eqs_to_add)

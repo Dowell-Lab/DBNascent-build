@@ -33,13 +33,14 @@ class organismInfo(Base):
     genome_bases = sql.Column(sql.BigInteger)
 
 
-class searchEq(Base):
-    __tablename__ = "searchEq"
+class searchEquiv(Base):
+    __tablename__ = "searchEquiv"
 #    metadata = MetaData()
     search_term = sql.Column(
         sql.String(length=250), primary_key=True, index=True, unique=True
     )
     db_term = sql.Column(sql.String(length=127))
+    term_category = sql.Column(sql.String(length=50))
 
 
 class exptMetadata(Base):
@@ -172,6 +173,7 @@ class sampleAccum(Base):
     timecourse = sql.Column(sql.Boolean)
     baseline_control_expt = sql.Column(sql.String(length=50))
     notes = sql.Column(sql.String(length=300))
+    processing_notes = sql.Column(sql.String(length=300))
     raw_read_depth = sql.Column(sql.Integer)
     trim_read_depth = sql.Column(sql.Integer)
     raw_read_length = sql.Column(sql.Integer)
