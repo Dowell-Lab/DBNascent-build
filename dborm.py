@@ -4,7 +4,6 @@
 # Description: ORM for DBNascent
 # Authors: Lynn Sanford <lynn.sanford@colorado.edu> and Zach Maas
 # Created: Mon Jun 10 13:11:55 2019 (-0600)
-# URL:
 #
 
 # Commentary:
@@ -25,9 +24,11 @@ Base = declarative_base()
 # MAIN TABLES
 class organismInfo(Base):
     __tablename__ = "organismInfo"
-#    metadata = MetaData()
     organism = sql.Column(
-        sql.String(length=127), primary_key=True, index=True, unique=True
+        sql.String(length=127),
+        primary_key=True,
+        index=True,
+        unique=True,
     )
     genome_build = sql.Column(sql.String(length=50))
     genome_bases = sql.Column(sql.BigInteger)
@@ -35,9 +36,11 @@ class organismInfo(Base):
 
 class searchEquiv(Base):
     __tablename__ = "searchEquiv"
-#    metadata = MetaData()
     search_term = sql.Column(
-        sql.String(length=250), primary_key=True, index=True, unique=True
+        sql.String(length=250),
+        primary_key=True,
+        index=True,
+        unique=True,
     )
     db_term = sql.Column(sql.String(length=127))
     term_category = sql.Column(sql.String(length=50))
@@ -45,20 +48,23 @@ class searchEquiv(Base):
 
 class exptMetadata(Base):
     __tablename__ = "exptMetadata"
-#    metadata = MetaData()
     expt_id = sql.Column(sql.Integer,
-                         primary_key=True,
-                         index=True,
-                         unique=True)
+        primary_key=True,
+        index=True,
+        unique=True,
+    )
     srp = sql.Column(sql.String(length=50))
     protocol = sql.Column(sql.String(length=50))
     organism = sql.Column(
-        sql.String(length=127), sql.ForeignKey("organismInfo.organism")
+        sql.String(length=127),
+        sql.ForeignKey("organismInfo.organism"),
     )
     library = sql.Column(sql.String(length=50))
     spikein = sql.Column(sql.String(length=127))
-    paper_id = sql.Column(sql.String(length=127),
-                          index=True)
+    paper_id = sql.Column(
+        sql.String(length=127),
+        index=True,
+    )
     published = sql.Column(sql.Boolean)
     year = sql.Column(sql.Integer)
     first_author = sql.Column(sql.String(length=127))
@@ -78,26 +84,32 @@ class exptMetadata(Base):
 
 class sampleID(Base):
     __tablename__ = "sampleID"
-#    metadata = MetaData()
     srr = sql.Column(sql.String(length=50),
-                     primary_key=True,
-                     index=True,
-                     unique=True)
-    sample_name = sql.Column(sql.String(length=50),
-                             index=True)
-    sample_id = sql.Column(sql.Integer,
-                           index=True)
+        primary_key=True,
+        index=True,
+        unique=True,
+    )
+    sample_name = sql.Column(
+        sql.String(length=50),
+        index=True,
+    )
+    sample_id = sql.Column(
+        sql.Integer,
+        index=True,
+    )
 
 
 class geneticInfo(Base):
     __tablename__ = "geneticInfo"
-#    metadata = MetaData()
-    genetic_id = sql.Column(sql.Integer,
-                            primary_key=True,
-                            index=True,
-                            unique=True)
+    genetic_id = sql.Column(
+        sql.Integer,
+        primary_key=True,
+        index=True,
+        unique=True,
+    )
     organism = sql.Column(
-        sql.String(length=127), sql.ForeignKey("organismInfo.organism")
+        sql.String(length=127),
+        sql.ForeignKey("organismInfo.organism"),
     )
     sample_type = sql.Column(sql.String(length=127))
     cell_type = sql.Column(sql.String(length=127))
@@ -109,11 +121,12 @@ class geneticInfo(Base):
 
 class conditionInfo(Base):
     __tablename__ = "conditionInfo"
-#    metadata = MetaData()
-    condition_id = sql.Column(sql.Integer,
-                              primary_key=True,
-                              index=True,
-                              unique=True)
+    condition_id = sql.Column(
+        sql.Integer,
+        primary_key=True,
+        index=True,
+        unique=True,
+    )
     condition_type = sql.Column(sql.String(length=127))
     treatment = sql.Column(sql.String(length=127))
     conc_intens = sql.Column(sql.String(length=50))
@@ -127,18 +140,21 @@ class conditionInfo(Base):
 sampleCondition = sql.Table(
     "sampleCondition",
     Base.metadata,
-    sql.Column("sample_id",
-               sql.Integer,
-               sql.ForeignKey("sampleID.sample_id")),
-    sql.Column("condition_id",
-               sql.Integer,
-               sql.ForeignKey("conditionInfo.condition_id")),
+    sql.Column(
+        "sample_id",
+        sql.Integer,
+        sql.ForeignKey("sampleID.sample_id"),
+    ),
+    sql.Column(
+        "condition_id",
+        sql.Integer,
+        sql.ForeignKey("conditionInfo.condition_id"),
+    ),
 )
 
 
 class linkIDs(Base):
     __tablename__ = "linkIDs"
-#    metadata = MetaData()
     sample_id = sql.Column(
         sql.Integer,
         sql.ForeignKey("sampleID.sample_id"),
@@ -146,19 +162,26 @@ class linkIDs(Base):
         index=True,
         unique=True,
     )
-    genetic_id = sql.Column(sql.Integer,
-                            sql.ForeignKey("geneticInfo.genetic_id"))
-    expt_id = sql.Column(sql.Integer,
-                         sql.ForeignKey("exptMetadata.expt_id"))
-    sample_name = sql.Column(sql.String(length=127),
-                         sql.ForeignKey("sampleID.sample_name"))
-    paper_id = sql.Column(sql.String(length=127),
-                         sql.ForeignKey("exptMetadata.paper_id"))
+    genetic_id = sql.Column(
+        sql.Integer,
+        sql.ForeignKey("geneticInfo.genetic_id"),
+    )
+    expt_id = sql.Column(
+        sql.Integer,
+        sql.ForeignKey("exptMetadata.expt_id"),
+    )
+    sample_name = sql.Column(
+        sql.String(length=127),
+        sql.ForeignKey("sampleID.sample_name"),
+    )
+    paper_id = sql.Column(
+        sql.String(length=127),
+        sql.ForeignKey("exptMetadata.paper_id"),
+    )
 
 
 class sampleAccum(Base):
     __tablename__ = "sampleAccum"
-#    metadata = MetaData()
     sample_id = sql.Column(
         sql.Integer,
         sql.ForeignKey("sampleID.sample_id"),
@@ -198,9 +221,11 @@ class sampleAccum(Base):
 
 class nascentflowMetadata(Base):
     __tablename__ = "nascentflowMetadata"
-#    metadata = MetaData()
     nascentflow_id = sql.Column(
-        sql.Integer, primary_key=True, index=True, unique=True
+        sql.Integer,
+        primary_key=True,
+        index=True,
+        unique=True,
     )
     nascentflow_version = sql.Column(sql.String(length=127))
     pipeline_revision_hash = sql.Column(sql.String(length=127))
@@ -233,20 +258,26 @@ class nascentflowMetadata(Base):
 sampleNascentflow = sql.Table(
     "sampleNascentflow",
     Base.metadata,
-    sql.Column("sample_id",
-               sql.Integer,
-               sql.ForeignKey("sampleID.sample_id")),
-    sql.Column("nascentflow_id",
-               sql.Integer,
-               sql.ForeignKey("nascentflowMetadata.nascentflow_id")),
+    sql.Column(
+        "sample_id",
+        sql.Integer,
+        sql.ForeignKey("sampleID.sample_id"),
+    ),
+    sql.Column(
+        "nascentflow_id",
+        sql.Integer,
+        sql.ForeignKey("nascentflowMetadata.nascentflow_id"),
+    ),
 )
 
 
 class bidirflowMetadata(Base):
     __tablename__ = "bidirflowMetadata"
-#    metadata = MetaData()
     bidirflow_id = sql.Column(
-        sql.Integer, primary_key=True, index=True, unique=True
+        sql.Integer,
+        primary_key=True,
+        index=True,
+        unique=True,
     )
     bidirflow_version = sql.Column(sql.String(length=127))
     pipeline_revision_hash = sql.Column(sql.String(length=127))
@@ -272,54 +303,16 @@ class bidirflowMetadata(Base):
 sampleBidirflow = sql.Table(
     "sampleBidirflow",
     Base.metadata,
-    sql.Column("sample_id",
-               sql.Integer,
-               sql.ForeignKey("sampleID.sample_id")),
-    sql.Column("bidirflow_id",
-               sql.Integer,
-               sql.ForeignKey("bidirflowMetadata.bidirflow_id")),
+    sql.Column(
+        "sample_id",
+        sql.Integer,
+        sql.ForeignKey("sampleID.sample_id"),
+    ),
+    sql.Column(
+        "bidirflow_id",
+        sql.Integer,
+        sql.ForeignKey("bidirflowMetadata.bidirflow_id"),
+    ),
 )
-
-# The following were created by Zach and we may or may not use...
-
-# class tf(Base):
-#    __tablename__ = "tf"
-#    tf_id = sql.Column(sql.String(length=127), primary_key=True)
-#    tf_alias = sql.Column(sql.String(length=127))
-
-
-# class pipeline_status(Base):
-#    __tablename__ = "pipeline_status"
-#    srr_id = sql.Column(
-#        sql.String(length=127),
-#        sql.ForeignKey("srr_metadata.srr_id"),
-#        primary_key=True,
-#    )
-#    fastqc_complete = sql.Column(sql.Boolean)
-#    bbduk_complete = sql.Column(sql.Boolean)
-#    hisat2_complete = sql.Column(sql.Boolean)
-#    samtools_complete = sql.Column(sql.Boolean)
-#    fastq_dump_complete = sql.Column(sql.Boolean)
-#    pileup_complete = sql.Column(sql.String(length=127))
-#    preseq_complete = sql.Column(sql.Boolean)
-#    rseqc_complete = sql.Column(sql.String(length=127))
-#    bedtools_complete = sql.Column(sql.Boolean)
-#    igv_tools_complete = sql.Column(sql.Boolean)
-#    fstitch_complete = sql.Column(sql.Boolean)
-#    tfit_complete = sql.Column(sql.Boolean)
-
-
-# class md_score(Base):
-#    __tablename__ = "md_score"
-#    srr_id = sql.Column(
-#        sql.String(length=127),
-#        sql.ForeignKey("srr_metadata.srr_id"),
-#        primary_key=True,
-#    )
-#    tf_id = sql.Column(sql.String, sql.ForeignKey("tf.tf_id"))
-#    erna_type = sql.Column(sql.String(length=127))
-#    md_score_expected = sql.Column(sql.Integer)
-#    md_score_std = sql.Column(sql.Integer)
-
 
 # dborm.py ends here
