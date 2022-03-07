@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=dbnascent_build  # Job name
 #SBATCH --mail-type=NONE # Mail events (NONE, BEGIN, END, FAIL, ALL)
-#SBATCH --mail-user=lynn.sanford@colorado.edu # Where to send mail
+#SBATCH --mail-user=<email> # Where to send mail
 #SBATCH --nodes=1
 #SBATCH --ntasks=1 # Number of CPU (processer cores i.e. tasks)
 #SBATCH --time=02:00:00 # Time limit hrs:min:sec
@@ -23,7 +23,7 @@ printf "\nScript: $0\n"
 printf "\nYou've requested $SLURM_CPUS_ON_NODE core(s).\n"
 
 # Run scripts
-python3 ./db_full_build.py
+python3 ./db_global_add_update.py
 
 for dir in /Shares/dbnascent/*/; do
 paper_id=$(echo "$dir" | awk -F/ '{print $4}')
