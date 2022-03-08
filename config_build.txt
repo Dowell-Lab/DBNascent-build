@@ -162,5 +162,3 @@ conditionInfo =  INNER JOIN exptCondition ON exptCondition.sample_id = linkIDs.s
 sampleAccum =  INNER JOIN sampleAccum ON sampleAccum.sample_id = linkIDs.sample_id
 nascentflowMetadata =  INNER JOIN nascentflowMetadata ON nascentflowMetadata.sample_id = linkIDs.sample_id
 bidirflowMetadata =  INNER JOIN bidirflowMetadata ON bidirflowMetadata.sample_id = linkIDs.sample_id
-
-
