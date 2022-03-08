@@ -38,7 +38,7 @@ else:
 
 # Load config file
 config = dbutils.load_config(
-    "/scratch/Shares/dowell/dbnascent/DBNascent-build/config.txt"
+    "/scratch/Shares/dowell/dbnascent/DBNascent-build/config_build.txt"
 )
 
 # Define database location and connection and metadata paths
@@ -58,7 +58,7 @@ sampmeta_path = (str(config["file_locations"]["db_data"]) +
 
 # Raise error if paper identifier is not valid
 if not exists(exptmeta_path):
-    sys.exit(("Paper metadata not present at " + exptmeta_path))
+    sys.exit(("Paper metadata not present for " + paper_id))
 
 # Back up entire database (optional)
 # Should not use when building whole database
@@ -187,7 +187,7 @@ dbexpt_dump = dbconnect.reflect_table("exptMetadata")
 dbgene_dump = dbconnect.reflect_table("geneticInfo")
 
 # Add IDs to main metatable for matching entries
-for sample in samp.data:
+for sample in sampmeta.data:
     dbutils.key_store_compare(
         sample,
         dbsamp_dump,
@@ -208,7 +208,7 @@ for sample in samp.data:
     )
 
 # If not already present, add linked IDs to database
-link_unique = samp.unique(link_keys)
+link_unique = sampmeta.unique(link_keys)
 link_to_add = dbutils.entry_update(
                   dbconnect,
                   "linkIDs",
@@ -232,8 +232,8 @@ dbcond_keys.append("sample_name")
 cond_full_keys = list(dict(config["condition keys"]).values())
 dbcond_full_keys = list(dict(config["condition keys"]).keys())
 
-samp.key_replace(cond_keys, dbcond_keys)
-cond_preparse = samp.key_grab(dbcond_keys)
+sampmeta.key_replace(cond_keys, dbcond_keys)
+cond_preparse = sampmeta.key_grab(dbcond_keys)
 
 # Parse metadata strings and store values with db keys
 cond_parsed = []
@@ -244,9 +244,10 @@ for condition in cond_preparse:
         times = condition["times"].split(";")
         
         # Check if lengths are equivalent
-        if (len(cond_types) != len(treatments)) or 
-               (len(cond_types) != len(times)):
-            raise Error("Treatment parsing error")
+        if ((len(cond_types) != len(treatments)) 
+            or (len(cond_types) != len(times))
+        ):
+            raise Error("Treatment parsing error: " + paper_id)
         
         for i in range(len(cond_types)):
             new_cond = dict()
@@ -379,7 +380,7 @@ for condition in cond_parsed:
             condition["sample_id"] = sample["sample_id"]
     # Add condition_id to matching condition entries
     dbutils.key_store_compare(
-        entry,
+        condition,
         dbcond_data,
         dbcond_full_keys,
         ["condition_id"]
@@ -410,10 +411,10 @@ data_path = config["file_locations"]["db_data"]
 accum_keys = list(dict(config["metatable accum keys"]).values())
 dbaccum_keys = list(dict(config["metatable accum keys"]).keys())
 dbaccum_full_keys = list(dict(config["accum keys"]).keys())
-samp.key_replace(accum_keys, dbaccum_keys)
+sampmeta.key_replace(accum_keys, dbaccum_keys)
 
 # Scrape all QC data for each sample and add to sample dict
-for sample in samp.data:
+for sample in sampmeta.data:
     fastqc_dict = dbutils.scrape_fastqc(
         sample["paper_id"],
         sample["sample_name"],
@@ -465,12 +466,12 @@ for sample in samp.data:
     sample["replicate"] = rep_num[1]
 
 # Change datatypes for unique calc
-for sample in samp.data:
+for sample in sampmeta.data:
     for key in sample:
         sample[key] = str(sample[key])
 
 # If not present, add sample accum info to database
-accum_unique = samp.unique(dbaccum_full_keys)
+accum_unique = sampmeta.unique(dbaccum_full_keys)
 accum_to_add = dbutils.entry_update(
                    dbconnect,
                    "sampleAccum",
