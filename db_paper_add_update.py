@@ -1,15 +1,36 @@
 #!/usr/bin/env python
-# coding: utf-8
+#
+# Filename: db_paper_add_update.py
+# Description: Changes to paper/sample DBNascent values
+# Authors: Lynn Sanford <lynn.sanford@colorado.edu>
+#
 
-# Script for adding and updating DBNascent values
+# Commentary:
+#
+# This file contains code for adding/changing paper- 
+# and sample-specific values in the Dowell Lab's 
+# Nascent Database.
+#
+
+#
+# Parameters:
+#
+# This script takes the paper identifier to process 
+# as its sole argument
+#
+
+# Code:
 
 # Import
 import dbutils
 import dborm
-import datetime
+from os.path import exists
 import re
 import sys
 
+### Step 1: Define paths and database connection ###
+
+# Raise error if no argument given
 if len(sys.argv) < 2:
     raise Error("No paper identifier given")
 else:
@@ -17,38 +38,37 @@ else:
 
 # Load config file
 config = dbutils.load_config(
-    "/scratch/Shares/dowell/dbnascent/DBNascent-build/config.txt")
+    "/scratch/Shares/dowell/dbnascent/DBNascent-build/config.txt"
+)
 
-# Define database location and (optionally) back up database
+# Define database location and connection and metadata paths
 db_url = config["file_locations"]["database"]
 creds = config["file_locations"]["credentials"]
-backupdir = config["file_locations"]["backup_dir"]
 
 dbconnect = dbutils.dbnascentConnection(db_url, creds)
+
+exptmeta_path = (str(config["file_locations"]["db_data"]) + 
+                 str(paper_id) +
+                 "/metadata/expt_metadata.txt"
+                )
+sampmeta_path = (str(config["file_locations"]["db_data"]) + 
+                 str(paper_id) +
+                 "/metadata/sample_metadata.txt"
+                )
+
+# Raise error if paper identifier is not valid
+if not exists(exptmeta_path):
+    sys.exit("Paper metadata not present in data directory")
+
+# Back up entire database (optional)
+# Should not use when building whole database
+# May be useful for adding papers individually later
+backupdir = config["file_locations"]["backup_dir"]
 #dbutils.dbnascent_backup(dbconnect, backupdir, False)
 
-# Add/update organism table
-org_keys = list(dict(config["organism keys"]).values())
-dborg_keys = list(dict(config["organism keys"]).keys())
-orgtable_path = config["file_locations"]["organism_table"]
+### Step 2: Parse paper and sample metadata tables ###
 
-# Read in organism table and make sure entries are unique
-orgs = dbutils.Metatable(orgtable_path)
-orgs.key_replace(org_keys, dborg_keys)
-orgs_unique = orgs.unique(dborg_keys)
-
-# If not already present, add data to database
-orgs_to_add = dbutils.entry_update(dbconnect,
-                                   "organismInfo",
-                                   dborg_keys,
-                                   orgs_unique)
-if len(orgs_to_add) > 0:
-    dbconnect.engine.execute(
-        dborm.organismInfo.__table__.insert(), orgs_to_add)
-
-# Parse paper and sample metadata tables
-dbconnect = dbutils.dbnascentConnection(db_url, creds)
-
+# Load keys
 expt_keys = list(dict(config["expt keys"]).values())
 dbexpt_keys = list(dict(config["expt keys"]).keys())
 samp_keys = list(dict(config["sample keys"]).values())
@@ -56,150 +76,198 @@ dbsamp_keys = list(dict(config["sample keys"]).keys())
 genetic_keys = list(dict(config["genetic keys"]).values())
 dbgenetic_keys = list(dict(config["genetic keys"]).keys())
 
-exptmeta_path = (str(config["file_locations"]["db_data"]) + str(paper_id) +
-                 "/metadata/expt_metadata.txt")
-sampmeta_path = (str(config["file_locations"]["db_data"]) + str(paper_id) +
-                 "/metadata/sample_metadata.txt")
+# Read in files and make full metadata table
+exptmeta = dbutils.Metatable(exptmeta_path)
+sampmeta = dbutils.Metatable(sampmeta_path)
 
-# Read in experimental metadata
-expt = dbutils.Metatable(exptmeta_path)
-
-# Read in sample metadata and append experimental for whole metadata table
-samp = dbutils.Metatable(sampmeta_path)
-for entry in samp.data:
-    entry.update(expt.data[0])
-    if not entry["srz"]:
-        entry["srz"] = entry["srr"]
+for sample in sampmeta.data:
+    sample.update(exptmeta.data[0])
+    if not sample["srz"]:
+        sample["srz"] = sample["srr"]
 
 # Replace text file keys with database keys and find unique entries
-samp.key_replace(samp_keys, dbsamp_keys)
-samp.key_replace(expt_keys, dbexpt_keys)
-samp.key_replace(genetic_keys, dbgenetic_keys)
+sampmeta.key_replace(samp_keys, dbsamp_keys)
+sampmeta.key_replace(expt_keys, dbexpt_keys)
+sampmeta.key_replace(genetic_keys, dbgenetic_keys)
 
-expt_unique = samp.unique(dbexpt_keys)
-samp_unique = samp.unique(dbsamp_keys)
-gene_unique = samp.unique(dbgenetic_keys)
+expt_unique = sampmeta.unique(dbexpt_keys)
+samp_unique = sampmeta.unique(dbsamp_keys)
+gene_unique = sampmeta.unique(dbgenetic_keys)
 
-# If not already present, add experimental metadata to database
-expt_to_add = dbutils.entry_update(dbconnect,
-                                   "exptMetadata",
-                                   dbexpt_keys,
-                                   expt_unique)
-for entry in expt_to_add:
-    for key in entry:
-        if entry[key] == '1':
-            entry[key] = True
-        elif entry[key] == '0':
-            entry[key] = False
+### Step 3: If not present, add experimental metadata to database ###
+expt_to_add = dbutils.entry_update(
+                  dbconnect,
+                  "exptMetadata",
+                  dbexpt_keys,
+                  expt_unique
+              )
+for expt in expt_to_add: # Replace text 1/0 with boolean values
+    for key in expt:
+        if expt[key] == '1':
+            expt[key] = True
+        elif expt[key] == '0':
+            expt[key] = False
 if len(expt_to_add) > 0:
     dbconnect.engine.execute(
-        dborm.exptMetadata.__table__.insert(), expt_to_add)
+        dborm.exptMetadata.__table__.insert(),
+        expt_to_add
+    )
+
+### Step 4: If not present, add sample ids to database ###
 
 # Find max sample_id currently in db
 dbsamp_dump = dbconnect.reflect_table("sampleID")
 dbsamp = dbutils.Metatable(meta_path=None, dictlist=dbsamp_dump)
 curr_id = 0
-for entry in dbsamp.data:
-    if entry["sample_id"] > curr_id:
-        curr_id = entry["sample_id"]
+for dbsample in dbsamp.data:
+    if dbsample["sample_id"] > curr_id:
+        curr_id = dbsample["sample_id"]
 
 # If not already present, add samples to database with new ids
-samp_to_add = dbutils.entry_update(dbconnect,
-                                   "sampleID",
-                                   dbsamp_keys,
-                                   samp_unique)
+samp_to_add = dbutils.entry_update(
+                  dbconnect,
+                  "sampleID",
+                  dbsamp_keys,
+                  samp_unique
+              )
 if len(samp_to_add) > 0:
-    samps_meta = dbutils.Metatable(meta_path=None, dictlist=samp_to_add)
-    samp_id_hash = samps_meta.unique(["sample_name"])
-    for entry in samp_id_hash:
+    # Make hash of unique samples (srz OR srr if no srz) to id values
+    samp_for_hash = dbutils.Metatable(
+                        meta_path=None,
+                        dictlist=samp_to_add
+                    )
+    samp_id_hash = samp_for_hash.unique(["sample_name"])
+    for idhash in samp_id_hash:
         curr_id = curr_id + 1
-        entry["sample_id"] = curr_id
+        idhash["sample_id"] = curr_id
 
-    for entry in samp_to_add:
-        hash_entry = list(filter(lambda samp_id_hash: samp_id_hash["sample_name"]
-                                 == entry["sample_name"], samp_id_hash))[0]
-        entry["sample_id"] = hash_entry["sample_id"]
+    # Add sample id value to all srrs in a sample name based on hash
+    for sample in samp_to_add:
+        hash_entry = list(filter(lambda samp_id_hash:
+                                 samp_id_hash["sample_name"] ==
+                                 sample["sample_name"],
+                                 samp_id_hash
+                                )
+                         )[0]
+        sample["sample_id"] = hash_entry["sample_id"]
 
+    # Add to database
     dbconnect.engine.execute(
-        dborm.sampleID.__table__.insert(), samp_to_add)
+        dborm.sampleID.__table__.insert(),
+        samp_to_add
+    )
 
-# If not already present, add genetic info to database
-gene_to_add = dbutils.entry_update(dbconnect,
-                                   "geneticInfo",
-                                   dbgenetic_keys,
-                                   gene_unique)
+### Step 5: If not present, add genetic info to database ###
+
+gene_to_add = dbutils.entry_update(
+                  dbconnect,
+                  "geneticInfo",
+                  dbgenetic_keys,
+                  gene_unique
+              )
 if len(gene_to_add) > 0:
     dbconnect.engine.execute(
-        dborm.geneticInfo.__table__.insert(), gene_to_add)
+        dborm.geneticInfo.__table__.insert(),
+        gene_to_add
+    )
 
-# Make linkIDs table
+### Step 6: Make linkIDs table and add to database ###
+
 dbconnect = dbutils.dbnascentConnection(db_url, creds)
-link_keys = ["sample_id", "genetic_id", "expt_id",
-             "sample_name", "paper_id"]
+link_keys = ["sample_id",
+             "genetic_id", 
+             "expt_id",
+             "sample_name",
+             "paper_id",
+            ]
 
 # Reflect IDs currently in database
 dbsamp_dump = dbconnect.reflect_table("sampleID")
 dbexpt_dump = dbconnect.reflect_table("exptMetadata")
 dbgene_dump = dbconnect.reflect_table("geneticInfo")
 
-# Add IDs for matching entries
-for entry in samp.data:
-    dbutils.key_store_compare(entry, dbsamp_dump,
-                              dbsamp_keys, ["sample_id"])
-    dbutils.key_store_compare(entry, dbexpt_dump,
-                              dbexpt_keys, ["expt_id"])
-    dbutils.key_store_compare(entry, dbgene_dump,
-                              dbgenetic_keys, ["genetic_id"])
+# Add IDs to main metatable for matching entries
+for sample in samp.data:
+    dbutils.key_store_compare(
+        sample,
+        dbsamp_dump,
+        dbsamp_keys,
+        ["sample_id"]
+    )
+    dbutils.key_store_compare(
+        sample,
+        dbexpt_dump,
+        dbexpt_keys,
+        ["expt_id"]
+    )
+    dbutils.key_store_compare(
+        sample,
+        dbgene_dump,
+        dbgenetic_keys,
+        ["genetic_id"]
+    )
 
 # If not already present, add linked IDs to database
 link_unique = samp.unique(link_keys)
-link_to_add = dbutils.entry_update(dbconnect,
-                                   "linkIDs",
-                                   link_keys,
-                                   link_unique)
+link_to_add = dbutils.entry_update(
+                  dbconnect,
+                  "linkIDs",
+                  link_keys,
+                  link_unique
+              )
 if len(link_to_add) > 0:
     dbconnect.engine.execute(
-        dborm.linkIDs.__table__.insert(), link_to_add)
+        dborm.linkIDs.__table__.insert(),
+        link_to_add
+    )
 
-# Add condition info and build condition table
+### Step 7: Add condition info and build condition table ###
+
 dbconnect = dbutils.dbnascentConnection(db_url, creds)
+# cond_keys are as written in metadata, preparsing
+# cond_full_keys are all keys in database, postparsing
 cond_keys = list(dict(config["metatable condition keys"]).values())
 dbcond_keys = list(dict(config["metatable condition keys"]).keys())
 dbcond_keys.append("sample_name")
 cond_full_keys = list(dict(config["condition keys"]).values())
 dbcond_full_keys = list(dict(config["condition keys"]).keys())
 
-# Replace text file keys with database keys and separate conditions
 samp.key_replace(cond_keys, dbcond_keys)
 cond = samp.key_grab(dbcond_keys)
 
-# Split metadata strings and store values with db keys
+# Parse metadata strings and store values with db keys
 cond_parsed = []
-for entry in cond:
-    if entry["treatment"]:
-        cond_types = entry["condition_type"].split(";")
-        treatments = entry["treatment"].split(";")
-        times = entry["times"].split(";")
+for condition in cond:
+    if condition["treatment"]:
+        cond_types = condition["condition_type"].split(";")
+        treatments = condition["treatment"].split(";")
+        times = condition["times"].split(";")
+        
+        # Check if lengths are equivalent
+        if (len(cond_types) != len(treatments)) or 
+               (len(cond_types) != len(times)):
+            raise Error("Treatment parsing error")
+        
         for i in range(len(cond_types)):
-            new_entry = dict()
-            tx = treatments[i].split("(")
-            tm = times[i].split(",")
-            new_entry["sample_name"] = entry["sample_name"]
-            new_entry["condition_type"] = cond_types[i]
-            new_entry["treatment"] = tx[0]
-            if len(tx) > 1:
-                new_entry["conc_intens"] = tx[1].split(")")[0]
+            new_cond = dict()
+            treatment = treatments[i].split("(")
+            time = times[i].split(",")
+            new_cond["sample_name"] = condition["sample_name"]
+            new_cond["condition_type"] = cond_types[i]
+            new_cond["treatment"] = treatment[0]
+            if len(treatment) > 1:
+                new_cond["conc_intens"] = treatment[1].split(")")[0]
             else:
-                new_entry["conc_intens"] = ""
+                new_cond["conc_intens"] = ""
 
-            if len(tm) > 1:
-                new_entry["start_time"] = int(tm[0])
-                new_entry["end_time"] = int(tm[1])
-                new_entry["time_unit"] = tm[2]
+            if len(time) > 1:
+                new_cond["start_time"] = int(time[0])
+                new_cond["end_time"] = int(time[1])
+                new_cond["time_unit"] = time[2]
 
                 # Calculate duration and units
-                duration = int(tm[1]) - int(tm[0])
-                if tm[2] == "s":
+                duration = int(time[1]) - int(time[0])
+                if time[2] == "s":
                     if duration % 60 == 0:
                         if duration % 3600 == 0:
                             if duration % 86400 == 0:
@@ -213,7 +281,7 @@ for entry in cond:
                             duration_unit = "min"
                     else:
                         duration_unit = "s"
-                elif tm[2] == "min":
+                elif time[2] == "min":
                     if duration % 60 == 0:
                         if duration % 1440 == 0:
                             duration = duration / 1440
@@ -223,7 +291,7 @@ for entry in cond:
                             duration_unit = "hr"
                     else:
                         duration_unit = "min"
-                elif tm[2] == "hr":
+                elif time[2] == "hr":
                     if duration % 24 == 0:
                         duration = duration / 24
                         duration_unit = "day"
@@ -232,31 +300,33 @@ for entry in cond:
                 else:
                     duration_unit = "day"
 
-                new_entry["duration"] = int(duration)
-                new_entry["duration_unit"] = duration_unit
+                new_cond["duration"] = int(duration)
+                new_cond["duration_unit"] = duration_unit
             else:
-                new_entry["start_time"] = ""
-                new_entry["end_time"] = ""
-                new_entry["time_unit"] = ""
-                new_entry["duration"] = ""
-                new_entry["duration_unit"] = ""
+                new_cond["start_time"] = ""
+                new_cond["end_time"] = ""
+                new_cond["time_unit"] = ""
+                new_cond["duration"] = ""
+                new_cond["duration_unit"] = ""
 
-            cond_parsed.append(new_entry)
+            cond_parsed.append(new_cond)
 
     # If no treatment, store empty values
     else:
-        new_entry = dict()
-        new_entry["sample_name"] = entry["sample_name"]
-        new_entry["condition_type"] = "no treatment"
-        new_entry["treatment"] = ""
-        new_entry["conc_intens"] = ""
-        new_entry["start_time"] = ""
-        new_entry["end_time"] = ""
-        new_entry["time_unit"] = ""
-        new_entry["duration"] = ""
-        new_entry["duration_unit"] = ""
-        cond_parsed.append(new_entry)
+        new_cond = dict()
+        new_cond["sample_name"] = condition["sample_name"]
+        new_cond["condition_type"] = "no treatment"
+        new_cond["treatment"] = ""
+        new_cond["conc_intens"] = ""
+        new_cond["start_time"] = ""
+        new_cond["end_time"] = ""
+        new_cond["time_unit"] = ""
+        new_cond["duration"] = ""
+        new_cond["duration_unit"] = ""
+        cond_parsed.append(new_cond)
 
+
+####################
 # Extract unique conditions and store integer blanks correctly
 cond = dbutils.Metatable(meta_path=None, dictlist=cond_parsed)
 cond_unique = cond.unique(dbcond_full_keys)
