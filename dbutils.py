@@ -1,12 +1,12 @@
 """Functions for building and maintaining DBNascent.
 
 Filename: dbutils.py
-Authors: Lynn Sanford <lynn.sanford@colorado.edu> and Zach Maas
+Authors: Lynn Sanford <lynn.sanford@colorado.edu>
 
 Commentary:
     This module contains utility functions and classes for
     reducing the total amount of code needed for building and
-    updating the database
+    updating the Dowell Lab Nacent Database
 
 Classes:
     dbnascentConnection
@@ -14,14 +14,21 @@ Classes:
 
 Functions:
     load_config(file) -> object
-    add_tables(db_url)
-    table_parse(file) -> list of dicts
-    key_grab(dict, list) -> list of lists
-    get_unique_table(file, list) -> dict
-    value_compare(object, dict, dict)
-    object_as_dict(object)
-    scrape_fastqc(object) -> list of dicts
-
+    value_compare(dict, dict, dict) -> boolean
+    listdict_compare(dict, dict, list) -> list
+    key_store_compare(dict, list, list, list) -> dict
+    object_as_dict(object) -> dict
+    entry_update(object, str, list, list -> list
+    scrape_fastqc(str, str, str, dict) -> dict
+    scrape_picard(str, str, str) -> dict
+    scrape_mapstats(str, str, str, dict) -> dict
+    scrape_rseqc(str, str, str) -> dict
+    scrape_preseq(str, str, str) -> dict
+    scrape_pileup(str, str, str) -> dict
+    sample_qc_calc(dict) -> int
+    paper_qc_calc(list) -> float
+    add_version_info(object, str, str, str, list) -> list
+    
 Misc variables:
 """
 
@@ -31,28 +38,47 @@ import datetime
 import numpy as np
 import os
 import re
-import pymysql
-import sqlalchemy as sql
-from sqlalchemy.ext.serializer import loads, dumps
-from sqlalchemy.orm import sessionmaker
 import shutil
 from statistics import median
 import yaml
 import zipfile as zp
+
 import dborm
+import pymysql
+import sqlalchemy as sql
+from sqlalchemy.ext.serializer import loads, dumps
+from sqlalchemy.orm import sessionmaker
 
 
 # Database Connection Handler
 class dbnascentConnection:
-    """A class to handle connection to the mysql database.
+    """A class to handle connection to the MySQL database.
 
     Attributes:
-        engine (dialect, pool objects) : engine created by sqlalchemy
+        engine (dialect, pool objects) : 
+            engine created by sqlalchemy
 
-        session (session object) : ORM session object created by sqlalchemy
+        Session (session binding object) :
+            ORM session binding object created by sqlalchemy
+
+        session (session object) : 
+            ORM session object created by sqlalchemy
 
     Methods:
-        __enter__ :
+        add_tables() :
+            Adds tables from ORM to database
+
+        reflect_table(table, filter_crit=None) -> list:
+            Pulls table data from database, optionally filtered
+            by filter criteria
+
+        backup(out_path, tables=False) :
+            Backs up database to an external location, optionally
+            limited to specific tables
+
+        restore(in_path, tables=False) :
+            Restores database from backups, optionally limited to
+            specific tables
     """
 
     engine = None
@@ -83,6 +109,7 @@ class dbnascentConnection:
             raise FileNotFoundError(
                 "Database url must be provided"
             )
+
         self.Session = sessionmaker(bind=self.engine)
         self.session = self.Session()
 
@@ -105,38 +132,41 @@ class dbnascentConnection:
         Can optionally add filtering criteria.
 
         Parameters:
-            table (str) : string of table name from ORM
+            table (str) : table name from ORM
 
             filter_crit (dict) : filter criteria for table
+                Only currently takes "=" filter criteria
 
         Returns:
-            query_data (list of dicts) : all data in table
-                                         matching filter criteria
+            query_results (list of dicts) : all data in table
+                                            matching filter criteria
         """
-        query_data = []
+        query_results = []
 
         query_str = "SELECT * FROM " + table
         if filter_crit is not None:
             query_str = query_str + " WHERE "
             i = 0
-            for key in filter_crit:
+            for filtkey in filter_crit:
                 if i == 0:
-                    query_str = (query_str + str(key) +
-                                 ' = "' + str(filter_crit[key]) + '"')
+                    query_str = (query_str + str(filtkey) +
+                                 ' = "' + str(filter_crit[filtkey]) + '"')
                     i = (i + 1)
                 else:
-                    query_str = (query_str + " AND " + str(key) +
-                                 ' = "' + str(filter_crit[key]) + '"')
+                    query_str = (query_str + " AND " + str(filtkey) +
+                                 ' = "' + str(filter_crit[filtkey]) + '"')
 
         sqlquery = self.session.execute(sql.text(query_str)).fetchall()
 
-        for entry in sqlquery:
-            query_data.append(dict(entry))
+        for query_res in sqlquery:
+            query_results.append(dict(query_res))
 
-        return query_data
+        return query_results
 
     def backup(self, out_path, tables=False) -> None:
-        """Backup database (whole or specific tables).
+        """Backup database.
+
+        Can optionally limit to specific tables.
 
         Parameters:
             out_path (str) : path to backup file directory
@@ -147,18 +177,29 @@ class dbnascentConnection:
         Returns:
             none
         """
+        # Make subdirectory with timestamp
+        if not out_path:
+            out_path = "/Shares/dbnascent/db_backups"
+        now = datetime.datetime.now()
+        now_dir = now.strftime("%Y%m%d_%H%M%S")
+        backup_dir = out_path + "/" + now_dir
+        os.makedirs(backup_dir)
+
+        # Send contents of each table to serialized file
         if not tables:
             dborm.Base.metadata.reflect(bind=self.engine)
             tables = list(dborm.Base.metadata.tables.keys())
         for table in tables:
-            outfile = out_path + "/" + table + ".dbdump"
+            outfile = backup_dir + "/" + table + ".dbdump"
             q = self.session.query(eval('dborm.' + table))
             serialized_data = dumps(q.all())
             with open(outfile, 'wb') as out:
                 out.write(serialized_data)
 
-    def restore(self, in_path, tables) -> None:
-        """Restore database (whole or specific tables).
+    def restore(self, in_path, tables=False) -> None:
+        """Restore database.
+
+        Can optionally limit to specific tables.
 
         Parameters:
             in_path (str) : path to backup file directory
@@ -177,16 +218,9 @@ class dbnascentConnection:
         for table in tables:
             infile = in_path + "/" + table + ".dbdump"
             with open(infile, 'rb') as table_backup:
-                for entry in loads(table_backup.read()):
-                    self.session.merge(entry)
+                for dbentry in loads(table_backup.read()):
+                    self.session.merge(dbentry)
             self.session.commit()
-
-#    def __enter__(self):
-#        return self.session
-#
-#    def __exit__(self, exc_type, exc_val, exc_tb):
-#        self.session.commit()
-#        self.engine.dispose()
 
 
 # Metatable class definition
@@ -1017,63 +1051,4 @@ def add_version_info(dbconn, paper_id, data_path, vertype, dbver_keys):
 
     return ver_table
 
-
-def dbnascent_backup(db, basedir, tables):
-    """Create new database backup.
-
-    Parameters:
-        db (dbnascentConnection object) : current database connection
-
-        basedir (str) : path to base backup directory
-                        default /home/lsanford/Documents/data/dbnascent_backups
-
-        tables (list) : list of specific tables if whole db backup
-                        is not desired
-
-    Returns:
-        none
-    """
-    if not basedir:
-        basedir = "/home/lsanford/Documents/data/dbnascent_backups"
-    now = datetime.datetime.now()
-    nowdir = now.strftime("%Y%m%d_%H%M%S")
-    os.makedirs(basedir + "/" + nowdir)
-
-    if tables:
-        db.backup((basedir + "/" + nowdir), tables)
-    else:
-        db.backup((basedir + "/" + nowdir))
-
-
-def paper_add_update(db, config, identifier, basedir):
-    """Add or update paper and associated sample metadata.
-
-    Parameters:
-        db (dbnascentConnection object) : current database connection
-
-        config (configParser object) : parsed config file
-
-        identifier (str) : paper identifier, used to locate all (meta)data
-
-        basedir (str) : path to base database data directory
-                        default /Shares/dbnascent
-
-    Returns:
-        none
-    """
-    # Add experimental metadata
-    expt_keys = list(dict(config["expt keys"]).values())
-    if not basedir:
-        basedir = "/Shares/dbnascent"
-    exptmeta_path = basedir + "/" + identifier + "/"
-
-    # Read in expt metadata and make sure entries are unique
-    exptmeta = utils.Metatable(exptmeta_path + "metadata/expt_metadata.txt")
-    expt_unique = exptmeta.unique(expt_keys)
-
-    # Add expt metadata to database
-    db.engine.execute(exptMetadata.__table__.insert(), expt_unique.data())
-
-    # Add sample ids
-#
 # dbutils.py ends here

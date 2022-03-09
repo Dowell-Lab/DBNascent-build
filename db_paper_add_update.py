@@ -64,7 +64,7 @@ if not exists(exptmeta_path):
 # Should not use when building whole database
 # May be useful for adding papers individually later
 backupdir = config["file_locations"]["backup_dir"]
-#dbutils.dbnascent_backup(dbconnect, backupdir, False)
+#dbconnect.backup(backupdir, False)
 
 ### Step 2: Parse paper and sample metadata tables ###
 

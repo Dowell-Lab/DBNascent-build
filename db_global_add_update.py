@@ -34,7 +34,7 @@ dbconnect.add_tables()
 
 # Back up entire database
 backupdir = config["file_locations"]["backup_dir"]
-dbutils.dbnascent_backup(dbconnect, backupdir, False)
+dbconnect.backup(backupdir, False)
 
 # Load organism table keys and external location
 org_keys = list(dict(config["organism keys"]).values())
