@@ -50,7 +50,6 @@ from sqlalchemy.ext.serializer import loads, dumps
 from sqlalchemy.orm import sessionmaker
 
 
-# Database Connection Handler
 class dbnascentConnection:
     """A class to handle connection to the MySQL database.
 
@@ -89,9 +88,11 @@ class dbnascentConnection:
         """Initialize database connection.
 
         Parameters:
-            db_url (str) : path to database (mandatory)
+            db_url (str) : 
+                path to database (mandatory)
 
-            cred_path (str) : path to tab-delimited credentials
+            cred_path (str) : 
+                path to tab-delimited credentials
                 one line file with username tab password
 
         Returns:
@@ -132,14 +133,16 @@ class dbnascentConnection:
         Can optionally add filtering criteria.
 
         Parameters:
-            table (str) : table name from ORM
+            table (str) : 
+                table name from ORM
 
-            filter_crit (dict) : filter criteria for table
-                Only currently takes "=" filter criteria
+            filter_crit (dict) : 
+                filter criteria for table
+                only currently takes "=" filter criteria
 
         Returns:
-            query_results (list of dicts) : all data in table
-                                            matching filter criteria
+            query_results (list of dicts) : 
+                all data in table matching filter criteria
         """
         query_results = []
 
@@ -169,10 +172,12 @@ class dbnascentConnection:
         Can optionally limit to specific tables.
 
         Parameters:
-            out_path (str) : path to backup file directory
+            out_path (str) : 
+                path to backup file directory
 
-            tables (list) : list of specific tables, if whole
-                            database backup is not desired
+            tables (list) : 
+                list of specific tables, if whole database 
+                backup is not desired
 
         Returns:
             none
@@ -202,10 +207,12 @@ class dbnascentConnection:
         Can optionally limit to specific tables.
 
         Parameters:
-            in_path (str) : path to backup file directory
+            in_path (str) : 
+                path to backup file directory
 
-            tables (list) : list of specific tables, if whole
-                            database backup is not desired
+            tables (list) : 
+                list of specific tables, if whole database 
+                restore is not desired
 
         Returns:
             none
@@ -223,60 +230,82 @@ class dbnascentConnection:
             self.session.commit()
 
 
-# Metatable class definition
 class Metatable:
     """A class to store metadata.
 
     Attributes:
         data (list of dicts) :
+            metadata, one dict for each sample/paper entry
 
     Methods:
-        load_file :
+        load_file(meta_path) :
+            load metadata from file into data attribute
+
+        key_replace(file_keys, db_keys) :
+            replace metadata file keys with database keys
+
+        value_grab(key_list) -> list :
+            extract values for specific keys
+
+        key_grab(key_list) -> list :
+            extract dicts with only specific keys
+
+        unique(extract_keys) -> list :
+            extract unique set of dicts based on specific keys
     """
 
-    def __init__(self, meta_path, dictlist=None):
+    def __init__(self, input_data=False):
         """Initialize metatable object.
 
         Parameters:
-            meta_path (str) : path to metadata file
-                file must be tab-delimited with field names as header
-
-            dictlist (list of dicts) : if not path, list of dicts
-                this can convert a list of dicts into the self.data of
-                a metatable object
+            input_data (str OR list of dicts) : 
+                path to metadata file (str)
+                OR metadata (list of dicts)
+                
+                if path str, file must be tab-delimited with 
+                field names as header
         """
         self.data = []
 
-        if meta_path:
-            self.load_file(meta_path)
-        elif dictlist:
-            self.data = dictlist
+        if input_data:
+            if type(input_data) == str:
+                self.load_file(input_data)
+            elif type(input_data) == list:
+                if len(input_data > 0):
+                    if type(input_data[0]) == dict:
+                        self.data = dictlist
+                    else:
+                        raise TypeError(
+                            "Input data must be list of dicts"
+                        )
 
     def load_file(self, meta_path):
-        """Load metatable object.
+        """Load metatable data from file into data attribute.
 
         Parameters:
             meta_path (str) : path to metadata file
                 file must be tab-delimited with field names as header
 
         Returns:
-            self.data (list of dicts)
+            none
         """
-        # Check that the metadata file exists
+        # Check if path exists
         if not (os.path.exists(meta_path)
                 and os.path.isfile(meta_path)):
             raise FileNotFoundError(
                 "Metadata file does not exist at the provided path")
 
+        # Load path and check if tab-delimited
         with open(meta_path, newline="") as metatab:
             full_table = list(csv.DictReader(metatab, delimiter="\t"))
             if len(full_table[0]) == 1:
                 raise IndexError(
                     "Input must be tab-delimited. Double check input."
                 )
+            # Load metadata into data attribute
             else:
-                for entry in full_table:
-                    self.data.append(dict(entry))
+                for meta_entry in full_table:
+                    self.data.append(dict(meta_entry))
 
     def key_replace(self, file_keys, db_keys):
         """Replace file keys with database keys.
@@ -286,20 +315,22 @@ class Metatable:
 
             db_keys (list) : list of keys in database
                 Must be equivalent in length to file_keys
+                with equivalent indeces
 
         Returns:
-            self.data (list of dicts)
+            none
         """
         # Check if keys are valid
-        for key in file_keys:
-            if key not in self.data[0]:
+        for filekey in file_keys:
+            if filekey not in self.data[0]:
                 raise KeyError(
                     "Key(s) not present in metatable object."
                 )
-
-        for entry in self.data:
+                return
+        # Replace keys
+        for meta_entry in self.data:
             for i in range(len(file_keys)):
-                entry[db_keys[i]] = entry.pop(file_keys[i])
+                meta_entry[db_keys[i]] = meta_entry.pop(file_keys[i])
 
     def value_grab(self, key_list) -> list:
         """Extract values for specific keys from metatable data.
@@ -308,10 +339,9 @@ class Metatable:
             key_list (list) : desired keys from dicts in table_list
 
         Returns:
-            value_list (list of lists) : each entry containing the values
-                                         of the given keys
+            value_list (list of lists) : 
+                each entry containing the values of the given keys
         """
-        # Load in file as a list of dicts
         value_list = []
 
         if len(self.data) == 0:
@@ -323,7 +353,7 @@ class Metatable:
                 raise KeyError(
                     "Key(s) not present in metatable object."
                 )
-
+        # Add dict values to list
         for entry in self.data:
             value_subset = []
             for key in key_list:
@@ -339,8 +369,9 @@ class Metatable:
             key_list (list) : desired keys from dicts in table_list
 
         Returns:
-            dict_list (list of dicts) : each entry containing the dicts
-                                        with only the given keys
+            dict_list (list of dicts) : 
+                each entry containing the dicts with only the 
+                given keys
         """
         dict_list = []
 
@@ -353,7 +384,7 @@ class Metatable:
                 raise KeyError(
                     "Key(s) not present in metatable object."
                 )
-
+        # Add subsetted dicts to list
         for entry in self.data:
             newentry = dict()
             for key in key_list:
@@ -363,15 +394,16 @@ class Metatable:
         return dict_list
 
     def unique(self, extract_keys) -> list:
-        """Extract values for specific keys from a metatable filepath.
+        """Extract values for specific keys from metatable.
 
         Parameters:
-            extract_keys (list) : list containing db key labels for binding
+            extract_keys (list) : 
+                list containing db key labels for binding
 
         Returns:
-            unique_metatable (list of dicts) : each entry contains the values
-                                               of the extract keys; only
-                                               returns unique sets of values
+            unique_metatable (list of dicts) : 
+                each entry contains the values of the extract keys;
+                only returns unique sets of values
         """
         unique_metatable = []
 
@@ -384,12 +416,12 @@ class Metatable:
                 raise KeyError(
                     "Key(s) not present in metatable object."
                 )
-
+        # Get lists of values and filter for unique values
         full_table_list = np.array(self.value_grab(extract_keys))
         unique_list = np.unique(full_table_list, axis=0)
-
-        for entry in unique_list:
-            new_dict = dict(zip(extract_keys, entry))
+        # Zip keys and values back into dicts
+        for meta_entry in unique_list:
+            new_dict = dict(zip(extract_keys, meta_entry))
             unique_metatable.append(new_dict)
 
         return unique_metatable
