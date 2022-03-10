@@ -14,8 +14,6 @@ Classes:
 
 Functions:
     load_config(file) -> object
-    value_compare(dict, dict, dict) -> boolean
-    listdict_compare(dict, dict, list) -> list
     key_store_compare(dict, list, list, list) -> dict
     object_as_dict(object) -> dict
     entry_update(object, str, list, list -> list
@@ -217,17 +215,32 @@ class dbnascentConnection:
         Returns:
             none
         """
+        # If not specified, identify all tables that have backups
         if not tables:
             files = os.listdir(in_path)
             tables = []
             for file in files:
                 tables.append(file.split(".")[0])
-        for table in tables:
-            infile = in_path + "/" + table + ".dbdump"
-            with open(infile, 'rb') as table_backup:
-                for dbentry in loads(table_backup.read()):
-                    self.session.merge(dbentry)
-            self.session.commit()
+        # Grab table order from ORM and reverse for deletion
+        dborm.Base.metadata.reflect(bind=self.engine)
+        dbtables = list(dborm.Base.metadata.tables.keys())
+        dbtables.reverse()
+        # Delete data in tables for backup (if not all tables,
+        # foreign key dependencies may cause a problem)
+        for dbtable in dbtables:
+            if dbtable in tables:
+                self.engine.execute(
+                    eval("dborm." + dbtable + ".__table__.delete()")
+                )
+        # Restore in normal building order
+        dbtables.reverse()
+        for dbtable in dbtables:
+            if dbtable in tables:
+                infile = in_path + "/" + dbtable + ".dbdump"
+                with open(infile, 'rb') as table_backup:
+                    for dbentry in loads(table_backup.read()):
+                        self.session.merge(dbentry)
+                self.session.commit()
 
 
 class Metatable:
@@ -271,9 +284,9 @@ class Metatable:
             if type(input_data) == str:
                 self.load_file(input_data)
             elif type(input_data) == list:
-                if len(input_data > 0):
+                if len(input_data) > 0:
                     if type(input_data[0]) == dict:
-                        self.data = dictlist
+                        self.data = input_data
                     else:
                         raise TypeError(
                             "Input data must be list of dicts"
@@ -428,72 +441,98 @@ class Metatable:
 
 
 # Configuration File Reader
-def load_config(filename: str):
-    """Load database config file compatible with configparser package.
+def load_config(config_filename: str) -> object:
+    """Load database config file with configparser package.
 
     Parameters:
-        filename (str) : path to config file
+        filename (str) : 
+            path to config file
 
     Returns:
-        config (configparser object) : parsed config file
+        config (configparser object) : 
+            parsed config file
     """
-    if not os.path.exists(filename):
+    if not os.path.exists(config_filename):
         raise FileNotFoundError(
-            "Configuration file does not exist at the provided path"
+            "Config file does not exist at the provided path"
         )
     config = configparser.ConfigParser()
-    with open(filename) as confFile:
-        config.read_string(confFile.read())
+    with open(config_filename) as conffile:
+        config.read_string(conffile.read())
     return config
 
 
-def value_compare(db_row, metatable_row, key_dict) -> bool:
-    """Compare values between two dicts.
-
-    Parameters:
-        db_row (dict) : dict extracted from one entry in
-                        one table of the database
-
-        metatable_row (dict) : dict extracted from a metadata table
-
-        key_dict (dict) : specific keys for comparison
-
-    Returns:
-        {0,1} (boolean) : whether the value in the database matches the
-                          metadata value; 1 if matching, 0 if not
-    """
-    for key in key_dict:
-        if db_row[key] == metatable_row[key_dict[key]]:
-            continue
-        else:
-            return 0
-    return 1
-
-
-def listdict_compare(comp_dict, db_dict, db_keys) -> list:
-    """Compare two lists of dicts and take any rows not already in db.
+def key_store_compare(
+    comp_dict,
+    db_dict,
+    comp_keys,
+    store_keys
+) -> dict:
+    """Compare two lists of dicts and add a key if matching.
 
     Converts all values to strings for comparison purposes
 
     Parameters:
-        comp_dict (list of dicts) : list of dicts from metatable object
+        comp_dict (dict) : 
+            single dict (usually from metatable object)
 
-        db_dict (list of dicts) : list of dicts extracted from db query
+        db_dict (list of dicts) : 
+            list of dicts (usually extracted from db query)
 
-        db_keys (list) : specific keys for comparison
+        comp_keys (list) : 
+            specific keys for comparison
+
+        store_keys (list) : 
+            key(s) for adding to comp_dict
 
     Returns:
-        data_to_add (list of dicts) : any dicts in comp_dict not in db_dict
+        comp_dict (dict) : 
+            dict with new value added
+    """
+    for dbentry in db_dict:
+        comp = 0
+        for key in comp_keys:
+            if str(comp_dict[key]) != str(dbentry[key]):
+                if str(comp_dict[key]) == "":
+                    if dbentry[key] != None:
+                        comp = 1
+                else:
+                    comp = 1
+        if comp == 0:
+            for storekey in store_keys:
+                comp_dict[storekey] = dbentry[storekey]
+
+    return comp_dict
+
+
+def listdict_compare(comp_dict, db_dict, db_keys) -> list:
+    """Compare two lists of dicts and take rows not already in db.
+
+    Converts all values to strings for comparison purposes
+
+    Parameters:
+        comp_dict (list of dicts) :
+            list of dicts (usually from metatable object)
+
+        db_dict (list of dicts) :
+            list of dicts (usually extracted from db query)
+
+        db_keys (list) :
+            specific keys for comparison
+
+    Returns:
+        data_to_add (list of dicts) :
+            any dicts in comp_dict not in db_dict
     """
     data_to_add = []
 
-    for entry in comp_dict:
-        for key in db_keys:
-            entry[key] = str(entry[key])
+    for comp_entry in comp_dict:
+        for dbkey in db_keys:
+            comp_entry[dbkey] = str(comp_entry[dbkey])
 
-    for entry in db_dict:
-        for key in db_keys:
-            entry[key] = str(entry[key])
+    for db_entry in db_dict:
+        for dbkey in db_keys:
+            db_entry[dbkey] = str(db_entry[dbkey])
 
     for comp_entry in comp_dict:
         if comp_entry not in db_dict:
@@ -502,75 +541,54 @@ def listdict_compare(comp_dict, db_dict, db_keys) -> list:
     return data_to_add
 
 
-def key_store_compare(comp_dict, db_dict, db_keys, store_keys) -> list:
-    """Compare two lists of dicts and take any rows not already in db.
-
-    Converts all values to strings for comparison purposes
-
-    Parameters:
-        comp_dict (dict) : single dict from metatable object
-
-        db_dict (list of dicts) : list of dicts extracted from db query
-
-        db_keys (list) : specific keys for comparison
-
-        store_keys (list) : key(s) for adding to dict
-
-    Returns:
-        new_dict (dict) : dict with new value added
-    """
-    for dbentry in db_dict:
-        comp = 0
-        for key in db_keys:
-            if str(comp_dict[key]) != str(dbentry[key]):
-                if str(comp_dict[key]) == "":
-                    if dbentry[key] != None:
-                        comp = 1
-                else:
-                    comp = 1
-        if comp == 0:
-            for stkey in store_keys:
-                comp_dict[stkey] = dbentry[stkey]
-
-    return comp_dict
-
-
-def object_as_dict(obj):
+def object_as_dict(dbobj) -> dict:
     """Convert queried database entry into dict.
 
     Parameters:
-        obj (str) : single row (entry) of a database query output
+        dbobj (str) : 
+            single row (entry) of a database query output
 
     Returns:
-        db_dict (dict) : key-value pairs from database entry
+        db_dict (dict) : 
+            key-value pairs from database entry
     """
-    db_dict = {c.key: getattr(obj, c.key) for c
-               in sql.inspect(obj).mapper.column_attrs}
+    db_dict = {
+        col.key: getattr(dbobj, col.key) for col
+        in sql.inspect(dbobj).mapper.column_attrs
+    }
     return db_dict
 
 
-def entry_update(dbconn, dbtable, dbkeys, comp_table) -> list:
+def entry_update(dbconn, table, dbkeys, comp_table) -> list:
     """Find entries not already in database.
 
     Parameters:
-        dbconn (dbnascentConnection object) : curr db connection
+        dbconn (dbnascentConnection object) : 
+            current db connection
 
-        dbtable (str) : Which db table to search for entries
+        table (str) : 
+            which db table to search for entries
 
-        dbkeys (list) : list of keys to use for comparison
+        dbkeys (list) : 
+            list of keys to use for comparison
 
-        comp_table (list of dicts) : Entries to match (or not)
-                                     to db entries
+        comp_table (list of dicts) : 
+            entries to match (or not) to db entries
 
     Returns:
-        to_add (list of dicts) : New entries not in db to add
+        to_add (list of dicts) : 
+            new entries not in db to add
     """
-    db_dump = dbconn.reflect_table(dbtable)
-    dbtab = Metatable(meta_path=None, dictlist=db_dump)
-    dbtab_data = dbtab.key_grab(dbkeys)
-    to_add = listdict_compare(comp_table, dbtab_data, dbkeys)
+    db_dump = dbconn.reflect_table(table)
+    db_table = Metatable(db_dump)
+    dbtable_data = db_table.key_grab(dbkeys)
+    entries_to_add = listdict_compare(
+                         comp_table,
+                         dbtable_data,
+                         dbkeys
+                     )
 
-    return to_add
+    return entries_to_add
 
 
 def scrape_fastqc(paper_id, sample_name, data_path, db_sample) -> dict:

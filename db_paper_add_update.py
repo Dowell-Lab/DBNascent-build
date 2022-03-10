@@ -32,7 +32,7 @@ import sys
 
 # Raise error if no argument given
 if len(sys.argv) < 2:
-    raise Error("No paper identifier given")
+    raise NameError("No paper identifier given")
 else:
     paper_id = sys.argv[1]
 
@@ -117,7 +117,7 @@ if len(expt_to_add) > 0:
 
 # Find max sample_id currently in db
 dbsamp_dump = dbconnect.reflect_table("sampleID")
-dbsamp = dbutils.Metatable(meta_path=None, dictlist=dbsamp_dump)
+dbsamp = dbutils.Metatable(dbsamp_dump)
 curr_id = 0
 for dbsample in dbsamp.data:
     if dbsample["sample_id"] > curr_id:
@@ -132,10 +132,7 @@ samp_to_add = dbutils.entry_update(
               )
 if len(samp_to_add) > 0:
     # Make hash of unique samples (srz OR srr if no srz) to id values
-    samp_for_hash = dbutils.Metatable(
-                        meta_path=None,
-                        dictlist=samp_to_add
-                    )
+    samp_for_hash = dbutils.Metatable(samp_to_add)
     samp_id_hash = samp_for_hash.unique(["sample_name"])
     for idhash in samp_id_hash:
         curr_id = curr_id + 1
@@ -247,7 +244,7 @@ for condition in cond_preparse:
         if ((len(cond_types) != len(treatments)) 
             or (len(cond_types) != len(times))
         ):
-            raise Error("Treatment parsing error: " + paper_id)
+            raise SyntaxError("Treatment parsing error: " + paper_id)
         
         for i in range(len(cond_types)):
             new_cond = dict()
@@ -327,7 +324,7 @@ for condition in cond_preparse:
         cond_parsed.append(new_cond)
 
 # Extract unique conditions and store integer blanks correctly
-cond = dbutils.Metatable(meta_path=None, dictlist=cond_parsed)
+cond = dbutils.Metatable(cond_parsed)
 cond_unique = cond.unique(dbcond_full_keys)
 for condition in cond_unique:
     if condition["start_time"] == "":
@@ -367,10 +364,10 @@ dbcond_add_keys.append("condition_id")
 
 # Grab condition and sample id info from database
 dbcond_dump = dbconnect.reflect_table("conditionInfo")
-dbcond = dbutils.Metatable(meta_path=None, dictlist=dbcond_dump)
+dbcond = dbutils.Metatable(dbcond_dump)
 dbcond_data = dbcond.key_grab(dbcond_add_keys)
 dbsamp_dump = dbconnect.reflect_table("sampleID")
-dbsamp = dbutils.Metatable(meta_path=None, dictlist=dbsamp_dump)
+dbsamp = dbutils.Metatable(dbsamp_dump)
 name_id = dbsamp.unique(["sample_name", "sample_id"])
 
 # Add sample ids to parsed condition table
@@ -387,18 +384,18 @@ for condition in cond_parsed:
     )
 
 # If not present, add sample/condition ids to database
-exptcond = dbutils.Metatable(meta_path=None, dictlist=cond_parsed)
-exptcond_unique = exptcond.unique(["sample_id", "condition_id"])
-exptcond_to_add = dbutils.entry_update(
+sampcond = dbutils.Metatable(cond_parsed)
+sampcond_unique = sampcond.unique(["sample_id", "condition_id"])
+sampcond_to_add = dbutils.entry_update(
                       dbconnect,
                       "sampleCondition",
                       ["sample_id", "condition_id"],
-                      exptcond_unique
+                      sampcond_unique
                   )
-if len(exptcond_to_add) > 0:
+if len(sampcond_to_add) > 0:
     dbconnect.engine.execute(
-        dborm.sampleCondition.insert(),
-        exptcond_to_add
+        dborm.sampleCondition.__table__.insert(),
+        sampcond_to_add
     )
 
 
@@ -471,7 +468,10 @@ for sample in sampmeta.data:
         sample[key] = str(sample[key])
 
 # If not present, add sample accum info to database
-accum_unique = sampmeta.unique(dbaccum_full_keys)
+try:
+    accum_unique = sampmeta.unique(dbaccum_full_keys)
+except KeyError:
+    print(paper_id)
 accum_to_add = dbutils.entry_update(
                    dbconnect,
                    "sampleAccum",
@@ -535,7 +535,7 @@ for bfrun in bftable:
         bfrun[key] = str(bfrun[key])
 
 # If not present, add nascentflow version info to database
-nf_vers = dbutils.Metatable(meta_path=None, dictlist=nftable)
+nf_vers = dbutils.Metatable(nftable)
 nf_unique = nf_vers.unique(dbnf_keys)
 nf_to_add = dbutils.entry_update(
                 dbconnect,
@@ -555,7 +555,7 @@ if len(nf_to_add) > 0:
     )
 
 # If not present, add bidirflow version info to database
-bf_vers = dbutils.Metatable(meta_path=None, dictlist=bftable)
+bf_vers = dbutils.Metatable(bftable)
 bf_unique = bf_vers.unique(dbbf_keys)
 bf_to_add = dbutils.entry_update(
                 dbconnect,
@@ -584,10 +584,10 @@ dbbf_add_keys.append("bidirflow_id")
 
 # Extract current version data from database
 dbnf_dump = dbconnect.reflect_table("nascentflowMetadata")
-dbnf = dbutils.Metatable(meta_path=None, dictlist=dbnf_dump)
+dbnf = dbutils.Metatable(dbnf_dump)
 dbnf_data = dbnf.key_grab(dbnf_add_keys)
 dbbf_dump = dbconnect.reflect_table("bidirflowMetadata")
-dbbf = dbutils.Metatable(meta_path=None, dictlist=dbbf_dump)
+dbbf = dbutils.Metatable(dbbf_dump)
 dbbf_data = dbbf.key_grab(dbbf_add_keys)
 
 # Add ids from version tables to data tables that have sample ids
@@ -608,8 +608,7 @@ for bfrun in bf_vers.data:
     )
 
 # If not present, add sample and nascentflow ids to database
-sampnf = dbutils.Metatable(meta_path=None, dictlist=nf_vers.data)
-sampnf_unique = sampnf.unique(["sample_id", "nascentflow_id"])
+sampnf_unique = nf_vers.unique(["sample_id", "nascentflow_id"])
 sampnf_to_add = dbutils.entry_update(
                     dbconnect,
                     "sampleNascentflow",
@@ -618,13 +617,12 @@ sampnf_to_add = dbutils.entry_update(
                 )
 if len(sampnf_to_add) > 0:
     dbconnect.engine.execute(
-        dborm.sampleNascentflow.insert(),
+        dborm.sampleNascentflow.__table__.insert(),
         sampnf_to_add
     )
 
 # If not present, add sample and bidirflow ids to database
-sampbf = dbutils.Metatable(meta_path=None, dictlist=bf_vers.data)
-sampbf_unique = sampbf.unique(["sample_id", "bidirflow_id"])
+sampbf_unique = bf_vers.unique(["sample_id", "bidirflow_id"])
 sampbf_to_add = dbutils.entry_update(
                     dbconnect,
                     "sampleBidirflow",
@@ -633,7 +631,7 @@ sampbf_to_add = dbutils.entry_update(
                 )
 if len(sampbf_to_add) > 0:
     dbconnect.engine.execute(
-        dborm.sampleBidirflow.insert(),
+        dborm.sampleBidirflow.__table__.insert(),
         sampbf_to_add
     )
 
