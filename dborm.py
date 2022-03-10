@@ -137,20 +137,36 @@ class conditionInfo(Base):
     duration_unit = sql.Column(sql.String(length=50))
 
 
-sampleCondition = sql.Table(
-    "sampleCondition",
-    Base.metadata,
-    sql.Column(
-        "sample_id",
+class sampleCondition(Base):
+    __tablename__ = "sampleCondition"
+    condition_match_id = sql.Column(
         sql.Integer,
-        sql.ForeignKey("sampleID.sample_id"),
-    ),
-    sql.Column(
-        "condition_id",
+        primary_key=True,
+        index=True,
+        unique=True,
+    )
+    sample_id = sql.Column(
+        sql.Integer,
+        sql.ForeignKey(sampleID.sample_id),
+    )
+    condition_id = sql.Column(
         sql.Integer,
         sql.ForeignKey("conditionInfo.condition_id"),
-    ),
-)
+    )
+#sampleCondition = sql.Table(
+#    "sampleCondition",
+#    Base.metadata,
+#    sql.Column(
+#        "sample_id",
+#        sql.Integer,
+#        sql.ForeignKey("sampleID.sample_id"),
+#    ),
+#    sql.Column(
+#        "condition_id",
+#        sql.Integer,
+#        sql.ForeignKey("conditionInfo.condition_id"),
+#    ),
+#)
 
 
 class linkIDs(Base):
@@ -255,20 +271,36 @@ class nascentflowMetadata(Base):
     numpy_version = sql.Column(sql.String(length=127))
 
 
-sampleNascentflow = sql.Table(
-    "sampleNascentflow",
-    Base.metadata,
-    sql.Column(
-        "sample_id",
+class sampleNascentflow(Base):
+    __tablename__ = "sampleNascentflow"
+    nascentver_match_id = sql.Column(
         sql.Integer,
-        sql.ForeignKey("sampleID.sample_id"),
-    ),
-    sql.Column(
-        "nascentflow_id",
+        primary_key=True,
+        index=True,
+        unique=True,
+    )
+    sample_id = sql.Column(
+        sql.Integer,
+        sql.ForeignKey(sampleID.sample_id),
+    )
+    nascentflow_id = sql.Column(
         sql.Integer,
         sql.ForeignKey("nascentflowMetadata.nascentflow_id"),
-    ),
-)
+    )
+#sampleNascentflow = sql.Table(
+#    "sampleNascentflow",
+#    Base.metadata,
+#    sql.Column(
+#        "sample_id",
+#        sql.Integer,
+#        sql.ForeignKey("sampleID.sample_id"),
+#    ),
+#    sql.Column(
+#        "nascentflow_id",
+#        sql.Integer,
+#        sql.ForeignKey("nascentflowMetadata.nascentflow_id"),
+#    ),
+#)
 
 
 class bidirflowMetadata(Base):
@@ -300,19 +332,35 @@ class bidirflowMetadata(Base):
     fcgene_date = sql.Column(sql.Date)
 
 
-sampleBidirflow = sql.Table(
-    "sampleBidirflow",
-    Base.metadata,
-    sql.Column(
-        "sample_id",
+class sampleBidirflow(Base):
+    __tablename__ = "sampleBidirflow"
+    bidirver_match_id = sql.Column(
         sql.Integer,
-        sql.ForeignKey("sampleID.sample_id"),
-    ),
-    sql.Column(
-        "bidirflow_id",
+        primary_key=True,
+        index=True,
+        unique=True,
+    )
+    sample_id = sql.Column(
+        sql.Integer,
+        sql.ForeignKey(sampleID.sample_id),
+    )
+    bidirflow_id = sql.Column(
         sql.Integer,
         sql.ForeignKey("bidirflowMetadata.bidirflow_id"),
-    ),
-)
+    )
+#sampleBidirflow = sql.Table(
+#    "sampleBidirflow",
+#    Base.metadata,
+#    sql.Column(
+#        "sample_id",
+#        sql.Integer,
+#        sql.ForeignKey("sampleID.sample_id"),
+#    ),
+#    sql.Column(
+#        "bidirflow_id",
+#        sql.Integer,
+#        sql.ForeignKey("bidirflowMetadata.bidirflow_id"),
+#    ),
+#)
 
 # dborm.py ends here

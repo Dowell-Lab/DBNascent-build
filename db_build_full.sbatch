@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=dbnascent_build  # Job name
 #SBATCH --mail-type=NONE # Mail events (NONE, BEGIN, END, FAIL, ALL)
-#SBATCH --mail-user=<email> # Where to send mail
+#SBATCH --mail-user=lynn.sanford@colorado.edu # Where to send mail
 #SBATCH --nodes=1
 #SBATCH --ntasks=1 # Number of CPU (processer cores i.e. tasks)
 #SBATCH --time=02:00:00 # Time limit hrs:min:sec
