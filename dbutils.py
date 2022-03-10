@@ -591,24 +591,33 @@ def entry_update(dbconn, table, dbkeys, comp_table) -> list:
     return entries_to_add
 
 
-def scrape_fastqc(paper_id, sample_name, data_path, db_sample) -> dict:
+def scrape_fastqc(paper_id,
+    sample_name,
+    data_path,
+    db_sample
+) -> dict:
     """Scrape read length and depth from fastQC report.
 
     Parameters:
-        paper_id (str) : paper identifier
+        paper_id (str) :
+            paper identifier
 
-        sample_name (str) : sample name
+        sample_name (str) :
+            sample name
 
-        data_path (str) : path to database storage directory
+        data_path (str) :
+            path to database paper data directory
 
-        db_sample (dict) : sample_accum entry dict from db query
+        db_sample (dict) :
+            sample_accum entry dict from db query
 
     Returns:
-        fastqc_dict (dict) : scraped fastqc metadata in dict format
+        fastqc_dict (dict) :
+            scraped fastqc metadata in dict format
     """
     fastqc_dict = {}
 
-    # Determine paths for raw fastQC file to scrape, depending on SE/PE
+    # Determine paths for raw fastQC file to scrape, based on SE/PE
     fqc_path = data_path + paper_id + "/qc/fastqc/zips/"
     if db_sample["single_paired"] == "paired":
         samp_zip = fqc_path + sample_name + "_1_fastqc"
@@ -630,29 +639,31 @@ def scrape_fastqc(paper_id, sample_name, data_path, db_sample) -> dict:
     fdata = open(samp_zip + "/fastqc_data.txt")
     for line in fdata:
         if re.compile("Total Sequences").search(line):
-            fastqc_dict["raw_read_depth"] = int(line.split()[2])
+            (fastqc_dict["raw_read_depth"] =
+                int(line.split()[2]))
         if re.compile("Sequence length").search(line):
-            fastqc_dict["raw_read_length"] = int(line.split()[2].split("-")[0])
+            (fastqc_dict["raw_read_length"] =
+                int(line.split()[2].split("-")[0]))
 
     # Remove unzipped file
     shutil.rmtree((samp_zip + "/"), ignore_errors=True)
 
-    # Determine paths for trimmed fastQC file to scrape, depending on SE/PE
+    # Determine paths for trim fastQC file to scrape, based on SE/PE
     # and whether reverse complemented or not
     if str(db_sample["rcomp"]) == '1':
         if db_sample["single_paired"] == "paired":
-            samp_zip = fqc_path + sample_name + "_1.flip.trim_fastqc"
+            trim_zip = fqc_path + sample_name + "_1.flip.trim_fastqc"
         else:
-            samp_zip = fqc_path + sample_name + ".flip.trim_fastqc"
+            trim_zip = fqc_path + sample_name + ".flip.trim_fastqc"
     else:
         if db_sample["single_paired"] == "paired":
-            samp_zip = fqc_path + sample_name + "_1.trim_fastqc"
+            trim_zip = fqc_path + sample_name + "_1.trim_fastqc"
         else:
-            samp_zip = fqc_path + sample_name + ".trim_fastqc"
+            trim_zip = fqc_path + sample_name + ".trim_fastqc"
 
     # If trimmed fastQC report doesn't exist, return null value for
     # trimmed read depth
-    if not (os.path.exists(samp_zip + ".zip")):
+    if not (os.path.exists(trim_zip + ".zip")):
         fastqc_dict["trim_read_depth"] = None
         return fastqc_dict
 
@@ -661,13 +672,13 @@ def scrape_fastqc(paper_id, sample_name, data_path, db_sample) -> dict:
         zp_ref.extractall(fqc_path)
 
     # Extract trimmed read depth
-    fdata = open(samp_zip + "/fastqc_data.txt")
+    fdata = open(trim_zip + "/fastqc_data.txt")
     for line in fdata:
         if re.compile("Total Sequences").search(line):
             fastqc_dict["trim_read_depth"] = int(line.split()[2])
 
     # Remove unzipped file
-    shutil.rmtree((samp_zip + "/"), ignore_errors=True)
+    shutil.rmtree((trim_zip + "/"), ignore_errors=True)
 
     return fastqc_dict
 
@@ -676,14 +687,18 @@ def scrape_picard(paper_id, sample_name, data_path):
     """Scrape read length and depth from picard duplication report.
 
     Parameters:
-        paper_id (str) : paper identifier
+        paper_id (str) :
+            paper identifier
 
-        sample_name (str) : sample name derived from db query
+        sample_name (str) :
+            sample name derived from db query
 
-        data_path (str) : path to database storage directory
+        data_path (str) :
+            path to database storage directory
 
     Returns:
-        picard_dict (dict) : scraped picard metadata in dict format
+        picard_dict (dict) :
+            scraped picard metadata in dict format
     """
     picard_dict = {}
 
@@ -709,16 +724,21 @@ def scrape_mapstats(paper_id, sample_name, data_path, db_sample):
     """Scrape read length and depth from hisat2 mapstats report.
 
     Parameters:
-        paper_id (str) : paper identifier
+        paper_id (str) :
+            paper identifier
 
-        sample_name (str) : sample name derived from db query
+        sample_name (str) :
+            sample name derived from db query
 
-        data_path (str) : path to database storage directory
+        data_path (str) :
+            path to database storage directory
 
-        db_sample (dict) : sample_accum entry dict from db query
+        db_sample (dict) :
+            sample_accum entry dict from db query
 
     Returns:
-        mapstats_dict (dict) : scraped hisat2 metadata in dict format
+        mapstats_dict (dict) :
+            scraped hisat2 metadata in dict format
     """
     mapstats_dict = {}
 
@@ -750,17 +770,21 @@ def scrape_mapstats(paper_id, sample_name, data_path, db_sample):
                     line.split(": ")[1].split(" (")[0]
                 )
             if re.compile("Overall alignment rate").search(line):
-                alrate = float(line.split(": ")[1].split("%")[0]) / 100
+                (alrate = 
+                    float(line.split(": ")[1].split("%")[0]) / 100)
                 mapstats_dict["map_prop"] = round(alrate, 5)
     # Report mapped reads for single end data
     else:
         for line in fdata:
             if re.compile("Aligned 1 time").search(line):
-                mapstats_dict["single_map"] = int(line.split(": ")[1].split(" (")[0])
+                (mapstats_dict["single_map"] = 
+                    int(line.split(": ")[1].split(" (")[0]))
             if re.compile("Aligned >1 times").search(line):
-                mapstats_dict["multi_map"] = int(line.split(": ")[1].split(" (")[0])
+                (mapstats_dict["multi_map"] = 
+                    int(line.split(": ")[1].split(" (")[0]))
             if re.compile("Overall alignment rate").search(line):
-                alrate = float(line.split(": ")[1].split("%")[0]) / 100
+                (alrate = 
+                    float(line.split(": ")[1].split("%")[0]) / 100)
                 mapstats_dict["map_prop"] = round(alrate, 5)
 
     return mapstats_dict
@@ -770,21 +794,25 @@ def scrape_rseqc(paper_id, sample_name, data_path):
     """Scrape read length and depth from RSeQC report.
 
     Parameters:
-        paper_id (str) : paper identifier
+        paper_id (str) :
+            paper identifier
 
-        sample_name (str) : sample name derived from db query
+        sample_name (str) :
+            sample name derived from db query
 
-        data_path (str) : path to database storage directory
+        data_path (str) :
+            path to database storage directory
 
     Returns:
-        rseqc_dict (dict) : scraped RSeQC metadata in dict format
+        rseqc_dict (dict) :
+            scraped RSeQC metadata in dict format
     """
     rseqc_dict = {}
 
     dirpath = data_path + paper_id + "/qc/rseqc/read_distribution/"
     filepath = dirpath + sample_name + ".read_distribution.txt"
 
-    # If rseqc read distribution data doesn't exist, return null values
+    # If rseqc read distribution data doesn't exist, return nulls
     if not (os.path.exists(filepath) and os.path.isfile(filepath)):
         rseqc_dict["rseqc_tags"] = None
         rseqc_dict["rseqc_cds"] = None
@@ -797,6 +825,8 @@ def scrape_rseqc(paper_id, sample_name, data_path):
         return rseqc_dict
 
     # Extract RSeQC data
+    # MySQL rounds things strangely, so manual rounding required
+    # for proper matching to db entries
     fdata = open(filepath)
     for line in fdata:
         if re.compile("Total Assigned Tags").search(line):
@@ -837,7 +867,8 @@ def scrape_rseqc(paper_id, sample_name, data_path):
                 rseqc_dict["intron_rpk"] = round(intron, 5)
 
     if rseqc_dict["intron_rpk"] > 0:
-        exint_ratio = rseqc_dict["cds_rpk"] / rseqc_dict["intron_rpk"]
+        (exint_ratio = 
+            rseqc_dict["cds_rpk"] / rseqc_dict["intron_rpk"])
         if exint_ratio > 99999:
             rseqc_dict["exint_ratio"] = round(exint_ratio, 0)
         elif exint_ratio > 9999:
@@ -860,14 +891,18 @@ def scrape_preseq(paper_id, sample_name, data_path):
     """Scrape read length and depth from preseq complexity report.
 
     Parameters:
-        paper_id (str) : paper identifier
+        paper_id (str) :
+            paper identifier
 
-        sample_name (str) : sample name derived from db query
+        sample_name (str) :
+            sample name derived from db query
 
-        data_path (str) : path to database storage directory
+        data_path (str) :
+            path to database storage directory
 
     Returns:
-        preseq_dict (dict) : scraped preseq metadata in dict format
+        preseq_dict (dict) :
+            scraped preseq metadata in dict format
     """
     preseq_dict = {}
 
@@ -893,14 +928,18 @@ def scrape_pileup(paper_id, sample_name, data_path):
     """Scrape read length and depth from pileup report.
 
     Parameters:
-        paper_id (str) : paper identifier
+        paper_id (str) :
+            paper identifier
 
-        sample_name (str) : sample name derived from db query
+        sample_name (str) :
+            sample name derived from db query
 
-        data_path (str) : path to database storage directory
+        data_path (str) :
+            path to database storage directory
 
     Returns:
-        pileup_dict (dict) : scraped pileup metadata in dict format
+        pileup_dict (dict) :
+            scraped pileup metadata in dict format
     """
     pileup_dict = {}
 
@@ -928,6 +967,8 @@ def scrape_pileup(paper_id, sample_name, data_path):
             fold = fold + (float(line.split("\t")[1])
                            * int(line.split("\t")[2]))
 
+    # MySQL rounds strangely, so manual rounding required
+    # for proper matching to database entries
     pileup_dict["genome_prop_cov"] = round((cov / total), 5)
     fold_cov = fold / total
     if fold_cov > 99999:
@@ -946,14 +987,16 @@ def scrape_pileup(paper_id, sample_name, data_path):
     return pileup_dict
 
 
-def sample_qc_calc(db_sample):
+def sample_qc_calc(db_sample) -> dict:
     """Calculate sample qc and data scores.
 
     Parameters:
-        db_sample (dict) : sample_accum entry dict from db query
+        db_sample (dict) :
+            sample_accum entry dict from db query
 
     Returns:
-        samp_score (int) : calculated sample scores in dict format
+        samp_score (dict) :
+            calculated sample scores in dict format
     """
     samp_score = dict()
     trimrd = db_sample["trim_read_depth"]
@@ -964,6 +1007,7 @@ def sample_qc_calc(db_sample):
     exint = db_sample["exint_ratio"]
 
     # Determine sample QC score
+    # All cutoffs based on manual inspection of data
     if (trimrd is None
        or dup is None
        or mapped is None
@@ -1033,14 +1077,16 @@ def sample_qc_calc(db_sample):
     return samp_score
 
 
-def paper_qc_calc(db_samples):
-    """Calculate sample qc and data scores.
+def paper_qc_calc(db_samples) -> dict:
+    """Calculate paper qc and data scores.
 
     Parameters:
-        db_samples (list of dicts) : sample_accum entries from db query
+        db_samples (list of dicts) :
+            sample_accum entries from same paper from db query
 
     Returns:
-        paper_scores (float) : calculated median scores in dict format
+        paper_scores (dict) : 
+            calculated median scores in dict format
     """
     qc_scores = []
     data_scores = []
@@ -1056,34 +1102,50 @@ def paper_qc_calc(db_samples):
     return paper_scores
 
 
-def add_version_info(dbconn, paper_id, data_path, vertype, dbver_keys):
+def add_version_info(
+    dbconn,
+    paper_id,
+    data_path,
+    vertype,
+    dbver_keys
+) -> list:
     """Find nascentflow/bidirflow version info for a paper.
 
     Parameters:
-        dbconn (dbnascentConnection object) : curr db connection
+        dbconn (dbnascentConnection object) :
+            curr db connection
 
-        paper_id (str) : paper identifier
+        paper_id (str) :
+            paper identifier
 
-        data_path (str) : path to dbnascent data
+        data_path (str) :
+            path to dbnascent data
 
-        vertype (str) : {"nascent", "bidir"} : Which nextflow type
+        vertype (str) : {"nascent", "bidir"} :
+            which nextflow type
 
-        dbver_keys (list) : list of keys for version tables
+        dbver_keys (list) :
+            list of keys for version tables
 
     Returns:
-        ver_table (list of dicts) : all relevant version info for
-                                      entry into db
+        ver_table (list of dicts) :
+            all relevant version info for entry into db
     """
     ver_table = []
 
-    dblink_dump = dbconn.reflect_table("linkIDs", {"paper_id": paper_id})
+    dblink_dump = dbconn.reflect_table(
+                      "linkIDs",
+                      {"paper_id": paper_id}
+                  )
     for entry in dblink_dump:
         del entry["genetic_id"]
         del entry["expt_id"]
         ver_path = (data_path + paper_id + "/software_versions/" +
                     entry["sample_name"] + "_" + vertype + ".yaml")
 
-        if not (os.path.exists(ver_path) and os.path.isfile(ver_path)):
+        if not ((os.path.exists(ver_path) 
+                 and os.path.isfile(ver_path))
+               ):
             for key in dbver_keys:
                 entry.update({key: None})
             ver_table.append(entry)
