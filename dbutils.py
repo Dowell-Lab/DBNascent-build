@@ -26,8 +26,6 @@ Functions:
     sample_qc_calc(dict) -> int
     paper_qc_calc(list) -> float
     add_version_info(object, str, str, str, list) -> list
-    
-Misc variables:
 """
 
 import configparser
@@ -639,11 +637,9 @@ def scrape_fastqc(paper_id,
     fdata = open(samp_zip + "/fastqc_data.txt")
     for line in fdata:
         if re.compile("Total Sequences").search(line):
-            (fastqc_dict["raw_read_depth"] =
-                int(line.split()[2]))
+            fastqc_dict["raw_read_depth"] = int(line.split()[2])
         if re.compile("Sequence length").search(line):
-            (fastqc_dict["raw_read_length"] =
-                int(line.split()[2].split("-")[0]))
+            fastqc_dict["raw_read_length"] = int(line.split()[2].split("-")[0])
 
     # Remove unzipped file
     shutil.rmtree((samp_zip + "/"), ignore_errors=True)
@@ -770,21 +766,17 @@ def scrape_mapstats(paper_id, sample_name, data_path, db_sample):
                     line.split(": ")[1].split(" (")[0]
                 )
             if re.compile("Overall alignment rate").search(line):
-                (alrate = 
-                    float(line.split(": ")[1].split("%")[0]) / 100)
+                alrate = float(line.split(": ")[1].split("%")[0]) / 100
                 mapstats_dict["map_prop"] = round(alrate, 5)
     # Report mapped reads for single end data
     else:
         for line in fdata:
             if re.compile("Aligned 1 time").search(line):
-                (mapstats_dict["single_map"] = 
-                    int(line.split(": ")[1].split(" (")[0]))
+                mapstats_dict["single_map"] = int(line.split(": ")[1].split(" (")[0])
             if re.compile("Aligned >1 times").search(line):
-                (mapstats_dict["multi_map"] = 
-                    int(line.split(": ")[1].split(" (")[0]))
+                mapstats_dict["multi_map"] = int(line.split(": ")[1].split(" (")[0])
             if re.compile("Overall alignment rate").search(line):
-                (alrate = 
-                    float(line.split(": ")[1].split("%")[0]) / 100)
+                alrate = float(line.split(": ")[1].split("%")[0]) / 100
                 mapstats_dict["map_prop"] = round(alrate, 5)
 
     return mapstats_dict
@@ -867,8 +859,7 @@ def scrape_rseqc(paper_id, sample_name, data_path):
                 rseqc_dict["intron_rpk"] = round(intron, 5)
 
     if rseqc_dict["intron_rpk"] > 0:
-        (exint_ratio = 
-            rseqc_dict["cds_rpk"] / rseqc_dict["intron_rpk"])
+        exint_ratio = rseqc_dict["cds_rpk"] / rseqc_dict["intron_rpk"]
         if exint_ratio > 99999:
             rseqc_dict["exint_ratio"] = round(exint_ratio, 0)
         elif exint_ratio > 9999:

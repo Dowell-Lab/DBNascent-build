@@ -153,20 +153,6 @@ class sampleCondition(Base):
         sql.Integer,
         sql.ForeignKey("conditionInfo.condition_id"),
     )
-#sampleCondition = sql.Table(
-#    "sampleCondition",
-#    Base.metadata,
-#    sql.Column(
-#        "sample_id",
-#        sql.Integer,
-#        sql.ForeignKey("sampleID.sample_id"),
-#    ),
-#    sql.Column(
-#        "condition_id",
-#        sql.Integer,
-#        sql.ForeignKey("conditionInfo.condition_id"),
-#    ),
-#)
 
 
 class linkIDs(Base):
@@ -287,20 +273,6 @@ class sampleNascentflow(Base):
         sql.Integer,
         sql.ForeignKey("nascentflowMetadata.nascentflow_id"),
     )
-#sampleNascentflow = sql.Table(
-#    "sampleNascentflow",
-#    Base.metadata,
-#    sql.Column(
-#        "sample_id",
-#        sql.Integer,
-#        sql.ForeignKey("sampleID.sample_id"),
-#    ),
-#    sql.Column(
-#        "nascentflow_id",
-#        sql.Integer,
-#        sql.ForeignKey("nascentflowMetadata.nascentflow_id"),
-#    ),
-#)
 
 
 class bidirflowMetadata(Base):
@@ -348,19 +320,5 @@ class sampleBidirflow(Base):
         sql.Integer,
         sql.ForeignKey("bidirflowMetadata.bidirflow_id"),
     )
-#sampleBidirflow = sql.Table(
-#    "sampleBidirflow",
-#    Base.metadata,
-#    sql.Column(
-#        "sample_id",
-#        sql.Integer,
-#        sql.ForeignKey("sampleID.sample_id"),
-#    ),
-#    sql.Column(
-#        "bidirflow_id",
-#        sql.Integer,
-#        sql.ForeignKey("bidirflowMetadata.bidirflow_id"),
-#    ),
-#)
 
 # dborm.py ends here

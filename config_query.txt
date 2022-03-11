@@ -2,7 +2,7 @@
 database = socotra.int.colorado.edu/dbnascent
 credentials = /Users/lysa8537/.mysql_creds
 
-[query_join keys]
+[query_join_keys]
 existing = [linkIDs, exptMetadata]
 sampleID = INNER JOIN sampleID ON sampleID.sample_id = linkIDs.sample_id
 organismInfo = INNER JOIN organismInfo ON organismInfo.organism = exptMetadata.organism

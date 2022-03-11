@@ -20,22 +20,21 @@ import dbutils
 import dborm
 
 ### User input variables ###
-user_query_fields = ["paper_id",
-                     "organism",
+user_query_fields = ["sample_id",
+                     "sample_name",
+                     "paper_id",
                      "cell_type",
-                     "genotype",
-                     "construct",
+                     "samp_qc_score",
                     ]
 
 user_filter_fields = {
-    "genotype": ["IS NOT NULL"],
-#    "baseline_control_expt": ['in ("control","baseline")'],
-#    "cell_type": ['in ("HeLa")'],
-#    "samp_qc_score": ['< 3'],
-#    "paper_id": ['= "Andrysik2017identification"'],
+    "organism": ['= "H. sapiens"'],
+    "baseline_control_expt": ['IN ("control","baseline")'],
+    "tfit_date": ['IS NOT NULL'],
+    "samp_qc_score": ['< 4'],
     }
 
-outfile = "/Users/lysa8537/db_query_outputs/unique_genetic_manips.tsv"
+outfile = "/Users/lysa8537/db_query_outputs/control_human_tfit_qc123.tsv"
 
 
 ### Determine which search fields are from which tables
@@ -52,7 +51,7 @@ dbconnect = dbutils.dbnascentConnection(db_url, creds)
 db_query_fields = {}
 db_filter_fields = {}
 tables_to_join = []
-query_join_keys = dict(config["query_join keys"])
+query_join_keys = dict(config["query_join_keys"])
 db_tables = dict(dborm.Base.metadata.tables)
 
 for table in db_tables.keys():
@@ -62,11 +61,11 @@ for table in db_tables.keys():
             # store the field with table name attached
             if field not in db_query_fields.keys():
                 db_query_fields[field] = table + "." + field
-            # If that table is not already on the list of
-            # tables to join, add it
-            if table not in tables_to_join:
-                if table not in query_join_keys["existing"]:
-                    tables_to_join.append(table)
+                # If that table is not already on the list of
+                # tables to join, add it
+                if table not in tables_to_join:
+                    if table not in query_join_keys["existing"]:
+                        tables_to_join.append(table)
     for filtkey in user_filter_fields:
         if filtkey in db_tables[table].columns.keys():
             if filtkey not in db_filter_fields.keys():
