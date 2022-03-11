@@ -22,6 +22,8 @@ Base = declarative_base()
 
 
 # MAIN TABLES
+
+# Defines all organisms in the database
 class organismInfo(Base):
     __tablename__ = "organismInfo"
     organism = sql.Column(
@@ -33,7 +35,7 @@ class organismInfo(Base):
     genome_build = sql.Column(sql.String(length=50))
     genome_bases = sql.Column(sql.BigInteger)
 
-
+# Reference table for unique values in database
 class searchEquiv(Base):
     __tablename__ = "searchEquiv"
     search_term = sql.Column(
@@ -45,7 +47,7 @@ class searchEquiv(Base):
     db_term = sql.Column(sql.String(length=127))
     term_category = sql.Column(sql.String(length=50))
 
-
+# Paper-level metadata common to most samples in paper
 class exptMetadata(Base):
     __tablename__ = "exptMetadata"
     expt_id = sql.Column(sql.Integer,
@@ -81,7 +83,7 @@ class exptMetadata(Base):
     paper_qc_score = sql.Column(sql.Float)
     paper_data_score = sql.Column(sql.Float)
 
-
+# All SRR numbers, and equivalence to SRZ values and sample IDs
 class sampleID(Base):
     __tablename__ = "sampleID"
     srr = sql.Column(sql.String(length=50),
@@ -98,7 +100,8 @@ class sampleID(Base):
         index=True,
     )
 
-
+# Genetic info, including organism, sample type, cell type, and
+# any genetic modifications of note
 class geneticInfo(Base):
     __tablename__ = "geneticInfo"
     genetic_id = sql.Column(
@@ -118,7 +121,7 @@ class geneticInfo(Base):
     genotype = sql.Column(sql.String(length=127))
     construct = sql.Column(sql.String(length=127))
 
-
+# Treatment information
 class conditionInfo(Base):
     __tablename__ = "conditionInfo"
     condition_id = sql.Column(
@@ -136,7 +139,7 @@ class conditionInfo(Base):
     duration = sql.Column(sql.Integer)
     duration_unit = sql.Column(sql.String(length=50))
 
-
+# Linkage table of each sample to treatment(s)
 class sampleCondition(Base):
     __tablename__ = "sampleCondition"
     condition_match_id = sql.Column(
@@ -154,7 +157,7 @@ class sampleCondition(Base):
         sql.ForeignKey("conditionInfo.condition_id"),
     )
 
-
+# Main linkage table between sample, genetic, and expt IDs
 class linkIDs(Base):
     __tablename__ = "linkIDs"
     sample_id = sql.Column(
@@ -181,7 +184,7 @@ class linkIDs(Base):
         sql.ForeignKey("exptMetadata.paper_id"),
     )
 
-
+# All sample-specific information, including QC data and notes
 class sampleAccum(Base):
     __tablename__ = "sampleAccum"
     sample_id = sql.Column(
@@ -220,7 +223,7 @@ class sampleAccum(Base):
     samp_qc_score = sql.Column(sql.Integer)
     samp_data_score = sql.Column(sql.Integer)
 
-
+# Version information for nascentflow runs
 class nascentflowMetadata(Base):
     __tablename__ = "nascentflowMetadata"
     nascentflow_id = sql.Column(
@@ -256,7 +259,7 @@ class nascentflowMetadata(Base):
     python_version = sql.Column(sql.String(length=127))
     numpy_version = sql.Column(sql.String(length=127))
 
-
+# Linkage table of each sample to nascentflow run(s)
 class sampleNascentflow(Base):
     __tablename__ = "sampleNascentflow"
     nascentver_match_id = sql.Column(
@@ -274,7 +277,7 @@ class sampleNascentflow(Base):
         sql.ForeignKey("nascentflowMetadata.nascentflow_id"),
     )
 
-
+# Version information for bidirectionalflow runs
 class bidirflowMetadata(Base):
     __tablename__ = "bidirflowMetadata"
     bidirflow_id = sql.Column(
@@ -303,7 +306,7 @@ class bidirflowMetadata(Base):
     tfit_date = sql.Column(sql.Date)
     fcgene_date = sql.Column(sql.Date)
 
-
+# Linkage table of each sample to bidirectionalflow run(s)
 class sampleBidirflow(Base):
     __tablename__ = "sampleBidirflow"
     bidirver_match_id = sql.Column(
