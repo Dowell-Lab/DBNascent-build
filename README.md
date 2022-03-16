@@ -8,15 +8,15 @@ Data in the database pulls from manually curated metadata tables, quality contro
 
 The database was built with python 3.6.3. The following packages are required:
 
-configparser	v5.2.0 or higher\n
-numpy		v1.19.2 or higher\n
-yaml		v5.4.1 or higher\n
-pymysql		v1.0.2 or higher (may substitute a different MySQL translator)\n
-sqlalchemy	v1.4.31 or higher\n
+configparser	v5.2.0 or higher<br>
+numpy		v1.19.2 or higher<br>
+yaml		v5.4.1 or higher<br>
+pymysql		v1.0.2 or higher (may substitute a different MySQL translator)<br>
+sqlalchemy	v1.4.31 or higher<br>
 
 ## Database schema
 
-![DBNascent database schema](./dbschema.png)
+![DBNascent database schema](./dbschema.png)<br>
 (Generated with https://github.com/sqlalchemy/sqlalchemy/wiki/SchemaDisplay)
 
 ## Usage
