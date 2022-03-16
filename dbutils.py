@@ -664,7 +664,7 @@ def scrape_fastqc(paper_id,
         return fastqc_dict
 
     # Unzip trimmed fastQC report
-    with zp.ZipFile(samp_zip + ".zip", "r") as zp_ref:
+    with zp.ZipFile(trim_zip + ".zip", "r") as zp_ref:
         zp_ref.extractall(fqc_path)
 
     # Extract trimmed read depth
