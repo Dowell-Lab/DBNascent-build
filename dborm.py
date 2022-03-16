@@ -304,6 +304,7 @@ class bidirflowMetadata(Base):
     dreg_version = sql.Column(sql.String(length=127))
     dreg_date = sql.Column(sql.Date)
     tfit_date = sql.Column(sql.Date)
+    tfit_prelim_date = sql.Column(sql.Date)
     fcgene_date = sql.Column(sql.Date)
 
 # Linkage table of each sample to bidirectionalflow run(s)

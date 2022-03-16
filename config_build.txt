@@ -152,4 +152,5 @@ tfit_version = tfit_version
 dreg_version = dreg_version
 dreg_date = dreg_date
 tfit_date = tfit_date
+tfit_prelim_date = tfit_prelim_date
 fcgene_date = fcgene_date
