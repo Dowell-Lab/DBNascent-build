@@ -197,9 +197,10 @@ class sampleAccum(Base):
     replicate = sql.Column(sql.String(length=50))
     single_paired = sql.Column(sql.String(length=50))
     rcomp = sql.Column(sql.Boolean)
-    expt_unusable = sql.Column(sql.Boolean)
+    unusable = sql.Column(sql.Boolean)
     timecourse = sql.Column(sql.Boolean)
-    baseline_control_expt = sql.Column(sql.String(length=50))
+    control_experimental = sql.Column(sql.String(length=50))
+    outlier = sql.Column(sql.Boolean)
     notes = sql.Column(sql.String(length=300))
     processing_notes = sql.Column(sql.String(length=300))
     raw_read_depth = sql.Column(sql.Integer)
@@ -223,6 +224,29 @@ class sampleAccum(Base):
     samp_qc_score = sql.Column(sql.Integer)
     samp_data_score = sql.Column(sql.Integer)
 
+# Summary stats for bidirectionals
+class bidirSummary(Base):
+    __tablename__ = "bidirSummary"
+    sample_id = sql.Column(
+        sql.Integer,
+        sql.ForeignKey("sampleID.sample_id"),
+        primary_key=True,
+        index=True,
+        unique=True,
+    )
+    num_tfit_bidir = sql.Column(sql.Integer)
+    num_tfit_bidir_promoter = sql.Column(sql.Integer)
+    num_tfit_bidir_intronic = sql.Column(sql.Integer)
+    num_tfit_bidir_intergenic = sql.Column(sql.Integer)
+    num_dreg_bidir = sql.Column(sql.Integer)
+    num_dreg_bidir_promoter = sql.Column(sql.Integer)
+    num_dreg_bidir_intronic = sql.Column(sql.Integer)
+    num_dreg_bidir_intergenic = sql.Column(sql.Integer)
+    tfit_bidir_gc_prop = sql.Column(sql.Float)
+    dreg_bidir_gc_prop = sql.Column(sql.Float)
+    tfit_master_merge_incl = sql.Column(sql.Boolean)
+    dreg_master_merge_incl = sql.Column(sql.Boolean)
+
 # Version information for nascentflow runs
 class nascentflowMetadata(Base):
     __tablename__ = "nascentflowMetadata"
@@ -233,10 +257,12 @@ class nascentflowMetadata(Base):
         unique=True,
     )
     nascentflow_version = sql.Column(sql.String(length=127))
+    downfile_version = sql.Column(sql.String(length=127))
     pipeline_revision_hash = sql.Column(sql.String(length=127))
     pipeline_hash = sql.Column(sql.String(length=127))
     nascentflow_date = sql.Column(sql.Date)
     nascentflow_redo_date = sql.Column(sql.Date)
+    downfile_pipeline_date = sql.Column(sql.Date)
     nextflow_version = sql.Column(sql.String(length=127))
     fastqc_version = sql.Column(sql.String(length=127))
     bbmap_version = sql.Column(sql.String(length=127))
@@ -303,9 +329,11 @@ class bidirflowMetadata(Base):
     tfit_version = sql.Column(sql.String(length=127))
     dreg_version = sql.Column(sql.String(length=127))
     dreg_date = sql.Column(sql.Date)
+    dreg_postprocess_date = sql.Column(sql.Date)
     tfit_date = sql.Column(sql.Date)
     tfit_prelim_date = sql.Column(sql.Date)
     fcgene_date = sql.Column(sql.Date)
+    fcbidir_date = sql.Column(sql.Date)
 
 # Linkage table of each sample to bidirectionalflow run(s)
 class sampleBidirflow(Base):
