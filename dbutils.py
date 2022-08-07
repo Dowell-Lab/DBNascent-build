@@ -17,6 +17,8 @@ Functions:
     key_store_compare(dict, list, list, list) -> dict
     object_as_dict(object) -> dict
     entry_update(object, str, list, list -> list
+    db_round(float) -> float
+    duration_calc(list) -> list
     scrape_fastqc(str, str, str, dict) -> dict
     scrape_picard(str, str, str) -> dict
     scrape_mapstats(str, str, str, dict) -> dict
@@ -466,7 +468,7 @@ def key_store_compare(
     comp_keys,
     store_keys
 ) -> dict:
-    """Compare two lists of dicts and add a key if matching.
+    """Compare two lists of dicts and, if matching, add new key/value.
 
     Converts all values to strings for comparison purposes
 
@@ -504,7 +506,7 @@ def key_store_compare(
 
 
 def listdict_compare(comp_dict, db_dict, db_keys) -> list:
-    """Compare two lists of dicts and take rows not already in db.
+    """Compare two lists of dicts and return rows not already in db.
 
     Converts all values to strings for comparison purposes
 
@@ -558,7 +560,7 @@ def object_as_dict(dbobj) -> dict:
 
 
 def entry_update(dbconn, table, dbkeys, comp_table) -> list:
-    """Find entries not already in database.
+    """Find and return entries not already in database.
 
     Parameters:
         dbconn (dbnascentConnection object) : 
@@ -587,6 +589,111 @@ def entry_update(dbconn, table, dbkeys, comp_table) -> list:
                      )
 
     return entries_to_add
+
+
+def db_round(value_to_round) -> float:
+    """Round values appropriately for input into database.
+
+    Parameters:
+        value_to_round (float) :
+            value in float format
+
+    Returns:
+        rounded_value (float) :
+            properly rounded value
+    """
+    if value_to_round > 99999:
+        return round(value_to_round, 0)
+    elif value_to_round > 9999:
+        return round(value_to_round, 1)
+    elif value_to_round > 999:
+        return round(value_to_round, 2)
+    elif value_to_round > 99:
+        return round(value_to_round, 3)
+    elif value_to_round > 9:
+        return round(value_to_round, 4)
+    else:
+        return round(value_to_round, 5)
+
+
+def duration_calc(time_list) -> list:
+    """Calculate duration and duration units from parsed treatment times.
+
+    Parameters:
+        time_list (list) :
+            list of treatment times parsed from metadata
+            time_list[0] is the start time
+            time_list[1] is the end time
+            time_list[2] is the time unit
+
+    Returns:
+        duration_list (list) :
+            list containing treatment duration ([0]) and duration units ([1])
+    """
+    duration = int(time[1]) - int(time[0])
+    if time[2] == "s":
+        if duration % 60 == 0:
+            if duration % 3600 == 0:
+                if duration % 86400 == 0:
+                    duration = duration / 86400
+                    duration_unit = "day"
+                else:
+                    duration = duration / 3600
+                    duration_unit = "hr"
+            else:
+                duration = duration / 60
+                duration_unit = "min"
+        else:
+            duration_unit = "s"
+    elif time[2] == "min":
+        if duration % 60 == 0:
+            if duration % 1440 == 0:
+                duration = duration / 1440
+                duration_unit = "day"
+            else:
+                duration = duration / 60
+                duration_unit = "hr"
+        else:
+            duration_unit = "min"
+    elif time[2] == "hr":
+        if duration % 24 == 0:
+            duration = duration / 24
+            duration_unit = "day"
+        else:
+            duration_unit = "hr"
+    else:
+        duration_unit = "day"
+
+    duration_list = [duration, duration_unit]
+
+    return duration_list
+
+
+def merge_list_accum(merge_file_list) -> list:
+    """Scrape master merge lists for paper_id values.
+
+    Parameters:
+        merge_file_list (list) :
+            list of files to scrape
+
+    Returns:
+        merge_ids (list) :
+            list of paper_id values incl in master merges
+    """
+    if len(merge_file_list) == 0:
+        raise FileNotFoundError(
+            "Merge lists do not exist at the provided paths"
+        )
+
+    merge_ids = []
+    for mergefile in merge_file_list:
+       with open(mergefile) as f:
+           for line in f:
+               paper_id = tuple(line.strip().split("/"))[3]
+               if paper_id not in merge_ids:
+                   merge_ids.append(paper_id)
+
+    return merge_ids
 
 
 def scrape_fastqc(paper_id,
@@ -826,18 +933,7 @@ def scrape_rseqc(paper_id, sample_name, data_path):
         if re.compile("CDS_Exons").search(line):
             rseqc_dict["rseqc_cds"] = int(line.split()[2])
             cds = float(line.split()[-1])
-            if cds > 99999:
-                rseqc_dict["cds_rpk"] = round(cds, 0)
-            elif cds > 9999:
-                rseqc_dict["cds_rpk"] = round(cds, 1)
-            elif cds > 999:
-                rseqc_dict["cds_rpk"] = round(cds, 2)
-            elif cds > 99:
-                rseqc_dict["cds_rpk"] = round(cds, 3)
-            elif cds > 9:
-                rseqc_dict["cds_rpk"] = round(cds, 4)
-            else:
-                rseqc_dict["cds_rpk"] = round(cds, 5)
+            rseqc_dict["cds_rpk"] = db_round(cds)
         if re.compile("5'UTR_Exons").search(line):
             rseqc_dict["rseqc_five_utr"] = int(line.split()[2])
         if re.compile("3'UTR_Exons").search(line):
@@ -845,33 +941,11 @@ def scrape_rseqc(paper_id, sample_name, data_path):
         if re.compile("Introns").search(line):
             rseqc_dict["rseqc_intron"] = int(line.split()[2])
             intron = float(line.split()[-1])
-            if intron > 99999:
-                rseqc_dict["intron_rpk"] = round(intron, 0)
-            elif intron > 9999:
-                rseqc_dict["intron_rpk"] = round(intron, 1)
-            elif intron > 999:
-                rseqc_dict["intron_rpk"] = round(intron, 2)
-            elif intron > 99:
-                rseqc_dict["intron_rpk"] = round(intron, 3)
-            elif intron > 9:
-                rseqc_dict["intron_rpk"] = round(intron, 4)
-            else:
-                rseqc_dict["intron_rpk"] = round(intron, 5)
+            rseqc_dict["intron_rpk"] = db_round(intron)
 
     if rseqc_dict["intron_rpk"] > 0:
         exint_ratio = rseqc_dict["cds_rpk"] / rseqc_dict["intron_rpk"]
-        if exint_ratio > 99999:
-            rseqc_dict["exint_ratio"] = round(exint_ratio, 0)
-        elif exint_ratio > 9999:
-            rseqc_dict["exint_ratio"] = round(exint_ratio, 1)
-        elif exint_ratio > 999:
-            rseqc_dict["exint_ratio"] = round(exint_ratio, 2)
-        elif exint_ratio > 99:
-            rseqc_dict["exint_ratio"] = round(exint_ratio, 3)
-        elif exint_ratio > 9:
-            rseqc_dict["exint_ratio"] = round(exint_ratio, 4)
-        else:
-            rseqc_dict["exint_ratio"] = round(exint_ratio, 5)
+        rseqc_dict["exint_ratio"] = db_round(exint_ratio)
     else:
         rseqc_dict["exint_ratio"] = None
 
@@ -962,28 +1036,23 @@ def scrape_pileup(paper_id, sample_name, data_path):
     # for proper matching to database entries
     pileup_dict["genome_prop_cov"] = round((cov / total), 5)
     fold_cov = fold / total
-    if fold_cov > 99999:
-        pileup_dict["avg_fold_cov"] = round(fold_cov, 0)
-    elif fold_cov > 9999:
-        pileup_dict["avg_fold_cov"] = round(fold_cov, 1)
-    elif fold_cov > 999:
-        pileup_dict["avg_fold_cov"] = round(fold_cov, 2)
-    elif fold_cov > 99:
-        pileup_dict["avg_fold_cov"] = round(fold_cov, 3)
-    elif fold_cov > 9:
-        pileup_dict["avg_fold_cov"] = round(fold_cov, 4)
-    else:
-        pileup_dict["avg_fold_cov"] = round(fold_cov, 5)
+    pileup_dict["avg_fold_cov"] = db_round(fold_cov)
 
     return pileup_dict
 
 
-def sample_qc_calc(db_sample) -> dict:
+def sample_qc_calc(db_sample, thresholds) -> dict:
     """Calculate sample qc and data scores.
 
     Parameters:
         db_sample (dict) :
             sample_accum entry dict from db query
+
+        thresholds (dict) :
+            dict of thresholds to use for qc and data score calc
+            thresholds are given in dict format under keys for scores
+            example threshold for qc score is:
+                {qc5: [5000000, 0.95, 4000000, 0.05]}
 
     Returns:
         samp_score (dict) :
@@ -997,73 +1066,107 @@ def sample_qc_calc(db_sample) -> dict:
     genome = db_sample["genome_prop_cov"]
     exint = db_sample["exint_ratio"]
 
+    # Find bidirSummary data for sample, if present
+    dbbidir_dump = dbconn.reflect_table(
+                      "bidirSummary",
+                      {"sample_id": db_sample["sample_id"]}
+                   )
+    if len(dbbidir_dump) > 1:
+        raise ValueError(
+            "More than one bidir summary associated with sample_id"
+        )
+
     # Determine sample QC score
     # All cutoffs based on manual inspection of data
-    if (trimrd is None
-       or dup is None
-       or mapped is None
-       or complexity is None):
-
+    if (
+        trimrd is None
+        or dup is None
+        or mapped is None
+        or complexity is None
+    ):
         samp_score["samp_qc_score"] = 0
 
-    elif (trimrd <= 5000000
-          or dup >= 0.95
-          or (mapped * trimrd) <= 4000000
-          or complexity < 0.05):
-
+    elif (
+        trimrd <= thresholds["qc5"][0]
+        or dup >= thresholds["qc5"][1]
+        or (mapped * trimrd) <= thresholds["qc5"][2]
+        or complexity < thresholds["qc5"][3]
+    ):
         samp_score["samp_qc_score"] = 5
 
-    elif (trimrd <= 10000000
-          or dup >= 0.80
-          or (mapped * trimrd) <= 8000000
-          or complexity < 0.2):
-
+    elif (
+        trimrd <= thresholds["qc4"][0]
+        or dup >= thresholds["qc4"][1]
+        or (mapped * trimrd) <= thresholds["qc4"][2]
+        or complexity < thresholds["qc4"][3]
+    ):
         samp_score["samp_qc_score"] = 4
 
-    elif (trimrd <= 15000000
-          or dup >= 0.65
-          or (mapped * trimrd) <= 12000000
-          or complexity < 0.35):
-
+    elif (
+        trimrd <= thresholds["qc3"][0]
+        or dup >= thresholds["qc3"][1]
+        or (mapped * trimrd) <= thresholds["qc3"][2]
+        or complexity < thresholds["qc3"][3]
+    ):
         samp_score["samp_qc_score"] = 3
 
-    elif (trimrd <= 20000000
-          or dup >= 0.5
-          or (mapped * trimrd) <= 16000000
-          or complexity < 0.5):
-
+    elif (
+        trimrd <= thresholds["qc2"][0]
+        or dup >= thresholds["qc2"][1]
+        or (mapped * trimrd) <= thresholds["qc2"][2]
+        or complexity < thresholds["qc2"][3]
+    ):
         samp_score["samp_qc_score"] = 2
 
     else:
         samp_score["samp_qc_score"] = 1
 
     # Determine sample data score
-    if (genome is None
-       or exint is None):
-
+    if (exint is None):
         samp_score["samp_data_score"] = 0
 
-    elif (genome <= 0.04
-          or exint >= 9):
+    elif (len(dbbidir_dump) > 0):
 
-        samp_score["samp_data_score"] = 5
+        if dbbidir_dump[0]["tfit_bidir_gc_prop"]:
+            tfitgc = dbbidir_dump[0]["tfit_bidir_gc_prop"]
 
-    elif (genome <= 0.08
-          or exint >= 7):
+            if (
+                exint >= thresholds["data5"][0]
+                or tfitgc <= thresholds["data5"][1]
+            ):
+                samp_score["samp_data_score"] = 5
 
-        samp_score["samp_data_score"] = 4
+            elif (
+                exint >= thresholds["data4"][0]
+                or tfitgc <= thresholds["data4"][1]
+            ):
+                samp_score["samp_data_score"] = 4
 
-    elif (genome <= 0.12
-          or exint >= 5):
+            elif (
+                exint >= thresholds["data3"][0]
+                or tfitgc <= thresholds["data3"][1]
+            ):
+                samp_score["samp_data_score"] = 3
 
-        samp_score["samp_data_score"] = 3
+            elif (
+                exint >= thresholds["data2"][0]
+                or tfitgc <= thresholds["data2"][1]
+            ):
+                samp_score["samp_data_score"] = 2
 
-    elif (genome <= 0.16
-          or exint >= 3):
-        samp_score["samp_data_score"] = 2
-
+            else:
+                samp_score["samp_data_score"] = 1
     else:
-        samp_score["samp_data_score"] = 1
+        if (exint >= thresholds["data5"][0]):
+            samp_score["samp_data_score"] = 5
+        elif (exint >= thresholds["data4"][0]):
+            samp_score["samp_data_score"] = 4
+        elif (exint >= thresholds["data3"][0]):
+            samp_score["samp_data_score"] = 3
+        elif (exint >= thresholds["data2"][0]):
+            samp_score["samp_data_score"] = 2
+        else:
+            samp_score["samp_data_score"] = 1
 
     return samp_score
 
@@ -1123,6 +1226,12 @@ def add_version_info(
             all relevant version info for entry into db
     """
     ver_table = []
+
+    # If vertype is not in list of accepted, raise error
+    if vertype not in ["nascent","bidir"]:
+        raise ValueError(
+            "vertype must be nascent or bidir"
+        )
 
     dblink_dump = dbconn.reflect_table(
                       "linkIDs",

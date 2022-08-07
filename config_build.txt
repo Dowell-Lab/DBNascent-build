@@ -4,6 +4,10 @@ credentials = /Users/lysa8537/.mysql_creds
 backup_dir = /Shares/dbnascent/db_backups/
 organism_table = /scratch/Shares/dowell/dbnascent/DBNascent-build/organisms.txt
 searcheq_table = /scratch/Shares/dowell/dbnascent/DBNascent-build/searcheq.txt
+hg38_tfit_master_merge = /scratch/Shares/dowell/dbnascent/out/meta_analysis/mumerge/conditions_table/qc4_gc50perc_tss50perc_tfit_mumerge_files_hg38_220603.txt
+hg38_dreg_master_merge = /scratch/Shares/dowell/dbnascent/out/meta_analysis/mumerge/conditions_table/qc4_gc50perc_tss50perc_dreg_mumerge_files_hg38_220603.txt
+mm10_tfit_master_merge = /scratch/Shares/dowell/dbnascent/out/meta_analysis/mumerge/conditions_table/qc4_gc50perc_tss50perc_tfit_mumerge_files_mm10_220603.txt
+mm10_dreg_master_merge = /scratch/Shares/dowell/dbnascent/out/meta_analysis/mumerge/conditions_table/qc4_gc50perc_tss50perc_dreg_mumerge_files_mm10_220603.txt
 db_data = /Shares/dbnascent/
 
 [organism keys]
@@ -69,19 +73,21 @@ duration_unit = duration_unit
 replicate = replicate
 single_paired = single_paired
 rcomp = rcomp
-expt_unusable = experimentally not usable
+unusable = unusable
 notes = notes
 timecourse = timecourse
-baseline_control_expt = baseline_control_expt
+control_experimental = control_experimental
+outlier = outlier
 
 [accum keys]
 sample_id = sample_id
 replicate = replicate
 single_paired = single_paired
 rcomp = rcomp
-expt_unusable = expt_unusable
+unusable = unusable
 timecourse = timecourse
-baseline_control_expt = baseline_control_expt
+control_experimental = control_experimental
+outlier = outlier
 notes = notes
 processing_notes = processing_notes
 raw_read_depth = raw_read_depth
@@ -105,12 +111,28 @@ avg_fold_cov = avg_fold_cov
 samp_qc_score = samp_qc_score
 samp_data_score = samp_data_score
 
+[bidirsummary keys]
+num_tfit_bidir = num_tfit_bidir
+num_tfit_bidir_promoter = num_tfit_bidir_promoter
+num_tfit_bidir_intronic = num_tfit_bidir_intronic
+num_tfit_bidir_intergenic = num_tfit_bidir_intergenic
+num_dreg_bidir = num_dreg_bidir
+num_dreg_bidir_promoter = num_dreg_bidir_promoter
+num_dreg_bidir_intronic = num_dreg_bidir_intronic
+num_dreg_bidir_intergenic = num_dreg_bidir_intergenic
+tfit_bidir_gc_prop = tfit_bidir_gc_prop
+dreg_bidir_gc_prop = dreg_bidir_gc_prop
+tfit_master_merge_incl = tfit_master_merge_incl
+dreg_master_merge_incl = dreg_master_merge_incl
+
 [nascentflow keys]
 nascentflow_version = nascentflow_version
+downfile_version = downfile_version
 pipeline_revision_hash = pipeline_revision_hash
 pipeline_hash = pipeline_hash
 nascentflow_date = nascentflow_date
 nascentflow_redo_date = nascentflow_redo_date
+downfile_pipeline_date = downfile_pipeline_date
 nextflow_version = nextflow_version
 fastqc_version = fastqc_version
 bbmap_version = bbmap_version
@@ -151,6 +173,8 @@ fstitch_version = fstitch_version
 tfit_version = tfit_version
 dreg_version = dreg_version
 dreg_date = dreg_date
+dreg_postprocess_date = dreg_postprocess_date
 tfit_date = tfit_date
 tfit_prelim_date = tfit_prelim_date
 fcgene_date = fcgene_date
+fcbidir_date = fcbidir_date
