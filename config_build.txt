@@ -112,6 +112,7 @@ samp_qc_score = samp_qc_score
 samp_data_score = samp_data_score
 
 [bidirsummary keys]
+sample_id = sample_id
 num_tfit_bidir = num_tfit_bidir
 num_tfit_bidir_promoter = num_tfit_bidir_promoter
 num_tfit_bidir_intronic = num_tfit_bidir_intronic

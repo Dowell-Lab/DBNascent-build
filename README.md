@@ -1,4 +1,5 @@
 # DBNascent_build
+## Version 1.1
 
 This repository is intended for building, updating, and querying DBNascent. This is a MySQL database cataloguing all nascent sequencing experiments in the SRA through 2020. The database has been built and maintained by the DnA Lab at University of Colorado Boulder.
 

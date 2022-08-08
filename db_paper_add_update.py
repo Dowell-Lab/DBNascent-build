@@ -264,7 +264,7 @@ for condition in cond_preparse:
                 new_cond["time_unit"] = time[2]
 
                 # Calculate duration and units
-                duration_list = duration_calc(time)
+                duration_list = dbutils.duration_calc(time)
                 new_cond["duration"] = int(duration_list[0])
                 new_cond["duration_unit"] = duration_list[1]
             else:
@@ -387,17 +387,20 @@ if (exists(tfitsummary_path) or exists(dregsummary_path)):
         # Combine metatables if both summary files exist
         if exists(dregsummary_path):
             dreg_summary = dbutils.Metatable(dregsummary_path)
-            bidir_sumdata = key_store_compare(
-                                tfit_summary.data,
-                                dreg_summary.data,
-                                ["sample_id"],
-                                ["num_dreg_bidir",
-                                 "num_dreg_bidir_promoter",
-                                 "num_dreg_bidir_intronic",
-                                 "num_dreg_bidir_intergenic",
-                                 "dreg_bidir_gc_prop",
-                                ]
-                            )
+            bidir_sumdata = []
+            for tfit_entry in tfit_summary.data:
+                bidir_entry = dbutils.key_store_compare(
+                                  tfit_entry,
+                                  dreg_summary.data,
+                                  ["sample_name",],
+                                  ["num_dreg_bidir",
+                                   "num_dreg_bidir_promoter",
+                                   "num_dreg_bidir_intronic",
+                                   "num_dreg_bidir_intergenic",
+                                   "dreg_bidir_gc_prop",
+                                  ]
+                              )
+                bidir_sumdata.append(bidir_entry)
             bidir_summary = dbutils.Metatable(bidir_sumdata)
 
         # Make blank dreg key/value pairs if dreg file doesn't exist
@@ -429,8 +432,8 @@ if (exists(tfitsummary_path) or exists(dregsummary_path)):
     tfit_merge_files = [config["file_locations"]["hg38_dreg_master_merge"],
                         config["file_locations"]["mm10_dreg_master_merge"],
                        ]
-    dreg_merge_ids = merge_list_accum(dreg_merge_files)
-    tfit_merge_ids = merge_list_accum(tfit_merge_files)
+    dreg_merge_ids = dbutils.merge_list_accum(dreg_merge_files)
+    tfit_merge_ids = dbutils.merge_list_accum(tfit_merge_files)
 
     for bidir_entry in bidir_summary.data:
         if paper_id in dreg_merge_ids:
@@ -442,47 +445,47 @@ if (exists(tfitsummary_path) or exists(dregsummary_path)):
         else:
             bidir_entry["tfit_master_merge_incl"] = 0
 
-# Add sample_id values onto metatable
-dblink_dump = dbconnect.reflect_table("linkIDs")
+    # Add sample_id values onto metatable
+    dblink_dump = dbconnect.reflect_table("sampleID")
 
-for bidirsum in bidir_summary.data:
-    dbutils.key_store_compare(
-        bidirsum,
-        dblink_dump,
-        ["sample_name"],
-        ["sample_id"]
-    )
+    for bidirsum in bidir_summary.data:
+        dbutils.key_store_compare(
+            bidirsum,
+            dblink_dump,
+            ["sample_name"],
+            ["sample_id"]
+        )
 
-# Change datatypes for unique calc
-for bidirsum in bidir_summary.data:
-    for key in bidirsum:
-        bidirsum[key] = str(bidirsum[key])
-
-# If not present, add bidir summary info to database
-try:
-    bidir_summary_unique = bidir_summary.unique(dbbidirsummary_keys)
-except KeyError:
-    print(paper_id)
-bidir_summary_to_add = dbutils.entry_update(
-                           dbconnect,
-                           "bidirSummary",
-                           dbbidirsummary_keys,
-                           bidir_summary_unique
-                       )
-if len(bidir_summary_to_add) > 0:
-    for bidirsum in bidir_summary_to_add:
-        for key in ["tfit_master_merge_incl", "dreg_master_merge_incl"]:
-            if bidirsum[key] == '1':
-                bidirsum[key] = True
-            elif bidirsum[key] == '0':
-                bidirsum[key] = False
+    # Change datatypes for unique calc
+    for bidirsum in bidir_summary.data:
         for key in bidirsum:
-            if bidirsum[key] == 'None':
-                bidirsum[key] = None
-    dbconnect.engine.execute(
-        dborm.bidirSummary.__table__.insert(),
-        bidir_summary_to_add
-    )
+            bidirsum[key] = str(bidirsum[key])
+
+    # If not present, add bidir summary info to database
+    try:
+        bidir_summary_unique = bidir_summary.unique(dbbidirsummary_keys)
+    except KeyError:
+        print(paper_id)
+    bidir_summary_to_add = dbutils.entry_update(
+                               dbconnect,
+                               "bidirSummary",
+                               dbbidirsummary_keys,
+                               bidir_summary_unique
+                           )
+    if len(bidir_summary_to_add) > 0:
+        for bidirsum in bidir_summary_to_add:
+            for key in ["tfit_master_merge_incl", "dreg_master_merge_incl"]:
+                if bidirsum[key] == '1':
+                    bidirsum[key] = True
+                elif bidirsum[key] == '0':
+                    bidirsum[key] = False
+            for key in bidirsum:
+                if bidirsum[key] == 'None':
+                    bidirsum[key] = None
+        dbconnect.engine.execute(
+            dborm.bidirSummary.__table__.insert(),
+            bidir_summary_to_add
+        )
 
 ### Step 10: Make sampleAccum table ###
 
@@ -559,7 +562,7 @@ for sample in sampmeta.data:
 
     # Calculate qc and data scores
     # Uses bidir summary stats for data scores if available
-    score_dict = dbutils.sample_qc_calc(sample, samp_thresholds)
+    score_dict = dbutils.sample_qc_calc(dbconnect, sample, samp_thresholds)
     sample.update(score_dict)
 
     # Parse replicate number
@@ -584,7 +587,7 @@ accum_to_add = dbutils.entry_update(
                )
 if len(accum_to_add) > 0:
     for accsamp in accum_to_add:
-        for key in ["rcomp", "expt_unusable", "timecourse"]:
+        for key in ["rcomp", "unusable", "timecourse", "outlier"]:
             if accsamp[key] == '1':
                 accsamp[key] = True
             elif accsamp[key] == '0':

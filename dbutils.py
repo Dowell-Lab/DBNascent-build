@@ -652,8 +652,8 @@ def duration_calc(time_list) -> list:
         duration_list (list) :
             list containing treatment duration ([0]) and duration units ([1])
     """
-    duration = int(time[1]) - int(time[0])
-    if time[2] == "s":
+    duration = int(time_list[1]) - int(time_list[0])
+    if time_list[2] == "s":
         if duration % 60 == 0:
             if duration % 3600 == 0:
                 if duration % 86400 == 0:
@@ -667,7 +667,7 @@ def duration_calc(time_list) -> list:
                 duration_unit = "min"
         else:
             duration_unit = "s"
-    elif time[2] == "min":
+    elif time_list[2] == "min":
         if duration % 60 == 0:
             if duration % 1440 == 0:
                 duration = duration / 1440
@@ -677,7 +677,7 @@ def duration_calc(time_list) -> list:
                 duration_unit = "hr"
         else:
             duration_unit = "min"
-    elif time[2] == "hr":
+    elif time_list[2] == "hr":
         if duration % 24 == 0:
             duration = duration / 24
             duration_unit = "day"
@@ -1063,10 +1063,13 @@ def scrape_pileup(paper_id, sample_name, data_path):
     return pileup_dict
 
 
-def sample_qc_calc(db_sample, thresholds) -> dict:
+def sample_qc_calc(dbconn, db_sample, thresholds) -> dict:
     """Calculate sample qc and data scores.
 
     Parameters:
+        dbconn (sqlalchemy database connection) :
+            database connection object
+
         db_sample (dict) :
             sample_accum entry dict from db query
 
