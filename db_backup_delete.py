@@ -22,10 +22,6 @@ config = dbutils.load_config(
     "/scratch/Shares/dowell/dbnascent/DBNascent-build/config_build.txt"
 )
 
-#config = dbutils.load_config(
-#    "/Users/lysa8537/pipelines/DBNascent-build/config_build.txt"
-#)
-
 # Create database connection object and database schema
 #   This creates tables that do not already exist
 #   Does NOT update fields in tables that do exist
