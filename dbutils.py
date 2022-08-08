@@ -65,6 +65,9 @@ class dbnascentConnection:
         add_tables() :
             Adds tables from ORM to database
 
+        delete_tables() :
+            Deletes all tables in ORM from database
+
         reflect_table(table, filter_crit=None) -> list:
             Pulls table data from database, optionally filtered
             by filter criteria
@@ -124,6 +127,25 @@ class dbnascentConnection:
             none
         """
         dborm.Base.metadata.create_all(self.engine)
+
+    def delete_tables(self, table_list=[]) -> None:
+        """Delete tables in ORM from database.
+
+        Parameters:
+            table_list (list) :
+                list of tables to delete, optionally
+                each entry in list should look like:
+                    <tablename>.__table__
+
+        Returns:
+            none
+        """
+        if len(table_list) > 0:
+            dborm.Base.metadata.drop_all(self.engine,
+                                         tables=table_list
+                                        )
+        else:
+            dborm.Base.metadata.drop_all(self.engine)
 
     def reflect_table(self, table, filter_crit=None) -> list:
         """Query all records from a specific table.
