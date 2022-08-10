@@ -54,6 +54,20 @@ strain = strain
 genotype = genotype
 construct = construct
 
+[bidirsummary keys]
+num_tfit_bidir = num_tfit_bidir
+num_tfit_bidir_promoter = num_tfit_bidir_promoter
+num_tfit_bidir_intronic = num_tfit_bidir_intronic
+num_tfit_bidir_intergenic = num_tfit_bidir_intergenic
+num_dreg_bidir = num_dreg_bidir
+num_dreg_bidir_promoter = num_dreg_bidir_promoter
+num_dreg_bidir_intronic = num_dreg_bidir_intronic
+num_dreg_bidir_intergenic = num_dreg_bidir_intergenic
+tfit_bidir_gc_prop = tfit_bidir_gc_prop
+dreg_bidir_gc_prop = dreg_bidir_gc_prop
+tfit_master_merge_incl = tfit_master_merge_incl
+dreg_master_merge_incl = dreg_master_merge_incl
+
 [metatable condition keys]
 condition_type = treatment type
 treatment = treatment
@@ -110,21 +124,6 @@ genome_prop_cov = genome_prop_cov
 avg_fold_cov = avg_fold_cov
 samp_qc_score = samp_qc_score
 samp_data_score = samp_data_score
-
-[bidirsummary keys]
-sample_id = sample_id
-num_tfit_bidir = num_tfit_bidir
-num_tfit_bidir_promoter = num_tfit_bidir_promoter
-num_tfit_bidir_intronic = num_tfit_bidir_intronic
-num_tfit_bidir_intergenic = num_tfit_bidir_intergenic
-num_dreg_bidir = num_dreg_bidir
-num_dreg_bidir_promoter = num_dreg_bidir_promoter
-num_dreg_bidir_intronic = num_dreg_bidir_intronic
-num_dreg_bidir_intergenic = num_dreg_bidir_intergenic
-tfit_bidir_gc_prop = tfit_bidir_gc_prop
-dreg_bidir_gc_prop = dreg_bidir_gc_prop
-tfit_master_merge_incl = tfit_master_merge_incl
-dreg_master_merge_incl = dreg_master_merge_incl
 
 [nascentflow keys]
 nascentflow_version = nascentflow_version

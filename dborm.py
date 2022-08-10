@@ -121,6 +121,28 @@ class geneticInfo(Base):
     genotype = sql.Column(sql.String(length=127))
     construct = sql.Column(sql.String(length=127))
 
+# Summary stats for bidirectionals
+class bidirSummary(Base):
+    __tablename__ = "bidirSummary"
+    bidirsummary_id = sql.Column(
+        sql.Integer,
+        primary_key=True,
+        index=True,
+        unique=True,
+    )
+    num_tfit_bidir = sql.Column(sql.Integer)
+    num_tfit_bidir_promoter = sql.Column(sql.Integer)
+    num_tfit_bidir_intronic = sql.Column(sql.Integer)
+    num_tfit_bidir_intergenic = sql.Column(sql.Integer)
+    num_dreg_bidir = sql.Column(sql.Integer)
+    num_dreg_bidir_promoter = sql.Column(sql.Integer)
+    num_dreg_bidir_intronic = sql.Column(sql.Integer)
+    num_dreg_bidir_intergenic = sql.Column(sql.Integer)
+    tfit_bidir_gc_prop = sql.Column(sql.Float)
+    dreg_bidir_gc_prop = sql.Column(sql.Float)
+    tfit_master_merge_incl = sql.Column(sql.Boolean)
+    dreg_master_merge_incl = sql.Column(sql.Boolean)
+
 # Treatment information
 class conditionInfo(Base):
     __tablename__ = "conditionInfo"
@@ -175,6 +197,10 @@ class linkIDs(Base):
         sql.Integer,
         sql.ForeignKey("exptMetadata.expt_id"),
     )
+    bidirsummary_id = sql.Column(
+        sql.Integer,
+        sql.ForeignKey("bidirSummary.bidirsummary_id"),
+    )
     sample_name = sql.Column(
         sql.String(length=127),
         sql.ForeignKey("sampleID.sample_name"),
@@ -223,29 +249,6 @@ class sampleAccum(Base):
     avg_fold_cov = sql.Column(sql.Float)
     samp_qc_score = sql.Column(sql.Integer)
     samp_data_score = sql.Column(sql.Integer)
-
-# Summary stats for bidirectionals
-class bidirSummary(Base):
-    __tablename__ = "bidirSummary"
-    sample_id = sql.Column(
-        sql.Integer,
-        sql.ForeignKey("sampleID.sample_id"),
-        primary_key=True,
-        index=True,
-        unique=True,
-    )
-    num_tfit_bidir = sql.Column(sql.Integer)
-    num_tfit_bidir_promoter = sql.Column(sql.Integer)
-    num_tfit_bidir_intronic = sql.Column(sql.Integer)
-    num_tfit_bidir_intergenic = sql.Column(sql.Integer)
-    num_dreg_bidir = sql.Column(sql.Integer)
-    num_dreg_bidir_promoter = sql.Column(sql.Integer)
-    num_dreg_bidir_intronic = sql.Column(sql.Integer)
-    num_dreg_bidir_intergenic = sql.Column(sql.Integer)
-    tfit_bidir_gc_prop = sql.Column(sql.Float)
-    dreg_bidir_gc_prop = sql.Column(sql.Float)
-    tfit_master_merge_incl = sql.Column(sql.Boolean)
-    dreg_master_merge_incl = sql.Column(sql.Boolean)
 
 # Version information for nascentflow runs
 class nascentflowMetadata(Base):

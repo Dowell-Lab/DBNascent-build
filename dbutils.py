@@ -488,7 +488,8 @@ def key_store_compare(
     comp_dict,
     db_dict,
     comp_keys,
-    store_keys
+    store_keys,
+    addnull = False
 ) -> dict:
     """Compare two lists of dicts and, if matching, add new key/value.
 
@@ -507,6 +508,9 @@ def key_store_compare(
         store_keys (list) : 
             key(s) for adding to comp_dict
 
+        addnull (boolean) :
+            specifies whether to add null values if not present
+
     Returns:
         comp_dict (dict) : 
             dict with new value added
@@ -523,6 +527,10 @@ def key_store_compare(
         if comp == 0:
             for storekey in store_keys:
                 comp_dict[storekey] = dbentry[storekey]
+
+    if addnull and (store_keys[0] not in comp_dict.keys()):
+        for storekey in store_keys:
+            comp_dict[storekey] = None
 
     return comp_dict
 

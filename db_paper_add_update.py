@@ -94,7 +94,79 @@ expt_unique = sampmeta.unique(dbexpt_keys)
 samp_unique = sampmeta.unique(dbsamp_keys)
 gene_unique = sampmeta.unique(dbgenetic_keys)
 
-### Step 3: If not present, add experimental metadata to database ###
+### Step 3: Add bidir summary data, if present
+
+data_path = config["file_locations"]["db_data"]
+bidirsummary_keys = list(dict(config["bidirsummary keys"]).values())
+dbbidirsummary_keys = list(dict(config["bidirsummary keys"]).keys())
+tfitsummary_path = (data_path + str(paper_id) +
+                     "/bidir_summary/tfit_stats.txt"
+                    )
+dregsummary_path = (data_path + str(paper_id) +
+                     "/bidir_summary/dreg_stats.txt"
+                    )
+
+# Add Tfit bidir data, if available, otherwise add nulls
+if exists(tfitsummary_path):
+    tfit_summary = dbutils.Metatable(tfitsummary_path)
+    for sample in sampmeta.data:
+        dbutils.key_store_compare(
+            sample,
+            tfit_summary.data,
+            ["sample_name",],
+            ["num_tfit_bidir",
+             "num_tfit_bidir_promoter",
+             "num_tfit_bidir_intronic",
+             "num_tfit_bidir_intergenic",
+             "tfit_bidir_gc_prop",
+            ],
+            addnull = True
+        )
+
+# Add dREG bidir data, if available, otherwise add nulls
+if exists(dregsummary_path):
+    dreg_summary = dbutils.Metatable(dregsummary_path)
+    for sample in sampmeta.data:
+        dbutils.key_store_compare(
+            sample,
+            dreg_summary.data,
+            ["sample_name",],
+            ["num_dreg_bidir",
+             "num_dreg_bidir_promoter",
+             "num_dreg_bidir_intronic",
+             "num_dreg_bidir_intergenic",
+             "dreg_bidir_gc_prop",
+            ],
+            addnull = True
+        )
+
+# Read in master merge list files and make paper_id lists
+# for tfit and dreg separately
+dreg_merge_files = [config["file_locations"]["hg38_tfit_master_merge"],
+                    config["file_locations"]["mm10_tfit_master_merge"],
+                   ]
+tfit_merge_files = [config["file_locations"]["hg38_dreg_master_merge"],
+                    config["file_locations"]["mm10_dreg_master_merge"],
+                   ]
+dreg_merge_ids = dbutils.merge_list_accum(dreg_merge_files)
+tfit_merge_ids = dbutils.merge_list_accum(tfit_merge_files)
+
+# Add master merge info for all entries in paper (strings for unique comp)
+for sample in sampmeta.data:
+    if paper_id in dreg_merge_ids:
+        bidir_entry["dreg_master_merge_incl"] = '1'
+    else:
+        bidir_entry["dreg_master_merge_incl"] = '0'
+    if paper_id in tfit_merge_ids:
+        bidir_entry["tfit_master_merge_incl"] = '1'
+    else:
+        bidir_entry["tfit_master_merge_incl"] = '0'
+    for bidirkey in dbbidirsummary_keys:
+        sample[bidirkey] = str(sample[bidirkey])
+
+bidirsum_unique = sampmeta.unique(dbbidirsummary_keys)
+
+### Step 4: If not present, add experimental metadata to database ###
 expt_to_add = dbutils.entry_update(
                   dbconnect,
                   "exptMetadata",
@@ -113,7 +185,7 @@ if len(expt_to_add) > 0:
         expt_to_add
     )
 
-### Step 4: If not present, add sample ids to database ###
+### Step 5: If not present, add sample ids to database ###
 
 # Find max sample_id currently in db
 dbsamp_dump = dbconnect.reflect_table("sampleID")
@@ -154,7 +226,7 @@ if len(samp_to_add) > 0:
         samp_to_add
     )
 
-### Step 5: If not present, add genetic info to database ###
+### Step 6: If not present, add genetic info to database ###
 
 gene_to_add = dbutils.entry_update(
                   dbconnect,
@@ -168,12 +240,36 @@ if len(gene_to_add) > 0:
         gene_to_add
     )
 
-### Step 6: Make linkIDs table and add to database ###
+### Step 7: If not present, add bidir summary info to database ###
+
+bidirsum_to_add = dbutils.entry_update(
+                      dbconnect,
+                      "bidirSummary",
+                      dbbidirsummary_keys,
+                      bidirsum_unique
+                  )
+for bidirsum in bidirsum_to_add: # Format values for input into db
+    for key in ["tfit_master_merge_incl","dreg_master_merge_incl"]:
+        if bidirsum[key] == '1':
+            bidirsum[key] = True
+        elif bidirsum[key] == '0':
+            bidirsum[key] = False
+    for key in dbbidirsummary_keys:
+        if bidirsum[key] == 'None':
+            bidirsum[key] = None
+if len(bidirsum_to_add) > 0:
+    dbconnect.engine.execute(
+        dborm.bidirSummary.__table__.insert(),
+        bidirsum_to_add
+    )
+
+### Step 8: Make linkIDs table and add to database ###
 
 dbconnect = dbutils.dbnascentConnection(db_url, creds)
 link_keys = ["sample_id",
              "genetic_id", 
              "expt_id",
+             "bidirsummary_id",
              "sample_name",
              "paper_id",
             ]
@@ -182,6 +278,7 @@ link_keys = ["sample_id",
 dbsamp_dump = dbconnect.reflect_table("sampleID")
 dbexpt_dump = dbconnect.reflect_table("exptMetadata")
 dbgene_dump = dbconnect.reflect_table("geneticInfo")
+dbbidirsum_dump = dbconnect.reflect_table("bidirSummary")
 
 # Add IDs to main metatable for matching entries
 for sample in sampmeta.data:
@@ -203,6 +300,12 @@ for sample in sampmeta.data:
         dbgenetic_keys,
         ["genetic_id"]
     )
+    dbutils.key_store_compare(
+        sample,
+        dbbidirsum_dump,
+        dbbidirsummary_keys,
+        ["bidirsummary_id"]
+    )
 
 # If not already present, add linked IDs to database
 link_unique = sampmeta.unique(link_keys)
@@ -218,7 +321,7 @@ if len(link_to_add) > 0:
         link_to_add
     )
 
-### Step 7: Add condition info to database ###
+### Step 9: Add condition info to database ###
 
 dbconnect = dbutils.dbnascentConnection(db_url, creds)
 # cond_keys are as written in metadata, preparsing
@@ -321,7 +424,7 @@ if len(cond_to_add) > 0:
         cond_to_add
     )
 
-### Step 8: Make condition match table ###
+### Step 10: Make condition match table ###
 
 dbconnect = dbutils.dbnascentConnection(db_url, creds)
 
@@ -365,129 +468,7 @@ if len(sampcond_to_add) > 0:
         sampcond_to_add
     )
 
-### Step 9: Make bidirSummary table ###
-
-dbconnect = dbutils.dbnascentConnection(db_url, creds)
-
-data_path = config["file_locations"]["db_data"]
-bidirsummary_keys = list(dict(config["bidirsummary keys"]).values())
-dbbidirsummary_keys = list(dict(config["bidirsummary keys"]).keys())
-tfitsummary_path = (data_path + str(paper_id) +
-                     "/bidir_summary/tfit_stats.txt"
-                    )
-dregsummary_path = (data_path + str(paper_id) +
-                     "/bidir_summary/dreg_stats.txt"
-                    )
-
-# Only process if one of the bidir summary files exists
-if (exists(tfitsummary_path) or exists(dregsummary_path)):
-    if exists(tfitsummary_path):
-        tfit_summary = dbutils.Metatable(tfitsummary_path)
-
-        # Combine metatables if both summary files exist
-        if exists(dregsummary_path):
-            dreg_summary = dbutils.Metatable(dregsummary_path)
-            bidir_sumdata = []
-            for tfit_entry in tfit_summary.data:
-                bidir_entry = dbutils.key_store_compare(
-                                  tfit_entry,
-                                  dreg_summary.data,
-                                  ["sample_name",],
-                                  ["num_dreg_bidir",
-                                   "num_dreg_bidir_promoter",
-                                   "num_dreg_bidir_intronic",
-                                   "num_dreg_bidir_intergenic",
-                                   "dreg_bidir_gc_prop",
-                                  ]
-                              )
-                bidir_sumdata.append(bidir_entry)
-            bidir_summary = dbutils.Metatable(bidir_sumdata)
-
-        # Make blank dreg key/value pairs if dreg file doesn't exist
-        else:
-            bidir_summary = tfit_summary
-
-            for bidir_entry in bidir_summary.data:
-                bidir_entry["num_dreg_bidir"] = None
-                bidir_entry["num_dreg_bidir_promoter"] = None
-                bidir_entry["num_dreg_bidir_intronic"] = None
-                bidir_entry["num_dreg_bidir_intergenic"] = None
-                bidir_entry["dreg_bidir_gc_prop"] = None
-    # Make blank tfit key/value pairs if tfit file doesn't exist
-    else:
-        bidir_summary = dbutils.Metatable(dregsummary_path)
-
-        for bidir_entry in bidir_summary.data:
-            bidir_entry["num_tfit_bidir"] = None
-            bidir_entry["num_tfit_bidir_promoter"] = None
-            bidir_entry["num_tfit_bidir_intronic"] = None
-            bidir_entry["num_tfit_bidir_intergenic"] = None
-            bidir_entry["tfit_bidir_gc_prop"] = None
-
-    # Read in master merge list files and make paper_id lists
-    # for tfit and dreg separately
-    dreg_merge_files = [config["file_locations"]["hg38_tfit_master_merge"],
-                        config["file_locations"]["mm10_tfit_master_merge"],
-                       ]
-    tfit_merge_files = [config["file_locations"]["hg38_dreg_master_merge"],
-                        config["file_locations"]["mm10_dreg_master_merge"],
-                       ]
-    dreg_merge_ids = dbutils.merge_list_accum(dreg_merge_files)
-    tfit_merge_ids = dbutils.merge_list_accum(tfit_merge_files)
-
-    for bidir_entry in bidir_summary.data:
-        if paper_id in dreg_merge_ids:
-            bidir_entry["dreg_master_merge_incl"] = 1
-        else:
-            bidir_entry["dreg_master_merge_incl"] = 0
-        if paper_id in tfit_merge_ids:
-            bidir_entry["tfit_master_merge_incl"] = 1
-        else:
-            bidir_entry["tfit_master_merge_incl"] = 0
-
-    # Add sample_id values onto metatable
-    dblink_dump = dbconnect.reflect_table("sampleID")
-
-    for bidirsum in bidir_summary.data:
-        dbutils.key_store_compare(
-            bidirsum,
-            dblink_dump,
-            ["sample_name"],
-            ["sample_id"]
-        )
-
-    # Change datatypes for unique calc
-    for bidirsum in bidir_summary.data:
-        for key in bidirsum:
-            bidirsum[key] = str(bidirsum[key])
-
-    # If not present, add bidir summary info to database
-    try:
-        bidir_summary_unique = bidir_summary.unique(dbbidirsummary_keys)
-    except KeyError:
-        print(paper_id)
-    bidir_summary_to_add = dbutils.entry_update(
-                               dbconnect,
-                               "bidirSummary",
-                               dbbidirsummary_keys,
-                               bidir_summary_unique
-                           )
-    if len(bidir_summary_to_add) > 0:
-        for bidirsum in bidir_summary_to_add:
-            for key in ["tfit_master_merge_incl", "dreg_master_merge_incl"]:
-                if bidirsum[key] == '1':
-                    bidirsum[key] = True
-                elif bidirsum[key] == '0':
-                    bidirsum[key] = False
-            for key in bidirsum:
-                if bidirsum[key] == 'None':
-                    bidirsum[key] = None
-        dbconnect.engine.execute(
-            dborm.bidirSummary.__table__.insert(),
-            bidir_summary_to_add
-        )
-
-### Step 10: Make sampleAccum table ###
+### Step 11: Make sampleAccum table ###
 
 dbconnect = dbutils.dbnascentConnection(db_url, creds)
 
@@ -600,7 +581,7 @@ if len(accum_to_add) > 0:
         accum_to_add
     )
 
-### Step 11: Calculate and add paper qc/data scores ###
+### Step 12: Calculate and add paper qc/data scores ###
 dbconnect = dbutils.dbnascentConnection(db_url, creds)
 paper_scores = dbutils.paper_qc_calc(accum_unique)
 dbconnect.engine.execute(
@@ -609,7 +590,7 @@ dbconnect.engine.execute(
     paper_scores
 )
 
-### Step 12: Add nascentflow/bidirflow version data ###
+### Step 13: Add nascentflow/bidirflow version data ###
 
 dbconnect = dbutils.dbnascentConnection(db_url, creds)
 nf_keys = list(dict(config["nascentflow keys"]).values())
@@ -681,7 +662,7 @@ if len(bf_to_add) > 0:
         bf_to_add
     )
 
-### Step 13: Connect version data to samples ###
+### Step 14: Connect version data to samples ###
 
 dbconnect = dbutils.dbnascentConnection(db_url, creds)
 dbnf_add_keys = list(dict(config["nascentflow keys"]).keys())
