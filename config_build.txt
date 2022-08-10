@@ -3,6 +3,7 @@ database = socotra.int.colorado.edu/dbnascent
 credentials = /Users/lysa8537/.mysql_creds
 backup_dir = /Shares/dbnascent/db_backups/
 organism_table = /scratch/Shares/dowell/dbnascent/DBNascent-build/organisms.txt
+tissue_table = /scratch/Shares/dowell/dbnascent/DBNascent-build/tissueeq.txt
 searcheq_table = /scratch/Shares/dowell/dbnascent/DBNascent-build/searcheq.txt
 hg38_tfit_master_merge = /scratch/Shares/dowell/dbnascent/out/meta_analysis/mumerge/conditions_table/qc4_gc50perc_tss50perc_tfit_mumerge_files_hg38_220603.txt
 hg38_dreg_master_merge = /scratch/Shares/dowell/dbnascent/out/meta_analysis/mumerge/conditions_table/qc4_gc50perc_tss50perc_dreg_mumerge_files_hg38_220603.txt
@@ -53,6 +54,13 @@ clone_individual = clone_individual
 strain = strain
 genotype = genotype
 construct = construct
+
+[tissue equiv keys]
+organism = organism
+sample_type = sample_type
+cell_type = cell_type
+tissue_type = tissue_type
+cancerous = cancerous
 
 [bidirsummary keys]
 num_tfit_bidir = num_tfit_bidir
