@@ -22,6 +22,7 @@ D. melanogaster	tissue	ovary	ovary	None	ovary	0
 D. melanogaster	cell line	S2	embryo	unknown	embryo	0
 D. melanogaster	organism	whole fly	multiple	None	head	0
 E. caballus	tissue	liver	liver	None	liver	0
+E. coli	organism	whole bacteria	None	None	whole bacteria	0
 H. sapiens	cell line	76NF2V	breast	epithelial	breast; mammary	0
 H. sapiens	cell line	A2780	ovary	epithelial	ovary; ovarian carcinoma	1
 H. sapiens	cell line	A375	skin	epithelial	skin; melanoma	1
@@ -163,8 +164,11 @@ P. troglodytes	primary cell	CD4+ T cell	blood	lymphoblast	blood	0
 R. norvegicus	primary cell	cardiomyocyte	heart	cardiomyoblast	heart; muscle	0
 R. norvegicus	primary cell	CD4+ T cell	blood	lymphoblast	blood	0
 R. norvegicus	cell line	GC pituitary cell	pituitary	epithelial	pituitary	1
+S. Cerevisiae	organism	whole yeast	None	None	whole yeast	0
+S. Pombe	organism	whole yeast	None	None	whole yeast	0
 S. scrofa	tissue	myocardium (borderline ischemic)	heart	None	heart; muscle	1
 S. scrofa	tissue	myocardium (healthy)	heart	None	heart; muscle	0
 S. scrofa	tissue	myocardium (ischemic)	heart	None	heart; muscle	1
+T. thermophila	tissue	micronucleus	micronucleus	None	micronucleus	0
 Z. mays	tissue	seedling	seedling	None	seedling	0
 Z. mays	tissue	shoot	shoot	None	shoot	0
