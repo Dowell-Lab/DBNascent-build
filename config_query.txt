@@ -11,4 +11,5 @@ conditionInfo = INNER JOIN sampleCondition ON sampleCondition.sample_id = linkID
 sampleAccum = INNER JOIN sampleAccum ON sampleAccum.sample_id = linkIDs.sample_id
 nascentflowMetadata = INNER JOIN sampleNascentflow ON sampleNascentflow.sample_id = linkIDs.sample_id INNER JOIN nascentflowMetadata ON nascentflowMetadata.nascentflow_id = sampleNascentflow.nascentflow_id
 bidirflowMetadata = INNER JOIN sampleBidirflow ON sampleBidirflow.sample_id = linkIDs.sample_id INNER JOIN bidirflowMetadata ON bidirflowMetadata.bidirflow_id = sampleBidirflow.bidirflow_id
-bidirSummary = INNER JOIN bidirSummary ON bidirSummary.sample_id = linkIDs.sample_id
+bidirSummary = INNER JOIN bidirSummary ON bidirSummary.bidirsummary_id = linkIDs.bidirsummary_id
+tissueDetails = INNER JOIN geneticInfo ON geneticInfo.genetic_id = linkIDs.genetic_id INNER JOIN tissueDetails ON tissueDetails.organism = geneticInfo.organism AND tissueDetails.sample_type = geneticInfo.sample_type AND tissueDetails.cell_type = geneticInfo.cell_type
