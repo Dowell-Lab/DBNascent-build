@@ -20,21 +20,68 @@ import dbutils
 import dborm
 
 ### User input variables ###
-user_query_fields = ["sample_id",
-                     "sample_name",
+user_query_fields = ["sample_name",
+#                     "srp",
                      "paper_id",
+#                     "year",
+                     "protocol",
+#                     "library",
+#                     "spikein",
+                     "sample_type",
                      "cell_type",
+                     "organism",
+#                     "trim_read_depth",
+#                     "exint_ratio",
+#                     "distinct_tenmillion_prop",
+#                     "genome_prop_cov",
+#                     "avg_fold_cov",
                      "samp_qc_score",
+                     "samp_data_score",
+                     "replicate",
+                     "control_experimental",
+#                     "notes",
+#                     "tfit_bidir_gc_prop",
+#                     "num_tfit_bidir",
+#                     "num_tfit_bidir_promoter",
+#                     "num_tfit_bidir_intronic",
+#                     "num_tfit_bidir_intergenic",
+#                     "dreg_bidir_gc_prop",
+#                     "num_dreg_bidir",
+#                     "num_dreg_bidir_promoter",
+#                     "num_dreg_bidir_intronic",
+#                     "num_dreg_bidir_intergenic",
+#                     "tfit_master_merge_incl",
+#                     "dreg_master_merge_incl",
+#                     "bidirflow_date",
+#                     "dreg_date",
+#                     "dreg_postprocess_date",
+#                     "tfit_date",
+#                     "tfit_prelim_date",
+#                     "fcgene_date",
+#                     "fcbidir_date",
+#                     "nascentflow_date",
+#                     "downfile_pipeline_date",
+#                     "rseqc_date",
+#                     "preseq_date",
+#                     "treatment",
+#                     "conc_intens",
+#                     "start_time",
+#                     "end_time",
+#                     "time_unit",
+#                     "duration",
+#                     "duration_unit",
                     ]
 
 user_filter_fields = {
-    "organism": ['= "H. sapiens"'],
-    "baseline_control_expt": ['IN ("control","baseline")'],
-    "tfit_date": ['IS NOT NULL'],
-    "samp_qc_score": ['< 4'],
+#    "cell_type": ['IN ("U2OS","lymphoblast","IMR90")']
+#    "organism": ['= "M. musculus"'],
+#    "baseline_control_expt": ['IN ("control","baseline")'],
+#    "tfit_date": ['IS NOT NULL'],
+#    "samp_qc_score": ['< 4'],
+#     "treatment": ['= "DRB"'],
     }
 
-outfile = "/Users/lysa8537/db_query_outputs/control_human_tfit_qc123.tsv"
+outfile = "/Users/lysa8537/db_query_outputs/220829_mouse.tsv"
 
 
 ### Determine which search fields are from which tables
@@ -64,14 +111,20 @@ for table in db_tables.keys():
                 # If that table is not already on the list of
                 # tables to join, add it
                 if table not in tables_to_join:
-                    if table not in query_join_keys["existing"]:
+                    if table == "geneticInfo":
+                        if "tissueDetails" not in tables_to_join:
+                            tables_to_join.append("tissueDetails")
+                    elif table not in query_join_keys["existing"]:
                         tables_to_join.append(table)
     for filtkey in user_filter_fields:
         if filtkey in db_tables[table].columns.keys():
             if filtkey not in db_filter_fields.keys():
                 db_filter_fields[filtkey] = table + "." + filtkey
             if table not in tables_to_join:
-                if table not in query_join_keys["existing"]:
+                if table == "geneticInfo":
+                    if "tissueDetails" not in tables_to_join:
+                        tables_to_join.append("tissueDetails")
+                elif table not in query_join_keys["existing"]:
                     tables_to_join.append(table)
 
 ### Build raw SQlite query string
