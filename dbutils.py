@@ -1100,9 +1100,13 @@ def sample_qc_calc(dbconn, db_sample, thresholds) -> dict:
     exint = db_sample["exint_ratio"]
 
     # Find bidirSummary data for sample, if present
-    dbbidir_dump = dbconn.reflect_table(
-                      "bidirSummary",
+    dblink_dump = dbconn.reflect_table(
+                      "linkIDs",
                       {"sample_id": db_sample["sample_id"]}
+                  )
+    dbbidir_dump = dbconn.reflect_table(
+                       "bidirSummary",
+                       {"bidirsummary_id": dblink_dump[0]["bidirsummary_id"]}
                    )
     if len(dbbidir_dump) > 1:
         raise ValueError(
@@ -1155,41 +1159,36 @@ def sample_qc_calc(dbconn, db_sample, thresholds) -> dict:
         samp_score["samp_qc_score"] = 1
 
     # Determine sample data score
-    if (exint is None):
-        samp_score["samp_data_score"] = 0
+    if (exint and dbbidir_dump[0]["tfit_bidir_gc_prop"]):
+        tfitgc = dbbidir_dump[0]["tfit_bidir_gc_prop"]
 
-    elif (len(dbbidir_dump) > 0):
+        if (
+            exint >= thresholds["data5"][0]
+            or tfitgc <= thresholds["data5"][1]
+        ):
+            samp_score["samp_data_score"] = 5
 
-        if dbbidir_dump[0]["tfit_bidir_gc_prop"]:
-            tfitgc = dbbidir_dump[0]["tfit_bidir_gc_prop"]
+        elif (
+            exint >= thresholds["data4"][0]
+            or tfitgc <= thresholds["data4"][1]
+        ):
+            samp_score["samp_data_score"] = 4
 
-            if (
-                exint >= thresholds["data5"][0]
-                or tfitgc <= thresholds["data5"][1]
-            ):
-                samp_score["samp_data_score"] = 5
+        elif (
+            exint >= thresholds["data3"][0]
+            or tfitgc <= thresholds["data3"][1]
+        ):
+            samp_score["samp_data_score"] = 3
 
-            elif (
-                exint >= thresholds["data4"][0]
-                or tfitgc <= thresholds["data4"][1]
-            ):
-                samp_score["samp_data_score"] = 4
+        elif (
+            exint >= thresholds["data2"][0]
+            or tfitgc <= thresholds["data2"][1]
+        ):
+            samp_score["samp_data_score"] = 2
 
-            elif (
-                exint >= thresholds["data3"][0]
-                or tfitgc <= thresholds["data3"][1]
-            ):
-                samp_score["samp_data_score"] = 3
-
-            elif (
-                exint >= thresholds["data2"][0]
-                or tfitgc <= thresholds["data2"][1]
-            ):
-                samp_score["samp_data_score"] = 2
-
-            else:
-                samp_score["samp_data_score"] = 1
-    else:
+        else:
+            samp_score["samp_data_score"] = 1
+    elif exint:
         if (exint >= thresholds["data5"][0]):
             samp_score["samp_data_score"] = 5
         elif (exint >= thresholds["data4"][0]):
@@ -1200,6 +1199,8 @@ def sample_qc_calc(dbconn, db_sample, thresholds) -> dict:
             samp_score["samp_data_score"] = 2
         else:
             samp_score["samp_data_score"] = 1
+    else:
+        samp_score["samp_data_score"] = 0
 
     return samp_score
 

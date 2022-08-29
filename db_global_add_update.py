@@ -33,8 +33,8 @@ dbconnect = dbutils.dbnascentConnection(db_url, creds)
 dbconnect.add_tables()
 
 # Back up entire database
-backupdir = config["file_locations"]["backup_dir"]
-dbconnect.backup(backupdir, False)
+#backupdir = config["file_locations"]["backup_dir"]
+#dbconnect.backup(backupdir, False)
 
 # Load organism table keys and external location
 org_keys = list(dict(config["organism keys"]).values())
@@ -80,6 +80,35 @@ if len(searcheqs_to_add) > 0:
     dbconnect.engine.execute(
         dborm.searchEquiv.__table__.insert(),
         searcheqs_to_add
+    )
+
+# Load sample type table keys and external location
+tissuetype_keys = list(dict(config["tissue type keys"]).values())
+dbtissuetype_keys = list(dict(config["tissue type keys"]).keys())
+tissuetype_path = config["file_locations"]["tissue_table"]
+
+# Read in sample type table and make sure entries are unique
+tissuetypes = dbutils.Metatable(tissuetype_path)
+tissuetypes.key_replace(tissuetype_keys, dbtissuetype_keys)
+tissuetypes_unique = tissuetypes.unique(dbtissuetype_keys)
+
+# If not already present, add data to database
+tissuetypes_to_add = dbutils.entry_update(
+                       dbconnect,
+                       "tissueDetails",
+                       dbtissuetype_keys,
+                       tissuetypes_unique
+                   )
+for tissuetype in tissuetypes_to_add:
+    for key in ["disease"]:
+        if tissuetype[key] == '1':
+            tissuetype[key] = True
+        elif tissuetype[key] == '0':
+            tissuetype[key] = False
+if len(tissuetypes_to_add) > 0:
+    dbconnect.engine.execute(
+        dborm.tissueDetails.__table__.insert(),
+        tissuetypes_to_add
     )
 
 # db_global_add_update.py ends here

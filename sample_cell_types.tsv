@@ -1,0 +1,170 @@
+organism	sample_type	cell_type	tissue	cell_origin_type	tissue_description	disease
+A. thaliana	tissue	inflorescence and meristem	inflorescence and meristem	None	inflorescence and meristem	0
+A. thaliana	tissue	leaf	leaf	None	leaf	0
+A. thaliana	tissue	seed	seed	None	seed	0
+A. thaliana	tissue	seedling	seedling	None	seedling	0
+C. elegans	organism	whole worm	multiple	None	whole worm	0
+C. griseus	primary cell	bone marrow derived macrophage	blood	myeloblast	blood; marrow	0
+C. griseus	tissue	brain	brain	None	brain	0
+C. griseus	cell line	CHO-K1	ovary	epithelial	ovary	0
+C. griseus	tissue	kidney	kidney	None	kidney	0
+C. griseus	tissue	liver	liver	None	liver	0
+C. griseus	tissue	lung	lung	None	lung	0
+C. lupus familiaris	tissue	embryonic gonad	gonad	None	embryonic gonad	0
+C. lupus familiaris	tissue	spleen	spleen	None	spleen	0
+C. lupus familiaris	tissue	spleen hemangiosarcoma	spleen	None	spleen hemangiosarcoma	1
+D. melanogaster	cell line	DL1	embryo	unknown	embryo	0
+D. melanogaster	tissue	embryo	multiple	None	embryo	0
+D. melanogaster	tissue	head	multiple	None	head	0
+D. melanogaster	cell line	ML-DmBG3-c2	nervous	unknown	central nervous system	0
+D. melanogaster	cell line	ovarian somatic cell	ovary	unknown	ovary	0
+D. melanogaster	tissue	ovary	ovary	None	ovary	0
+D. melanogaster	cell line	S2	embryo	unknown	embryo	0
+D. melanogaster	organism	whole fly	multiple	None	head	0
+E. caballus	tissue	liver	liver	None	liver	0
+H. sapiens	cell line	76NF2V	breast	epithelial	breast; mammary	0
+H. sapiens	cell line	A2780	ovary	epithelial	ovary; ovarian carcinoma	1
+H. sapiens	cell line	A375	skin	epithelial	skin; melanoma	1
+H. sapiens	cell line	A549	lung	epithelial	lung; lung carcinoma	1
+H. sapiens	cell line	AC16	heart	cardiomyoblast	heart; cardiac fused with fibroblast	0
+H. sapiens	primary cell	acute myeloid leukemia cell	blood	myeloblast	blood; acute myeloid leukemia	1
+H. sapiens	cell line	ARPE-19	eye	epithelial	eye; retinal epithelium	0
+H. sapiens	cell line	AU565	breast	epithelial	breast; mammary; adenocarcinoma	1
+H. sapiens	cell line	B cell	blood	lymphoblast	blood; marrow	0
+H. sapiens	cell line	BEAS-2B	lung	epithelial	lung	0
+H. sapiens	cell line	BJ	skin	epithelial	skin; foreskin	0
+H. sapiens	cell line	BJ5ta	skin	epithelial	skin; foreskin	0
+H. sapiens	primary cell	CD14+ macrophage	blood	myeloblast	blood; marrow	0
+H. sapiens	primary cell	CD34+ erythroblast	blood	erythroblast	blood; marrow	0
+H. sapiens	primary cell	CD4+ T cell	blood	lymphoblast	blood; marrow	0
+H. sapiens	cell line	CUTLL1	blood	lymphoblast	blood; T-cell non-Hodgkin lymphoma	1
+H. sapiens	cell line	Daudi	blood	lymphoblast	blood; Burkitts Lymphoma	1
+H. sapiens	cell line	DLD1 Flp-In	intestine	epithelial	intestine; colorectal adenocarcinoma	1
+H. sapiens	cell line	ESC	embryo	embryonic stem cell	embryo	0
+H. sapiens	primary cell	foreskin fibroblast	skin	epithelial	skin; foreskin	0
+H. sapiens	cell line	G401	kidney	epithelial	kidney; Rhabdoid Tumor	1
+H. sapiens	cell line	GM12878	blood	lymphoblast	blood; CYP2C19 mutation	1
+H. sapiens	primary cell	HAEC	heart	endothelial	heart; aorta	0
+H. sapiens	cell line	HAP1	blood	myeloblast	blood; chronic myelogenous leukemia; haploid	1
+H. sapiens	primary cell	HASM	muscle	mesenchymal progenitor	muscle; lung	0
+H. sapiens	cell line	HCC1806	breast	epithelial	breast; mammary; acantholytic Squamous Cell Carcinoma	1
+H. sapiens	cell line	HCC1937	breast	lymphoblast	breast; mammary; carcinoma	1
+H. sapiens	cell line	HCC1954	breast	epithelial	breast; mammary; carcinoma	1
+H. sapiens	cell line	HCEC	intestine	epithelial	intestine; colon	0
+H. sapiens	cell line	HCT116	intestine	epithelial	intestine; colorectal carcinoma	1
+H. sapiens	cell line	HEK293	kidney	epithelial	kidney; embryo	0
+H. sapiens	cell line	HEK293 Flp-In	kidney	epithelial	kidney; embryo	0
+H. sapiens	cell line	HEK293T	kidney	epithelial	kidney; embryo	0
+H. sapiens	cell line	HEK293T Flp-In	kidney	epithelial	kidney; embryo	0
+H. sapiens	cell line	HeLa	uterus	epithelial	uterus; cervix; cervical adenocarcinoma	1
+H. sapiens	cell line	HeLa S3	uterus	epithelial	uterus; cervix; cervical adenocarcinoma	1
+H. sapiens	primary cell	hematopoietic progenitor cell	blood	hematopoietic progenitor	blood	0
+H. sapiens	cell line	HEp2	uterus	epithelial	uterus; cervix; cervical adenocarcinoma	1
+H. sapiens	primary cell	hepatocyte	liver	endothelial	liver	0
+H. sapiens	cell line	HepG2	liver	epithelial	liver; Hepatocellular carcinoma	1
+H. sapiens	cell line	HF1	skin	epithelial	skin; foreskin	0
+H. sapiens	primary cell	HUVEC	umbilical cord	endothelial	umbilical cord	0
+H. sapiens	cell line	IMR90	lung	epithelial	lung	0
+H. sapiens	cell line	iPSC	multiple	epithelial	stem cells derived from potentially multiple sources	0
+H. sapiens	cell line	Jurkat T cell	blood	lymphoblast	blood; acute T cell leukemia	1
+H. sapiens	cell line	K562	blood	lymphoblast	blood; chronic myeloid leukemia 	1
+H. sapiens	cell line	Kasumi-1	blood	myeloblast	blood; acute myeloblastic leukemia	1
+H. sapiens	cell line	KBM7	blood	myeloblast	blood; chronic myelogenous leukemia; haploid	1
+H. sapiens	cell line	LC-2/ad	lung	epithelial	lung; pulmonary adenocarcinoma	1
+H. sapiens	cell line	LNCaP	prostate	epithelial	prostate; prostate carcinoma	1
+H. sapiens	cell line	OCI-LY1	blood	lymphoblast	blood; B-cell lymphoma	1
+H. sapiens	cell line	lymphoblast	blood	lymphoblast	blood	0
+H. sapiens	cell line	MCF10A	breast	epithelial	breast; mammary	0
+H. sapiens	cell line	MCF7	breast	epithelial	breast; mammary; adenocarcinoma	1
+H. sapiens	cell line	MDA-MB-231	breast	epithelial	breast; mammary; adenocarcinoma	1
+H. sapiens	cell line	MDA-MB-361	breast	epithelial	breast; mammary; adenocarcinoma	1
+H. sapiens	cell line	MDA-MB-436	breast	epithelial	breast; mammary; adenocarcinoma	1
+H. sapiens	cell line	MDA-MB-468	breast	epithelial	breast; mammary; adenocarcinoma	1
+H. sapiens	cell line	MEL624	skin	unknown	skin; lymph node derived; malignant melanoma	1
+H. sapiens	cell line	MRC5	lung	epithelial	lung; fetal fibroblast	0
+H. sapiens	cell line	MRC5VA	lung	epithelial	lung; fetal fibroblast	0
+H. sapiens	cell line	MV4-11	blood	myeloblast	blood; biphenotypic B myelomonocytic leukemia	1
+H. sapiens	primary cell	myoblast	muscle	myoblast	muscle	0
+H. sapiens	cell line	Nalm6	blood	lymphoblast	blood; acute lymphoblastic leukemia	1
+H. sapiens	cell line	NHA	brain	neural progenitor	brain; astrocyte	0
+H. sapiens	primary cell	NSPC	brain	neural progenitor	brain; stem cell	0
+H. sapiens	cell line	NTera2/D1	testis	embryonic stem cell	testis; malignant pluripotent embryonal carcinoma	1
+H. sapiens	cell line	NUDUL1	blood	lymphoblast	blood; non-Burkitt's type lymphoma	1
+H. sapiens	cell line	OCILY1	blood	lymphoblast	blood; B cell lymphoma	1
+H. sapiens	cell line	Ramos	blood	lymphoblast	blood; Burkitt's lymphoma	1
+H. sapiens	cell line	REH	blood	lymphoblast	blood; acute lymphocytic leukemia	1
+H. sapiens	cell line	RMG1	ovary	epithelial	ovary; ovarian clear cell adenocarcinoma	1
+H. sapiens	cell line	S2VP10	liver	unknown	liver; pancreatic ductal adenocarcinoma	1
+H. sapiens	cell line	SEM	blood	lymphoblast	blood; B cell precursor leukemia	1
+H. sapiens	cell line	SHEP	brain	unknown	brain; neuroblastoma; derived from bone marrow	1
+H. sapiens	cell line	SJSA	bone	unknown	bone; osteosarcoma	1
+H. sapiens	cell line	SKBR3	breast	epithelial	breast; mammary; adenocarcinoma	1
+H. sapiens	primary cell	skin fibroblast	skin	epithelial	skin	0
+H. sapiens	cell line	SKOV3	ovary	epithelial	ovary; adenocarcinoma	1
+H. sapiens	cell line	SUDHL4	blood	lymphoblast	blood; B-cell lymphoma	1
+H. sapiens	cell line	SW480	intestine	epithelial	intestine; colorectal adenocarcinoma	1
+H. sapiens	cell line	T47D	breast	epithelial	breast; ductal carcinoma	1
+H. sapiens	cell line	T98G	brain	unknown	brain; glioblastoma multiforme	1
+H. sapiens	cell line	THP1	blood	myeloblast	blood; acute monocytic leukemia	1
+H. sapiens	cell line	TIG-3	lung	epithelial	lung; fetal fibroblast	0
+H. sapiens	cell line	TRExBCBL1	blood	lymphoblast	blood; B cell lymphoma	1
+H. sapiens	cell line	U2OS	bone	epithelial	bone; osteosarcoma	1
+H. sapiens	cell line	U87	brain	epithelial	brain; glioblastoma	1
+H. sapiens	cell line	U936	blood	myeloblast	blood; histiocytic lymphoma	1
+H. sapiens	cell line	UACC812	breast	epithelial	breast; mammary; ductal carcinoma	1
+H. sapiens	cell line	VCaP	prostate	epithelial	prostate; prostate carcinoma	1
+H. sapiens	cell line	ZR751	breast	epithelial	breast; mammary; ductal carcinoma	1
+M. esculenta	tissue	shoot	shoot	None	shoot	0
+M. mulatta	primary cell	CD4+ T cell	blood	lymphoblast	blood	0
+M. musculus	cell line	3T3-L1	embryo	embryonic stem cell	embryonic fibroblast	0
+M. musculus	cell line	AtT20	pituitary	unknown	pituitary; pituitary adenoma	1
+M. musculus	primary cell	B cell	blood	lymphoblast	blood	0
+M. musculus	primary cell	bone marrow derived macrophage	blood	myeloblast	blood; marrow	0
+M. musculus	tissue	brown adipose tissue	adipose	None	brown adipose	0
+M. musculus	cell line	C2C12	muscle	myoblast	muscle	0
+M. musculus	primary cell	cardiomyocyte	heart	cardiomyoblast	heart; muscle	0
+M. musculus	primary cell	CD4+ T cell	blood	lymphoblast	blood	0
+M. musculus	cell line	CH12F3	blood	lymphoblast	blood; lymphoma	1
+M. musculus	tissue	cortex	brain	None	brain; cortex	0
+M. musculus	primary cell	cortical neuron	brain	neural progenitor	brain; neuron	0
+M. musculus	cell line	ECOMG	blood	myeloid progenitor	blood	0
+M. musculus	tissue	epididymal white adipose tissue	adipose	None	white adipose; epididymal white adipose	0
+M. musculus	cell line	ESC	embryo	embryonic stem cell	embryo	0
+M. musculus	primary cell	ESC	embryo	embryonic stem cell	embryo	0
+M. musculus	tissue	forebrain	brain	None	brain; forebrain	0
+M. musculus	cell line	hematopoietic progenitor cell	blood	hematopoietic progenitor	blood	0
+M. musculus	tissue	inguinal white adipose tissue	adipose	None	white adipose; inguinal white adipose	0
+M. musculus	primary cell	intestinal organoid	intestine	unknown	intestinal organoid	0
+M. musculus	tissue	liver	liver	None	liver	0
+M. musculus	cell line	MEF	embryo	embryonic stem cell	embryo; fibroblast	0
+M. musculus	primary cell	MEF	embryo	embryonic stem cell	embryo; fibroblast	0
+M. musculus	cell line	MHT	liver	unknown	liver; hepatocellular carcinoma	1
+M. musculus	cell line	N2a	brain	neural progenitor	brain; neuroblastoma	1
+M. musculus	primary cell	NSPC	brain	neural progenitor	brain	0
+M. musculus	cell line	PCT 7134	blood	unknown	blood; plasmacytoma	1
+M. musculus	primary cell	peritoneal macrophage	blood	myeloblast	blood; marrow	0
+M. musculus	primary cell	pre pro B cell 	blood	lymphoblast	blood	0
+M. musculus	primary cell	pro B cell	blood	lymphoblast	blood	0
+M. musculus	tissue	quadriceps muscle	muscle	None	muscle; quadriceps	0
+M. musculus	cell line	RAW264.7	blood	myeloblast	blood; Abelson murine leukemia virus-induced tumor	1
+M. musculus	primary cell	splenic B cell	blood	lymphoblast	blood	0
+M. musculus	primary cell	splenic germinal center B cell	blood	lymphoblast	blood	0
+M. musculus	cell line	v-Abl pro B cell	blood	lymphoblast	blood	0
+M. musculus	tissue	yolk sac	yolk sac	None	yolk sac	0
+M. velifer	cell line	embryonic fibroblast	embryo	epithelial	embryo; fibroblast	0
+P. falciparum	organism	early ring parasite	multiple	None	early ring parasite	0
+P. falciparum	organism	early schizont parasite	multiple	None	early schizont parasite	0
+P. falciparum	organism	early trophozoite parasite	multiple	None	early trophozoite parasite	0
+P. falciparum	organism	gametoyte stage III parasite	multiple	None	gametoyte stage III parasite	0
+P. falciparum	organism	late ring parasite	multiple	None	late ring parasite	0
+P. falciparum	organism	late schizont parasite	multiple	None	late schizont parasite	0
+P. falciparum	organism	late trophozoite parasite	multiple	None	late trophozoite parasite	0
+P. troglodytes	primary cell	CD4+ T cell	blood	lymphoblast	blood	0
+R. norvegicus	primary cell	cardiomyocyte	heart	cardiomyoblast	heart; muscle	0
+R. norvegicus	primary cell	CD4+ T cell	blood	lymphoblast	blood	0
+R. norvegicus	cell line	GC pituitary cell	pituitary	epithelial	pituitary	1
+S. scrofa	tissue	myocardium (borderline ischemic)	heart	None	heart; muscle	1
+S. scrofa	tissue	myocardium (healthy)	heart	None	heart; muscle	0
+S. scrofa	tissue	myocardium (ischemic)	heart	None	heart; muscle	1
+Z. mays	tissue	seedling	seedling	None	seedling	0
+Z. mays	tissue	shoot	shoot	None	shoot	0

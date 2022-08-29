@@ -47,6 +47,26 @@ class searchEquiv(Base):
     db_term = sql.Column(sql.String(length=127))
     term_category = sql.Column(sql.String(length=50))
 
+# Tissue and cancer designations for cell types
+class tissueDetails(Base):
+    __tablename__ = "tissueDetails"
+    tissuedetail_id = sql.Column(
+        sql.Integer,
+        primary_key=True,
+        index=True,
+        unique=True,
+    )
+    organism = sql.Column(
+        sql.String(length=127),
+        sql.ForeignKey("organismInfo.organism"),
+    )
+    sample_type = sql.Column(sql.String(length=127))
+    cell_type = sql.Column(sql.String(length=127))
+    tissue = sql.Column(sql.String(length=127))
+    cell_origin_type = sql.Column(sql.String(length=127))
+    tissue_description = sql.Column(sql.String(length=127))
+    disease = sql.Column(sql.Boolean)
+
 # Paper-level metadata common to most samples in paper
 class exptMetadata(Base):
     __tablename__ = "exptMetadata"
@@ -114,36 +134,20 @@ class geneticInfo(Base):
         sql.String(length=127),
         sql.ForeignKey("organismInfo.organism"),
     )
+    sample_type = sql.Column(
+        sql.String(length=127),
+        sql.ForeignKey("tissueDetails.sample_type"),
+    )
+    cell_type = sql.Column(
+        sql.String(length=127),
+        sql.ForeignKey("tissueDetails.cell_type"),
+    )
     sample_type = sql.Column(sql.String(length=127))
     cell_type = sql.Column(sql.String(length=127))
     clone_individual = sql.Column(sql.String(length=127))
     strain = sql.Column(sql.String(length=127))
     genotype = sql.Column(sql.String(length=127))
     construct = sql.Column(sql.String(length=127))
-
-# Tissue and cancer designations for cell types
-class tissueEquiv(Base):
-    __tablename__ = "tissueEquiv"
-    tissueequiv_id = sql.Column(
-        sql.Integer,
-        primary_key=True,
-        index=True,
-        unique=True,
-    )
-    organism = sql.Column(
-        sql.String(length=127),
-        sql.ForeignKey("organismInfo.organism"),
-    )
-    sample_type = sql.Column(
-        sql.String(length=127),
-        sql.ForeignKey("geneticInfo.sample_type"),
-    )
-    cell_type = sql.Column(
-        sql.String(length=127),
-        sql.ForeignKey("geneticInfo.cell_type"),
-    )
-    tissue_type = sql.Column(sql.String(length=127))
-    cancerous = sql.Column(sql.Boolean)
 
 # Summary stats for bidirectionals
 class bidirSummary(Base):
