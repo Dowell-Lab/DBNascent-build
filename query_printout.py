@@ -75,7 +75,7 @@ user_query_fields = ["sample_name",
 user_filter_fields = {
 #    "cell_type": ['IN ("U2OS","lymphoblast","IMR90")']
 #    "organism": ['= "M. musculus"'],
-#    "baseline_control_expt": ['IN ("control","baseline")'],
+#    "control_experimental": ['= "control"'],
 #    "tfit_date": ['IS NOT NULL'],
 #    "samp_qc_score": ['< 4'],
 #     "treatment": ['= "DRB"'],
