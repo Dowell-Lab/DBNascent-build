@@ -59,29 +59,6 @@ if len(orgs_to_add) > 0:
         orgs_to_add
     )
 
-# Load search equivalencies table keys and external location
-search_keys = list(dict(config["searcheq keys"]).values())
-dbsearch_keys = list(dict(config["searcheq keys"]).keys())
-searchtable_path = config["file_locations"]["searcheq_table"]
-
-# Read in search equivalencies table and make sure entries are unique
-searcheqs = dbutils.Metatable(searchtable_path)
-searcheqs.key_replace(search_keys, dbsearch_keys)
-searcheqs_unique = searcheqs.unique(dbsearch_keys)
-
-# If not already present, add data to database
-searcheqs_to_add = dbutils.entry_update(
-                       dbconnect,
-                       "searchEquiv",
-                       dbsearch_keys,
-                       searcheqs_unique
-                   )
-if len(searcheqs_to_add) > 0:
-    dbconnect.engine.execute(
-        dborm.searchEquiv.__table__.insert(),
-        searcheqs_to_add
-    )
-
 # Load sample type table keys and external location
 tissuetype_keys = list(dict(config["tissue type keys"]).values())
 dbtissuetype_keys = list(dict(config["tissue type keys"]).keys())

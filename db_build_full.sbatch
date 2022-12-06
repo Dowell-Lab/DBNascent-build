@@ -33,3 +33,5 @@ then
     rm -r "$dir"/qc/fastqc/zips/*fastqc
 fi
 done
+
+python3 ./searcheq_build.py

@@ -45,7 +45,7 @@ class searchEquiv(Base):
         unique=True,
     )
     db_term = sql.Column(sql.String(length=127))
-    term_category = sql.Column(sql.String(length=50))
+    search_field = sql.Column(sql.String(length=50))
 
 # Tissue and cancer designations for cell types
 class tissueDetails(Base):
@@ -56,12 +56,6 @@ class tissueDetails(Base):
         index=True,
         unique=True,
     )
-    organism = sql.Column(
-        sql.String(length=127),
-        sql.ForeignKey("organismInfo.organism"),
-    )
-    sample_type = sql.Column(sql.String(length=127))
-    cell_type = sql.Column(sql.String(length=127))
     tissue = sql.Column(sql.String(length=127))
     cell_origin_type = sql.Column(sql.String(length=127))
     tissue_description = sql.Column(sql.String(length=127))
@@ -134,13 +128,11 @@ class geneticInfo(Base):
         sql.String(length=127),
         sql.ForeignKey("organismInfo.organism"),
     )
-    sample_type = sql.Column(
-        sql.String(length=127),
-        sql.ForeignKey("tissueDetails.sample_type"),
-    )
-    cell_type = sql.Column(
-        sql.String(length=127),
-        sql.ForeignKey("tissueDetails.cell_type"),
+    sample_type = sql.Column(sql.String(length=127))
+    cell_type = sql.Column(sql.String(length=127))
+    tissuedetail_id = sql.Column(
+        sql.Integer,
+        sql.ForeignKey("tissueDetails.tissuedetail_id"),
     )
     sample_type = sql.Column(sql.String(length=127))
     cell_type = sql.Column(sql.String(length=127))

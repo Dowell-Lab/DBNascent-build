@@ -5,6 +5,7 @@ backup_dir = /Shares/dbnascent/db_backups/
 organism_table = /scratch/Shares/dowell/dbnascent/DBNascent-build/organisms.txt
 tissue_table = /scratch/Shares/dowell/dbnascent/DBNascent-build/sample_cell_types.tsv
 searcheq_table = /scratch/Shares/dowell/dbnascent/DBNascent-build/searcheq.txt
+searcheq_manual = /scratch/Shares/dowell/dbnascent/DBNascent-build/searcheq_manual.txt
 hg38_tfit_master_merge = /scratch/Shares/dowell/dbnascent/out/meta_analysis/mumerge/conditions_table/qc4_gc50perc_tss50perc_tfit_mumerge_files_hg38_220603.txt
 hg38_dreg_master_merge = /scratch/Shares/dowell/dbnascent/out/meta_analysis/mumerge/conditions_table/qc4_gc50perc_tss50perc_dreg_mumerge_files_hg38_220603.txt
 mm10_tfit_master_merge = /scratch/Shares/dowell/dbnascent/out/meta_analysis/mumerge/conditions_table/qc4_gc50perc_tss50perc_tfit_mumerge_files_mm10_220603.txt
@@ -19,7 +20,7 @@ genome_bases = total_bases
 [searcheq keys]
 search_term = search_term
 db_term = db_term
-term_category = term_category
+search_field = search_field
 
 [expt keys]
 srp = srp
@@ -56,9 +57,6 @@ genotype = genotype
 construct = construct
 
 [tissue type keys]
-organism = organism
-sample_type = sample_type
-cell_type = cell_type
 tissue = tissue
 cell_origin_type = cell_origin_type
 tissue_description = tissue_description

@@ -6,13 +6,13 @@
 #
 # Commentary:
 #
-# This file contains code for adding/changing paper- 
-# and sample-specific values in the Dowell Lab's 
+# This file contains code for adding/changing paper-
+# and sample-specific values in the Dowell Lab's
 # Nascent Database.
 #
 # Parameters:
 #
-# This script takes the paper identifier to process 
+# This script takes the paper identifier to process
 # as its sole argument
 #
 # Contents:
@@ -60,14 +60,16 @@ creds = config["file_locations"]["credentials"]
 
 dbconnect = dbutils.dbnascentConnection(db_url, creds)
 
-exptmeta_path = (str(config["file_locations"]["db_data"]) + 
-                 str(paper_id) +
-                 "/metadata/expt_metadata.txt"
-                )
-sampmeta_path = (str(config["file_locations"]["db_data"]) + 
-                 str(paper_id) +
-                 "/metadata/sample_metadata.txt"
-                )
+exptmeta_path = (
+    str(config["file_locations"]["db_data"])
+    + str(paper_id)
+    + "/metadata/expt_metadata.txt"
+)
+sampmeta_path = (
+    str(config["file_locations"]["db_data"])
+    + str(paper_id)
+    + "/metadata/sample_metadata.txt"
+)
 
 # Raise error if paper identifier is not valid
 if not exists(exptmeta_path):
@@ -77,7 +79,7 @@ if not exists(exptmeta_path):
 # Should not use when building whole database
 # May be useful for adding papers individually later
 backupdir = config["file_locations"]["backup_dir"]
-#dbconnect.backup(backupdir, False)
+# dbconnect.backup(backupdir, False)
 
 ### Step 2: Parse paper and sample metadata tables ###
 
@@ -112,12 +114,8 @@ gene_unique = sampmeta.unique(dbgenetic_keys)
 data_path = config["file_locations"]["db_data"]
 bidirsummary_keys = list(dict(config["bidirsummary keys"]).values())
 dbbidirsummary_keys = list(dict(config["bidirsummary keys"]).keys())
-tfitsummary_path = (data_path + str(paper_id) +
-                     "/bidir_summary/tfit_stats.txt"
-                    )
-dregsummary_path = (data_path + str(paper_id) +
-                     "/bidir_summary/dreg_stats.txt"
-                    )
+tfitsummary_path = data_path + str(paper_id) + "/bidir_summary/tfit_stats.txt"
+dregsummary_path = data_path + str(paper_id) + "/bidir_summary/dreg_stats.txt"
 
 # Add Tfit bidir data, if available, otherwise add nulls
 if exists(tfitsummary_path):
@@ -129,14 +127,17 @@ for sample in sampmeta.data:
     dbutils.key_store_compare(
         sample,
         tfit_summary.data,
-        ["sample_name",],
-        ["num_tfit_bidir",
-         "num_tfit_bidir_promoter",
-         "num_tfit_bidir_intronic",
-         "num_tfit_bidir_intergenic",
-         "tfit_bidir_gc_prop",
+        [
+            "sample_name",
         ],
-        addnull = True
+        [
+            "num_tfit_bidir",
+            "num_tfit_bidir_promoter",
+            "num_tfit_bidir_intronic",
+            "num_tfit_bidir_intergenic",
+            "tfit_bidir_gc_prop",
+        ],
+        addnull=True,
     )
     # Format proportion correctly
     if sample["tfit_bidir_gc_prop"]:
@@ -152,14 +153,17 @@ for sample in sampmeta.data:
     dbutils.key_store_compare(
         sample,
         dreg_summary.data,
-        ["sample_name",],
-        ["num_dreg_bidir",
-         "num_dreg_bidir_promoter",
-         "num_dreg_bidir_intronic",
-         "num_dreg_bidir_intergenic",
-         "dreg_bidir_gc_prop",
+        [
+            "sample_name",
         ],
-        addnull = True
+        [
+            "num_dreg_bidir",
+            "num_dreg_bidir_promoter",
+            "num_dreg_bidir_intronic",
+            "num_dreg_bidir_intergenic",
+            "dreg_bidir_gc_prop",
+        ],
+        addnull=True,
     )
     # Format proportion correctly
     if sample["dreg_bidir_gc_prop"]:
@@ -167,48 +171,42 @@ for sample in sampmeta.data:
 
 # Read in master merge list files and make paper_id lists
 # for tfit and dreg separately
-dreg_merge_files = [config["file_locations"]["hg38_tfit_master_merge"],
-                    config["file_locations"]["mm10_tfit_master_merge"],
-                   ]
-tfit_merge_files = [config["file_locations"]["hg38_dreg_master_merge"],
-                    config["file_locations"]["mm10_dreg_master_merge"],
-                   ]
+dreg_merge_files = [
+    config["file_locations"]["hg38_tfit_master_merge"],
+    config["file_locations"]["mm10_tfit_master_merge"],
+]
+tfit_merge_files = [
+    config["file_locations"]["hg38_dreg_master_merge"],
+    config["file_locations"]["mm10_dreg_master_merge"],
+]
 dreg_merge_ids = dbutils.merge_list_accum(dreg_merge_files)
 tfit_merge_ids = dbutils.merge_list_accum(tfit_merge_files)
 
 # Add master merge info for all entries in paper (strings for unique comp)
 for sample in sampmeta.data:
     if paper_id in dreg_merge_ids:
-        sample["dreg_master_merge_incl"] = '1'
+        sample["dreg_master_merge_incl"] = "1"
     else:
-        sample["dreg_master_merge_incl"] = '0'
+        sample["dreg_master_merge_incl"] = "0"
     if paper_id in tfit_merge_ids:
-        sample["tfit_master_merge_incl"] = '1'
+        sample["tfit_master_merge_incl"] = "1"
     else:
-        sample["tfit_master_merge_incl"] = '0'
+        sample["tfit_master_merge_incl"] = "0"
     for bidirkey in dbbidirsummary_keys:
         sample[bidirkey] = str(sample[bidirkey])
 
 bidirsum_unique = sampmeta.unique(dbbidirsummary_keys)
 
 ### Step 4: If not present, add experimental metadata to database ###
-expt_to_add = dbutils.entry_update(
-                  dbconnect,
-                  "exptMetadata",
-                  dbexpt_keys,
-                  expt_unique
-              )
-for expt in expt_to_add: # Replace text 1/0 with boolean values
+expt_to_add = dbutils.entry_update(dbconnect, "exptMetadata", dbexpt_keys, expt_unique)
+for expt in expt_to_add:  # Replace text 1/0 with boolean values
     for key in expt:
-        if expt[key] == '1':
+        if expt[key] == "1":
             expt[key] = True
-        elif expt[key] == '0':
+        elif expt[key] == "0":
             expt[key] = False
 if len(expt_to_add) > 0:
-    dbconnect.engine.execute(
-        dborm.exptMetadata.__table__.insert(),
-        expt_to_add
-    )
+    dbconnect.engine.execute(dborm.exptMetadata.__table__.insert(), expt_to_add)
 
 ### Step 5: If not present, add sample ids to database ###
 
@@ -221,12 +219,7 @@ for dbsample in dbsamp.data:
         curr_id = dbsample["sample_id"]
 
 # If not already present, add samples to database with new ids
-samp_to_add = dbutils.entry_update(
-                  dbconnect,
-                  "sampleID",
-                  dbsamp_keys,
-                  samp_unique
-              )
+samp_to_add = dbutils.entry_update(dbconnect, "sampleID", dbsamp_keys, samp_unique)
 if len(samp_to_add) > 0:
     # Make hash of unique samples (srz OR srr if no srz) to id values
     samp_for_hash = dbutils.Metatable(samp_to_add)
@@ -237,68 +230,82 @@ if len(samp_to_add) > 0:
 
     # Add sample id value to all srrs in a sample name based on hash
     for sample in samp_to_add:
-        hash_entry = list(filter(lambda samp_id_hash:
-                                 samp_id_hash["sample_name"] ==
-                                 sample["sample_name"],
-                                 samp_id_hash
-                                )
-                         )[0]
+        hash_entry = list(
+            filter(
+                lambda samp_id_hash: samp_id_hash["sample_name"]
+                == sample["sample_name"],
+                samp_id_hash,
+            )
+        )[0]
         sample["sample_id"] = hash_entry["sample_id"]
 
     # Add to database
-    dbconnect.engine.execute(
-        dborm.sampleID.__table__.insert(),
-        samp_to_add
-    )
+    dbconnect.engine.execute(dborm.sampleID.__table__.insert(), samp_to_add)
 
 ### Step 6: If not present, add genetic info to database ###
 
-gene_to_add = dbutils.entry_update(
-                  dbconnect,
-                  "geneticInfo",
-                  dbgenetic_keys,
-                  gene_unique
-              )
-if len(gene_to_add) > 0:
-    dbconnect.engine.execute(
-        dborm.geneticInfo.__table__.insert(),
-        gene_to_add
+# Grab tissue tables for matching tissuedetail_id
+dbtissuetype_keys = list(dict(config["tissue type keys"]).keys())
+tissuetype_path = config["file_locations"]["tissue_table"]
+tissuetypes = dbutils.Metatable(tissuetype_path)
+dbtiss_dump = dbconnect.reflect_table("tissueDetails")
+
+# Add tissuedetail_id to keys for geneticInfo
+dbgenetic_keys.append("tissuedetail_id")
+
+# Do serial comparison to connect genetic info to tissue id
+for gen in gene_unique.data:
+    dbutils.key_store_compare(
+        gen,
+        tissuetypes.data,
+        ["organism","sample_type","cell_type",],
+        ["tissue", "cell_origin_type", "tissue_description", "disease",],
+        addnull=True,
     )
+    dbutils.key_store_compare(
+        gen,
+        dbtiss_dump,
+        ["tissue", "cell_origin_type", "tissue_description", "disease",],   
+        ["tissuedetail_id"],
+        addnull=True,
+    )
+
+# Add genetic info to database
+gene_to_add = dbutils.entry_update(
+    dbconnect, "geneticInfo", dbgenetic_keys, gene_unique
+)
+if len(gene_to_add) > 0:
+    dbconnect.engine.execute(dborm.geneticInfo.__table__.insert(), gene_to_add)
 
 ### Step 7: If not present, add bidir summary info to database ###
 
 bidirsum_to_add = dbutils.entry_update(
-                      dbconnect,
-                      "bidirSummary",
-                      dbbidirsummary_keys,
-                      bidirsum_unique
-                  )
+    dbconnect, "bidirSummary", dbbidirsummary_keys, bidirsum_unique
+)
 # Format values for input into db
 for bidirsum in bidirsum_to_add:
-    for key in ["tfit_master_merge_incl","dreg_master_merge_incl"]:
-        if bidirsum[key] == '1':
+    for key in ["tfit_master_merge_incl", "dreg_master_merge_incl"]:
+        if bidirsum[key] == "1":
             bidirsum[key] = True
-        elif bidirsum[key] == '0':
+        elif bidirsum[key] == "0":
             bidirsum[key] = False
     for key in dbbidirsummary_keys:
-        if bidirsum[key] == 'None':
+        if bidirsum[key] == "None":
             bidirsum[key] = None
 if len(bidirsum_to_add) > 0:
-    dbconnect.engine.execute(
-        dborm.bidirSummary.__table__.insert(),
-        bidirsum_to_add
-    )
+    dbconnect.engine.execute(dborm.bidirSummary.__table__.insert(), bidirsum_to_add)
 
 ### Step 8: Make linkIDs table and add to database ###
 
 dbconnect = dbutils.dbnascentConnection(db_url, creds)
-link_keys = ["sample_id",
-             "genetic_id", 
-             "expt_id",
-             "bidirsummary_id",
-             "sample_name",
-             "paper_id",
-            ]
+link_keys = [
+    "sample_id",
+    "genetic_id",
+    "expt_id",
+    "bidirsummary_id",
+    "sample_name",
+    "paper_id",
+]
 
 # Reflect IDs currently in database
 dbsamp_dump = dbconnect.reflect_table("sampleID")
@@ -308,44 +315,18 @@ dbbidirsum_dump = dbconnect.reflect_table("bidirSummary")
 
 # Add IDs to main metatable for matching entries
 for sample in sampmeta.data:
+    dbutils.key_store_compare(sample, dbsamp_dump, dbsamp_keys, ["sample_id"])
+    dbutils.key_store_compare(sample, dbexpt_dump, dbexpt_keys, ["expt_id"])
+    dbutils.key_store_compare(sample, dbgene_dump, dbgenetic_keys, ["genetic_id"])
     dbutils.key_store_compare(
-        sample,
-        dbsamp_dump,
-        dbsamp_keys,
-        ["sample_id"]
-    )
-    dbutils.key_store_compare(
-        sample,
-        dbexpt_dump,
-        dbexpt_keys,
-        ["expt_id"]
-    )
-    dbutils.key_store_compare(
-        sample,
-        dbgene_dump,
-        dbgenetic_keys,
-        ["genetic_id"]
-    )
-    dbutils.key_store_compare(
-        sample,
-        dbbidirsum_dump,
-        dbbidirsummary_keys,
-        ["bidirsummary_id"]
+        sample, dbbidirsum_dump, dbbidirsummary_keys, ["bidirsummary_id"]
     )
 
 # If not already present, add linked IDs to database
 link_unique = sampmeta.unique(link_keys)
-link_to_add = dbutils.entry_update(
-                  dbconnect,
-                  "linkIDs",
-                  link_keys,
-                  link_unique
-              )
+link_to_add = dbutils.entry_update(dbconnect, "linkIDs", link_keys, link_unique)
 if len(link_to_add) > 0:
-    dbconnect.engine.execute(
-        dborm.linkIDs.__table__.insert(),
-        link_to_add
-    )
+    dbconnect.engine.execute(dborm.linkIDs.__table__.insert(), link_to_add)
 
 ### Step 9: Add condition info to database ###
 
@@ -368,13 +349,11 @@ for condition in cond_preparse:
         cond_types = condition["condition_type"].split(";")
         treatments = condition["treatment"].split(";")
         times = condition["times"].split(";")
-        
+
         # Check if lengths are equivalent
-        if ((len(cond_types) != len(treatments)) 
-            or (len(cond_types) != len(times))
-        ):
+        if (len(cond_types) != len(treatments)) or (len(cond_types) != len(times)):
             raise SyntaxError("Treatment parsing error: " + paper_id)
-        
+
         for i in range(len(cond_types)):
             new_cond = dict()
             treatment = treatments[i].split("(")
@@ -432,11 +411,8 @@ for condition in cond_unique:
 
 # If not present, add condition metadata to database
 cond_to_add = dbutils.entry_update(
-                  dbconnect,
-                  "conditionInfo",
-                  dbcond_full_keys,
-                  cond_unique
-              )
+    dbconnect, "conditionInfo", dbcond_full_keys, cond_unique
+)
 if len(cond_to_add) > 0:
     for condition in cond_to_add:
         if condition["start_time"] == "None":
@@ -445,10 +421,7 @@ if len(cond_to_add) > 0:
             condition["end_time"] = None
         if condition["duration"] == "None":
             condition["duration"] = None
-    dbconnect.engine.execute(
-        dborm.conditionInfo.__table__.insert(),
-        cond_to_add
-    )
+    dbconnect.engine.execute(dborm.conditionInfo.__table__.insert(), cond_to_add)
 
 ### Step 10: Make condition match table ###
 
@@ -473,26 +446,17 @@ for condition in cond_parsed:
             condition["sample_id"] = sample["sample_id"]
     # Add condition_id to matching condition entries
     dbutils.key_store_compare(
-        condition,
-        dbcond_data,
-        dbcond_full_keys,
-        ["condition_id"]
+        condition, dbcond_data, dbcond_full_keys, ["condition_id"]
     )
 
 # If not present, add sample/condition ids to database
 sampcond = dbutils.Metatable(cond_parsed)
 sampcond_unique = sampcond.unique(["sample_id", "condition_id"])
 sampcond_to_add = dbutils.entry_update(
-                      dbconnect,
-                      "sampleCondition",
-                      ["sample_id", "condition_id"],
-                      sampcond_unique
-                  )
+    dbconnect, "sampleCondition", ["sample_id", "condition_id"], sampcond_unique
+)
 if len(sampcond_to_add) > 0:
-    dbconnect.engine.execute(
-        dborm.sampleCondition.__table__.insert(),
-        sampcond_to_add
-    )
+    dbconnect.engine.execute(dborm.sampleCondition.__table__.insert(), sampcond_to_add)
 
 ### Step 11: Make sampleAccum table ###
 
@@ -508,45 +472,32 @@ sampmeta.key_replace(accum_keys, dbaccum_keys)
 # Scrape all QC data for each sample and add to sample dict
 for sample in sampmeta.data:
     fastqc_dict = dbutils.scrape_fastqc(
-        sample["paper_id"],
-        sample["sample_name"],
-        data_path,
-        sample
+        sample["paper_id"], sample["sample_name"], data_path, sample
     )
     picard_dict = dbutils.scrape_picard(
-        sample["paper_id"],
-        sample["sample_name"],
-        data_path
+        sample["paper_id"], sample["sample_name"], data_path
     )
     mapstats_dict = dbutils.scrape_mapstats(
-        sample["paper_id"],
-        sample["sample_name"],
-        data_path,
-        sample
+        sample["paper_id"], sample["sample_name"], data_path, sample
     )
     rseqc_dict = dbutils.scrape_rseqc(
-        sample["paper_id"],
-        sample["sample_name"],
-        data_path
+        sample["paper_id"], sample["sample_name"], data_path
     )
     preseq_dict = dbutils.scrape_preseq(
-        sample["paper_id"],
-        sample["sample_name"],
-        data_path
+        sample["paper_id"], sample["sample_name"], data_path
     )
     pileup_dict = dbutils.scrape_pileup(
-        sample["paper_id"],
-        sample["sample_name"],
-        data_path
+        sample["paper_id"], sample["sample_name"], data_path
     )
 
-    qc_dict = {**fastqc_dict,
-               **picard_dict,
-               **mapstats_dict,
-               **rseqc_dict,
-               **preseq_dict,
-               **pileup_dict
-              }
+    qc_dict = {
+        **fastqc_dict,
+        **picard_dict,
+        **mapstats_dict,
+        **rseqc_dict,
+        **preseq_dict,
+        **pileup_dict,
+    }
     sample.update(qc_dict)
 
     # Define thresholds for qc and data scores
@@ -557,14 +508,14 @@ for sample in sampmeta.data:
     # [exon intron ratio, tfit call GC proportion]
 
     samp_thresholds = {
-        'qc5' : [5000000, 0.95, 4000000, 0.05],
-        'qc4' : [10000000, 0.80, 8000000, 0.2],
-        'qc3' : [15000000, 0.65, 12000000, 0.35],
-        'qc2' : [20000000, 0.5, 16000000, 0.5],
-        'data5' : [9, 0.40],
-        'data4' : [7, 0.43],
-        'data3' : [5, 0.47],
-        'data2' : [3, 0.5]
+        "qc5": [5000000, 0.95, 4000000, 0.05],
+        "qc4": [10000000, 0.80, 8000000, 0.2],
+        "qc3": [15000000, 0.65, 12000000, 0.35],
+        "qc2": [20000000, 0.5, 16000000, 0.5],
+        "data5": [9, 0.40],
+        "data4": [7, 0.43],
+        "data3": [5, 0.47],
+        "data2": [3, 0.5],
     }
 
     # Calculate qc and data scores
@@ -573,7 +524,7 @@ for sample in sampmeta.data:
     sample.update(score_dict)
 
     # Parse replicate number
-    rep_num = re.split(r'(\d+)', sample["replicate"])
+    rep_num = re.split(r"(\d+)", sample["replicate"])
     sample["replicate"] = rep_num[1]
 
 # Change datatypes for unique calc
@@ -587,33 +538,28 @@ try:
 except KeyError:
     print(paper_id)
 accum_to_add = dbutils.entry_update(
-                   dbconnect,
-                   "sampleAccum",
-                   dbaccum_full_keys,
-                   accum_unique
-               )
+    dbconnect, "sampleAccum", dbaccum_full_keys, accum_unique
+)
 if len(accum_to_add) > 0:
     for accsamp in accum_to_add:
         for key in ["rcomp", "unusable", "timecourse", "outlier"]:
-            if accsamp[key] == '1':
+            if accsamp[key] == "1":
                 accsamp[key] = True
-            elif accsamp[key] == '0':
+            elif accsamp[key] == "0":
                 accsamp[key] = False
         for key in accsamp:
-            if accsamp[key] == 'None':
+            if accsamp[key] == "None":
                 accsamp[key] = None
-    dbconnect.engine.execute(
-        dborm.sampleAccum.__table__.insert(),
-        accum_to_add
-    )
+    dbconnect.engine.execute(dborm.sampleAccum.__table__.insert(), accum_to_add)
 
 ### Step 12: Calculate and add paper qc/data scores ###
 dbconnect = dbutils.dbnascentConnection(db_url, creds)
 paper_scores = dbutils.paper_qc_calc(accum_unique)
 dbconnect.engine.execute(
-    dborm.exptMetadata.__table__.update().
-    where(dborm.exptMetadata.__table__.c.paper_id == paper_id),
-    paper_scores
+    dborm.exptMetadata.__table__.update().where(
+        dborm.exptMetadata.__table__.c.paper_id == paper_id
+    ),
+    paper_scores,
 )
 
 ### Step 13: Add nascentflow/bidirflow version data ###
@@ -626,24 +572,12 @@ dbbf_keys = list(dict(config["bidirflow keys"]).keys())
 dirpath = config["file_locations"]["db_data"]
 
 # Parse version yamls and set entries as strings for unique calc
-nftable = dbutils.add_version_info(
-              dbconnect,
-              paper_id,
-              dirpath,
-              "nascent",
-              dbnf_keys
-          )
+nftable = dbutils.add_version_info(dbconnect, paper_id, dirpath, "nascent", dbnf_keys)
 for nfrun in nftable:
     for key in nfrun:
         nfrun[key] = str(nfrun[key])
 
-bftable = dbutils.add_version_info(
-              dbconnect,
-              paper_id,
-              dirpath,
-              "bidir",
-              dbbf_keys
-          )
+bftable = dbutils.add_version_info(dbconnect, paper_id, dirpath, "bidir", dbbf_keys)
 for bfrun in bftable:
     for key in bfrun:
         bfrun[key] = str(bfrun[key])
@@ -651,42 +585,26 @@ for bfrun in bftable:
 # If not present, add nascentflow version info to database
 nf_vers = dbutils.Metatable(nftable)
 nf_unique = nf_vers.unique(dbnf_keys)
-nf_to_add = dbutils.entry_update(
-                dbconnect,
-                "nascentflowMetadata",
-                dbnf_keys,
-                nf_unique
-            )
+nf_to_add = dbutils.entry_update(dbconnect, "nascentflowMetadata", dbnf_keys, nf_unique)
 if len(nf_to_add) > 0:
     # Store null values correctly
     for nfrun in nf_to_add:
         for key in dbnf_keys:
             if nfrun[key] == "None":
                 nfrun[key] = None
-    dbconnect.engine.execute(
-        dborm.nascentflowMetadata.__table__.insert(),
-        nf_to_add
-    )
+    dbconnect.engine.execute(dborm.nascentflowMetadata.__table__.insert(), nf_to_add)
 
 # If not present, add bidirflow version info to database
 bf_vers = dbutils.Metatable(bftable)
 bf_unique = bf_vers.unique(dbbf_keys)
-bf_to_add = dbutils.entry_update(
-                dbconnect,
-                "bidirflowMetadata",
-                dbbf_keys,
-                bf_unique
-            )
+bf_to_add = dbutils.entry_update(dbconnect, "bidirflowMetadata", dbbf_keys, bf_unique)
 if len(bf_to_add) > 0:
     # Store null values correctly
     for bfrun in bf_to_add:
         for key in dbbf_keys:
             if bfrun[key] == "None":
                 bfrun[key] = None
-    dbconnect.engine.execute(
-        dborm.bidirflowMetadata.__table__.insert(),
-        bf_to_add
-    )
+    dbconnect.engine.execute(dborm.bidirflowMetadata.__table__.insert(), bf_to_add)
 
 ### Step 14: Connect version data to samples ###
 
@@ -706,47 +624,25 @@ dbbf_data = dbbf.key_grab(dbbf_add_keys)
 
 # Add ids from version tables to data tables that have sample ids
 for nfrun in nf_vers.data:
-    dbutils.key_store_compare(
-        nfrun,
-        dbnf_data,
-        dbnf_keys,
-        ["nascentflow_id"]
-    )
+    dbutils.key_store_compare(nfrun, dbnf_data, dbnf_keys, ["nascentflow_id"])
 
 for bfrun in bf_vers.data:
-    dbutils.key_store_compare(
-        bfrun,
-        dbbf_data,
-        dbbf_keys,
-        ["bidirflow_id"]
-    )
+    dbutils.key_store_compare(bfrun, dbbf_data, dbbf_keys, ["bidirflow_id"])
 
 # If not present, add sample and nascentflow ids to database
 sampnf_unique = nf_vers.unique(["sample_id", "nascentflow_id"])
 sampnf_to_add = dbutils.entry_update(
-                    dbconnect,
-                    "sampleNascentflow",
-                    ["sample_id", "nascentflow_id"],
-                    sampnf_unique
-                )
+    dbconnect, "sampleNascentflow", ["sample_id", "nascentflow_id"], sampnf_unique
+)
 if len(sampnf_to_add) > 0:
-    dbconnect.engine.execute(
-        dborm.sampleNascentflow.__table__.insert(),
-        sampnf_to_add
-    )
+    dbconnect.engine.execute(dborm.sampleNascentflow.__table__.insert(), sampnf_to_add)
 
 # If not present, add sample and bidirflow ids to database
 sampbf_unique = bf_vers.unique(["sample_id", "bidirflow_id"])
 sampbf_to_add = dbutils.entry_update(
-                    dbconnect,
-                    "sampleBidirflow",
-                    ["sample_id", "bidirflow_id"],
-                    sampbf_unique
-                )
+    dbconnect, "sampleBidirflow", ["sample_id", "bidirflow_id"], sampbf_unique
+)
 if len(sampbf_to_add) > 0:
-    dbconnect.engine.execute(
-        dborm.sampleBidirflow.__table__.insert(),
-        sampbf_to_add
-    )
+    dbconnect.engine.execute(dborm.sampleBidirflow.__table__.insert(), sampbf_to_add)
 
 # db_paper_add_update.py ends here

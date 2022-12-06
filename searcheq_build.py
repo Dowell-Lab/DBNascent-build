@@ -98,11 +98,23 @@ searcheqs.key_replace(search_keys, dbsearch_keys)
 # Append manual to automatically generated and ensure unique
 for entry in searcheqs.data:
     search_table.append(entry)
-search_unique = search_table.unique(dbsearch_keys)
+searcheqs_unique = search_table.unique(dbsearch_keys)
 
 searcheq_full_path = config["file_locations"]["searcheq_table"]
 with open(searcheq_full_path, 'w') as outfile:
     outfile.write('search_term\tdb_term\tsearch_field\n')    
-    for entry in search_unique:
+    for entry in searcheqs_unique:
         outfile.write('\t'.join(entry.values()) + '\n')
 
+# If not already present, add data to database
+searcheqs_to_add = dbutils.entry_update(
+                       dbconnect,
+                       "searchEquiv",
+                       dbsearch_keys,
+                       searcheqs_unique
+                   )
+if len(searcheqs_to_add) > 0:
+    dbconnect.engine.execute(
+        dborm.searchEquiv.__table__.insert(),
+        searcheqs_to_add
+    )
