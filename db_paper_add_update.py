@@ -254,7 +254,7 @@ dbtiss_dump = dbconnect.reflect_table("tissueDetails")
 dbgenetic_keys.append("tissuedetail_id")
 
 # Do serial comparison to connect genetic info to tissue id
-for gen in gene_unique.data:
+for gen in gene_unique:
     dbutils.key_store_compare(
         gen,
         tissuetypes.data,
@@ -276,6 +276,9 @@ gene_to_add = dbutils.entry_update(
 )
 if len(gene_to_add) > 0:
     dbconnect.engine.execute(dborm.geneticInfo.__table__.insert(), gene_to_add)
+
+# Regenerate original dbgenetic_keys for future step
+dbgenetic_keys = list(dict(config["genetic keys"]).keys())
 
 ### Step 7: If not present, add bidir summary info to database ###
 

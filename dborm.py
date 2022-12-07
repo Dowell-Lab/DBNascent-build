@@ -38,12 +38,13 @@ class organismInfo(Base):
 # Reference table for unique values in database
 class searchEquiv(Base):
     __tablename__ = "searchEquiv"
-    search_term = sql.Column(
-        sql.String(length=250),
+    search_id = sql.Column(
+        sql.Integer,
         primary_key=True,
         index=True,
         unique=True,
     )
+    search_term = sql.Column(sql.String(length=250))
     db_term = sql.Column(sql.String(length=127))
     search_field = sql.Column(sql.String(length=50))
 
