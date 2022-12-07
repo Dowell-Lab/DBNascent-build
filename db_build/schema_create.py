@@ -15,14 +15,17 @@
 
 # Import
 import sqlalchemy as sql
-import dbutils
-import dborm
 from sqlalchemy import MetaData
 from sqlalchemy_schemadisplay import create_schema_graph
+import sys, os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'global_files'))
+import dborm
+import dbutils
+
 
 # Load config file and connect to db
 config = dbutils.load_config(
-    "/scratch/Shares/dowell/dbnascent/DBNascent-build/config_query.txt")
+    "/scratch/Shares/dowell/dbnascent/DBNascent-build/config/config_query.txt")
 db_url = config["file_locations"]["database"]
 creds = config["file_locations"]["credentials"]
 dbconnect = dbutils.dbnascentConnection(db_url, creds)

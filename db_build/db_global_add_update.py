@@ -15,12 +15,14 @@
 # Code:
 
 # Import
-import dbutils
+import sys, os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'global_files'))
 import dborm
+import dbutils
 
 # Load config file
 config = dbutils.load_config(
-    "/scratch/Shares/dowell/dbnascent/DBNascent-build/config_build.txt"
+    "/scratch/Shares/dowell/dbnascent/DBNascent-build/config/config_build.txt"
 )
 
 # Create database connection object and database schema

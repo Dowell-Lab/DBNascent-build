@@ -14,8 +14,10 @@
 # Code:
 
 # Import
-import dbutils
+import sys, os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'global_files'))
 import dborm
+import dbutils
 
 # User input
 restore_timestamp = "20220310_134246"
@@ -23,7 +25,7 @@ tables = []
 
 # Load config file
 config = dbutils.load_config(
-    "/scratch/Shares/dowell/dbnascent/DBNascent-build/config_build.txt"
+    "/scratch/Shares/dowell/dbnascent/DBNascent-build/config/config_build.txt"
 )
 
 # Create database connection object

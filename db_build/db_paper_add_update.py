@@ -35,11 +35,12 @@
 # Code:
 
 # Import
-import dbutils
-import dborm
 from os.path import exists
 import re
-import sys
+import sys, os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'global_files'))
+import dborm
+import dbutils
 
 ### Step 1: Define paths and database connection ###
 
@@ -51,7 +52,7 @@ else:
 
 # Load config file
 config = dbutils.load_config(
-    "/scratch/Shares/dowell/dbnascent/DBNascent-build/config_build.txt"
+    "/scratch/Shares/dowell/dbnascent/DBNascent-build/config/config_build.txt"
 )
 
 # Define database location and connection and metadata paths
