@@ -32,3 +32,12 @@ organisms.txt and searcheq.txt are manually curated tables defining organisms an
 The main scripts for building the database are db_global_add_update.py and db_paper_add_update.py, combined in the db_build_full.sbatch script.
 
 The database can be queried with defined fields and filtering specifications with query_printout.py for input into DESeq2 or other applications. This script relies on the config_query.txt config file, as well as the dborm and dbutils.
+
+Both config files refer to a credentials file that contains your credentials for accessing the database. This file should have the following six lines:
+
+[client]
+database = dbnascent
+host = socotra.int.colorado.edu
+user = <username>
+password = <password>
+default-character-set = utf8
