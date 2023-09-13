@@ -35,9 +35,9 @@ The database can be queried with defined fields and filtering specifications wit
 
 Both config files refer to a credentials file that contains your credentials for accessing the database. This file should have the following six lines:
 
-[client]
-database = dbnascent
-host = socotra.int.colorado.edu
-user = <username>
-password = <password>
-default-character-set = utf8
+[client]<br>
+database = dbnascent<br>
+host = socotra.int.colorado.edu<br>
+user = <username><br>
+password = <password><br>
+default-character-set = utf8<br>
