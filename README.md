@@ -33,11 +33,5 @@ The main scripts for building the database are db_global_add_update.py and db_pa
 
 The database can be queried with defined fields and filtering specifications with query_printout.py for input into DESeq2 or other applications. This script relies on the config_query.txt config file, as well as the dborm and dbutils.
 
-Both config files refer to a credentials file that contains your credentials for accessing the database. This file should have the following six lines:
-
-[client]<br>
-database = dbnascent<br>
-host = socotra.int.colorado.edu<br>
-user = <username><br>
-password = <password><br>
-default-character-set = utf8<br>
+Both config files refer to a credentials file that contains your credentials for accessing the database. This file should be a one-line two-column tab delimited file:
+\<username\>\<tab\>\<password\>
