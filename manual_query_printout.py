@@ -29,23 +29,29 @@ creds = config["file_locations"]["credentials"]
 dbconnect = dbutils.dbnascentConnection(db_url, creds)
 
 ### User inputs ###
-outfile = "/Users/lysa8537/db_query_outputs/drb_treatments.tsv"
+outfile = "/Users/lysa8537/db_query_outputs/high_quality_controls.tsv"
 
-db_fields = ["paper_id",
+db_fields = ["paper_name",
              "sample_name",
              "cell_type",
-             "organism",
-             "treatment",
-             "conc_intens",
-             "start_time",
-             "end_time",
-             "time_unit",
-             "duration",
-             "duration_unit"]
+             "sample_qc_score",
+             "condition_type",
+             "trim_read_depth",
+#             "organism",
+#             "treatment",
+#             "conc_intens",
+#             "start_time",
+#             "end_time",
+#             "time_unit",
+#             "duration",
+#             "duration_unit"
+            ]
 
-query_build = 'SELECT paper_id,sample_name,cell_type,organism,treatment,conc_intens,start_time,end_time,time_unit,duration,duration_unit FROM linkIDs INNER JOIN sampleCondition ON sampleCondition.sample_id = linkIDs.sample_id INNER JOIN conditionInfo ON conditionInfo.condition_id = sampleCondition.condition_id INNER JOIN geneticInfo ON geneticInfo.genetic_id = linkIDs.genetic_id WHERE linkIDs.sample_id IN (SELECT sampleCondition.sample_id FROM sampleCondition INNER JOIN conditionInfo ON conditionInfo.condition_id = sampleCondition.condition_id WHERE treatment = "DRB") ORDER BY sample_name'
+query_build = 'SELECT paper_name,sample_name,cell_type,sample_qc_score,condition_type,trim_read_depth FROM linkIDs INNER JOIN genetics ON genetics.id = linkIDs.genetic_id INNER JOIN organisms ON organisms.id = genetics.organism_id INNER JOIN samples ON samples.id = linkIDs.sample_id INNER JOIN conditionLink ON conditionLink.sample_id = linkIDs.sample_id INNER JOIN conditions ON conditions.id = conditionLink.condition_id WHERE organism = "H. sapiens" AND control_experimental = "control" AND sample_qc_score < 3 AND cell_type IN ("MCF7","lymphoblast","HeLa","K562","HEK293T Flp-In","HEK293","HEK293T") AND condition_type = "no treatment" ORDER BY cell_type;'
 
-#query_build = 'SELECT paper_id,sample_name,cell_type FROM linkIDs INNER JOIN geneticInfo ON geneticInfo.genetic_id = linkIDs.genetic_id INNER JOIN sampleAccum ON sampleAccum.sample_id = linkIDs.sample_id INNER JOIN sampleBidirflow ON sampleBidirflow.sample_id = linkIDs.sample_id INNER JOIN bidirflowMetadata ON bidirflowMetadata.bidirflow_id = sampleBidirflow.bidirflow_id WHERE baseline_control_expt IN ("baseline","control") AND geneticInfo.organism = "H. sapiens" AND fcgene_date IS NOT NULL AND cell_type in (SELECT cell_type FROM linkIDs INNER JOIN geneticInfo ON geneticInfo.genetic_id = linkIDs.genetic_id INNER JOIN sampleAccum ON sampleAccum.sample_id = linkIDs.sample_id INNER JOIN sampleBidirflow ON sampleBidirflow.sample_id = linkIDs.sample_id INNER JOIN bidirflowMetadata ON bidirflowMetadata.bidirflow_id = sampleBidirflow.bidirflow_id WHERE baseline_control_expt IN ("baseline","control") AND geneticInfo.organism = "H. sapiens" AND fcgene_date IS NOT NULL GROUP BY cell_type HAVING COUNT(cell_type) > 5) ORDER BY cell_type'
+#query_build = 'SELECT paper_name,sample_name,cell_type,organism,treatment,conc_intens,start_time,end_time,time_unit,duration,duration_unit FROM linkIDs INNER JOIN conditionLink ON conditionLink.sample_id = linkIDs.sample_id INNER JOIN conditions ON conditions.id = conditionLink.condition_id INNER JOIN genetics ON genetics.id = linkIDs.genetic_id INNER JOIN organisms ON organisms.id = genetics.organism_id WHERE linkIDs.sample_id IN (SELECT conditionLink.sample_id FROM conditionLink INNER JOIN conditions ON conditions.id = conditionLink.condition_id WHERE treatment = "DRB") ORDER BY sample_name'
+
+#query_build = 'SELECT paper_name,sample_name,cell_type FROM linkIDs INNER JOIN genetics ON genetics.id = linkIDs.genetic_id INNER JOIN organisms ON organisms.id = genetics.organism_id INNER JOIN samples ON samples.id = linkIDs.sample_id INNER JOIN bidirflowLink ON bidirflowLink.sample_id = linkIDs.sample_id INNER JOIN bidirflowRuns ON bidirflowRuns.id = bidirflowLink.bidirflow_id WHERE control_experimental = "control" AND organisms.organism = "H. sapiens" AND fcgene_date IS NOT NULL AND cell_type in (SELECT cell_type FROM linkIDs INNER JOIN genetics ON genetics.id = linkIDs.genetic_id INNER JOIN organisms ON organisms.id = genetics.organism_id INNER JOIN samples ON samples.id = linkIDs.sample_id INNER JOIN bidirflowLink ON bidirflowLink.sample_id = linkIDs.sample_id INNER JOIN bidirflowRuns ON bidirflowRuns.id = bidirflowLink.bidirflow_id WHERE control_experimental = "control" AND organisms.organism = "H. sapiens" AND fcgene_date IS NOT NULL GROUP BY cell_type HAVING COUNT(cell_type) > 5) ORDER BY cell_type'
 
 ### Query database and print results
 

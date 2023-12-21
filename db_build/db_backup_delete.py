@@ -33,8 +33,8 @@ creds = config["file_locations"]["credentials"]
 dbconnect = dbutils.dbnascentConnection(db_url, creds)
 
 # Back up entire database
-#backupdir = config["file_locations"]["backup_dir"]
-#dbconnect.backup(backupdir, False)
+backupdir = config["file_locations"]["backup_dir"]
+dbconnect.backup(backupdir, False)
 
 # Delete tables
 # Can optionally pass a list of tables in the following format:

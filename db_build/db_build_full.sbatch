@@ -30,7 +30,6 @@ paper_id=$(echo "$dir" | awk -F/ '{print $4}')
 if [ -d "$dir"/qc ] 
 then
     python3 ./db_paper_add_update.py "$paper_id"
-    rm -r "$dir"/qc/fastqc/zips/*fastqc
 fi
 done
 

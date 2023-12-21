@@ -1,16 +1,16 @@
 [file_locations]
-database = localhost/dbnascent
-credentials = /home/lsanford/.localdb_creds
-backup_dir = /home/lsanford/db_backups/
-organism_table = /home/lsanford/DBNascent-build/global_files/organisms.txt
-tissue_table = /home/lsanford/DBNascent-build/global_files/sample_cell_types.tsv
-searcheq_table = /home/lsanford/DBNascent-build/db_build/searcheq.txt
-searcheq_manual = /home/lsanford/DBNascent-build/global_files/searcheq_manual.txt
+database = socotra.int.colorado.edu/dbnascent
+credentials = /Users/lysa8537/.mysql_creds
+backup_dir = /Shares/dbnascent/db_backups/
+organism_table = /scratch/Shares/dowell/dbnascent/DBNascent-build/global_files/organisms.txt
+tissue_table = /scratch/Shares/dowell/dbnascent/DBNascent-build/global_files/sample_cell_types.tsv
+searcheq_table = /scratch/Shares/dowell/dbnascent/DBNascent-build/db_build/searcheq.txt
+searcheq_manual = /scratch/Shares/dowell/dbnascent/DBNascent-build/global_files/searcheq_manual.txt
+db_data = /Shares/dbnascent/
 hg38_tfit_master_merge = /home/lsanford/dbnascent_data/All_tiers_unfiltered_tfit_mumerge_files_hg38_230601.txt
 hg38_dreg_master_merge = /home/lsanford/dbnascent_data/All_tiers_unfiltered_dreg_mumerge_files_hg38_230601.txt
 mm10_tfit_master_merge = /home/lsanford/dbnascent_data/All_tiers_unfiltered_tfit_mumerge_files_mm10_230601.txt
 mm10_dreg_master_merge = /home/lsanford/dbnascent_data/All_tiers_unfiltered_dreg_mumerge_files_mm10_230601.txt
-db_data = /home/lsanford/dbnascent_data/
 
 [organisms]
 organism = organism

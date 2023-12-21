@@ -24,21 +24,21 @@ import dbutils
 ### User input variables ###
 user_query_fields = ["sample_name",
 #                     "srp",
-                     "paper_id",
+                     "paper_name",
 #                     "year",
                      "protocol",
 #                     "library",
 #                     "spikein",
-                     "sample_type",
+#                     "sample_type",
                      "cell_type",
-                     "organism",
+#                     "organism",
 #                     "trim_read_depth",
 #                     "exint_ratio",
 #                     "distinct_tenmillion_prop",
 #                     "genome_prop_cov",
 #                     "avg_fold_cov",
-                     "samp_qc_score",
-                     "samp_data_score",
+                     "sample_qc_score",
+                     "sample_nro_score",
                      "replicate",
                      "control_experimental",
 #                     "notes",
@@ -75,15 +75,15 @@ user_query_fields = ["sample_name",
                     ]
 
 user_filter_fields = {
-#    "cell_type": ['IN ("U2OS","lymphoblast","IMR90")']
+    "cell_type": ['IN ("HEK293","HEK293T","HEK293 Flp-In","HEK293T Flp-In")'],
 #    "organism": ['= "M. musculus"'],
 #    "control_experimental": ['= "control"'],
 #    "tfit_date": ['IS NOT NULL'],
-#    "samp_qc_score": ['< 4'],
-#     "treatment": ['= "DRB"'],
-    }
+#    "sample_qc_score": ['< 4'],
+#    "treatment": ['= "DRB"'],
+}
 
-outfile = "/Users/lysa8537/db_query_outputs/220829_mouse.tsv"
+outfile = "/Users/lysa8537/db_query_outputs/23_10_13_hek_samples.tsv"
 
 
 ### Determine which search fields are from which tables
@@ -113,9 +113,12 @@ for table in db_tables.keys():
                 # If that table is not already on the list of
                 # tables to join, add it
                 if table not in tables_to_join:
-                    if table == "geneticInfo":
-                        if "tissueDetails" not in tables_to_join:
-                            tables_to_join.append("tissueDetails")
+                    if table == "tissues" or table == "organisms":
+                        if "genetics" not in tables_to_join:
+                            tables_to_join.append("genetics")
+                    elif table == "sampleEquiv":
+                        if "samples" not in tables_to_join:
+                            tables_to_join.append("samples")
                     elif table not in query_join_keys["existing"]:
                         tables_to_join.append(table)
     for filtkey in user_filter_fields:
@@ -123,9 +126,12 @@ for table in db_tables.keys():
             if filtkey not in db_filter_fields.keys():
                 db_filter_fields[filtkey] = table + "." + filtkey
             if table not in tables_to_join:
-                if table == "geneticInfo":
-                    if "tissueDetails" not in tables_to_join:
-                        tables_to_join.append("tissueDetails")
+                if table == "tissues" or table == "organisms":
+                    if "genetics" not in tables_to_join:
+                        tables_to_join.append("genetics")
+                elif table == "sampleEquiv":
+                    if "samples" not in tables_to_join:
+                        tables_to_join.append("samples")
                 elif table not in query_join_keys["existing"]:
                     tables_to_join.append(table)
 
@@ -149,7 +155,6 @@ for field in db_query_fields:
 query_build = (
     query_build
     + " FROM linkIDs"
-    + " INNER JOIN exptMetadata ON exptMetadata.expt_id = linkIDs.expt_id"
 )
 
 for table in tables_to_join:
