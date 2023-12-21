@@ -33,7 +33,7 @@ The database has been somewhat restructured.
 |`samp_data_score`|`sample_nro_score`|
 |`paper_data_score`|`paper_nro_score`|
 
--All non-integer identifier table linkages have been removed, so `paper_name` and `sample_name` are no longer in `LinkIDs` and `organism` is linked to the `papers` and `genetics` tables by a numeric id instead of the organism name. Similarly with the `sampleEquiv` linkage to the `samples` table.
+-All non-integer identifier table linkages have been removed, so `paper_name` and `sample_name` are no longer in `LinkIDs` and `organisms` is linked to the `papers` and `genetics` tables by a numeric id instead of the organism name. Similarly with the `sampleEquiv` linkage to the `samples` table.
 
 ## Dependencies
 The database was built with python 3.6.3. The following packages are required for building OR querying:
