@@ -14,6 +14,7 @@ Classes:
 
 Functions:
     load_config(file) -> object
+    load_keys(dict) -> dict
     key_store_compare(dict, list, list, list) -> dict
     object_as_dict(object) -> dict
     entry_update(object, str, list, list -> list
@@ -185,6 +186,30 @@ class dbnascentConnection:
             query_results.append(dict(query_res))
 
         return query_results
+    
+    def get_coltypes(self) -> dict:
+        """Sorts column types for correct formatting.
+
+        Returns:
+            coltypes (dict) :
+                dict with boolean/string/num columns by table
+        """
+        insp = sql.inspect(self.engine)
+        coltypes = {}
+        for table in insp.get_table_names():
+            coltypes[table] = {}
+            coltypes[table]["boolean"] = []
+            coltypes[table]["string"] = []
+            coltypes[table]["num"] = []
+            for col in insp.get_columns(table):
+                if "TINYINT" in str(col["type"]):
+                    coltypes[table]["boolean"].append(col["name"])
+                elif "CHAR" in str(col["type"]):
+                    coltypes[table]["string"].append(col["name"])
+                else:
+                    coltypes[table]["num"].append(col["name"])
+
+        return coltypes
 
     def backup(self, out_path, tables=False) -> None:
         """Backup database.
@@ -451,6 +476,10 @@ class Metatable:
                 raise KeyError(
                     "Key(s) not present in metatable object."
                 )
+            else:
+                for entry in self.data:
+                    entry[key] = str(entry[key])
+
         # Get lists of values and filter for unique values
         full_table_list = np.array(self.value_grab(extract_keys))
         unique_list = np.unique(full_table_list, axis=0)
@@ -463,7 +492,7 @@ class Metatable:
 
 
 # Configuration File Reader
-def load_config(config_filename: str) -> object:
+def load_config(config_filename: str) -> dict:
     """Load database config file with configparser package.
 
     Parameters:
@@ -471,17 +500,55 @@ def load_config(config_filename: str) -> object:
             path to config file
 
     Returns:
-        config (configparser object) : 
+        config (dict) : 
             parsed config file
     """
     if not os.path.exists(config_filename):
         raise FileNotFoundError(
             "Config file does not exist at the provided path"
         )
-    config = configparser.ConfigParser()
+    config_full = configparser.ConfigParser()
     with open(config_filename) as conffile:
-        config.read_string(conffile.read())
+        config_full.read_string(conffile.read())
+    config = {s:dict(config_full.items(s)) for s in config_full.sections()}
     return config
+
+
+def load_keys(config: dict, section: str, dbfields = None) -> dict:
+    """Load in keys from config file.
+
+    Parameters:
+        config (dict) : 
+            config dict output by load_config
+        
+        section (str) : 
+            which key from config file to load
+        
+        dbfields (list or str) : 
+            any extra keys to add to a 'match' entry in dict
+
+    Returns:
+        keys (dict) : 
+            dict of dicts with input and db keys
+    """
+    keys = {
+        "in": list(config[section].values()),
+        "match": list(config[section].keys())
+    }
+    if dbfields:
+        if type(dbfields) == str:
+            keys["db"] = list(config[dbfields].keys())
+        elif type(dbfields) == list:
+            keys["db"] = list(config[section].keys())
+            keys["db"].extend(dbfields)
+        else:
+            raise ValueError(
+                "Database fields not input correctly"
+            )
+    else:
+        keys["db"] = list(config[section].keys())
+    
+    return keys
 
 
 def key_store_compare(
@@ -491,7 +558,7 @@ def key_store_compare(
     store_keys,
     addnull = False
 ) -> dict:
-    """Compare two lists of dicts and, if matching, add new key/value.
+    """Compare a dict to a list of dicts and, if matching, add new key/value.
 
     Converts all values to strings for comparison purposes
 
@@ -533,6 +600,48 @@ def key_store_compare(
             comp_dict[storekey] = None
 
     return comp_dict
+
+
+def bulk_key_store_compare(
+    samples,
+    compare,
+    comp_keys,
+    add_key,
+    replace_key = None,
+    nulls = False
+):
+    """Compare two lists of dicts and, if matching, add one new key
+
+    Parameters:
+        samples (Metatable object) : 
+            sample metatable object
+
+        db_dict (list of dicts) : 
+            list of dicts (usually extracted from db query)
+
+        comp_keys (list) : 
+            specific keys for comparison
+
+        add_key (list) : 
+            key for adding to comp_dict
+
+        replace_key (list) :
+            key for replacing afterward if necessary
+
+        nulls (boolean) :
+            specifies whether to add null values if not present
+
+    Returns:
+        samples (Metatable object) : 
+            Metatable object with new field added
+    """
+    for sample in samples.data:
+        key_store_compare(sample, compare, comp_keys, add_key, nulls)
+
+    if replace_key:
+        samples.key_replace(add_key, replace_key)
+
+    return samples
 
 
 def listdict_compare(comp_dict, db_dict, db_keys) -> list:
@@ -589,6 +698,47 @@ def object_as_dict(dbobj) -> dict:
     return db_dict
 
 
+def format_for_db_add(dbconn,samples) -> list:
+    """Convert queried database entry into dict.
+
+    Parameters:
+        dbconn (db connection object) :
+            connection to database
+
+        samples (list of dicts) : 
+            sample dicts to format
+
+    Returns:
+        samples (list of dicts) : 
+            formatted sample dicts
+    """
+    coltypes = dbconn.get_coltypes()
+    for sample in samples:
+        for table in list(coltypes.keys()):
+            for field in coltypes[table]["string"]:
+                if field in list(sample.keys()):
+                    if str(sample[field]) == "None":
+                        sample[field] = ""
+                    elif str(sample[field]) == "NULL":
+                        sample[field] = ""
+            for field in coltypes[table]["boolean"]:
+                if field in list(sample.keys()):
+                    if str(sample[field]) == "1":
+                        sample[field] = True
+                    elif str(sample[field]) == "True":
+                        sample[field] = True
+                    else:
+                        sample[field] = False
+            for field in coltypes[table]["num"]:
+                if field in list(sample.keys()):
+                    if str(sample[field]) == "None":
+                        sample[field] = None
+                    elif str(sample[field]) == "":
+                        sample[field] = None
+    
+    return samples
+
+
 def entry_update(dbconn, table, dbkeys, comp_table) -> list:
     """Find and return entries not already in database.
 
@@ -610,8 +760,13 @@ def entry_update(dbconn, table, dbkeys, comp_table) -> list:
             new entries not in db to add
     """
     db_dump = dbconn.reflect_table(table)
+      
+    db_dump = format_for_db_add(dbconn,db_dump)
     db_table = Metatable(db_dump)
     dbtable_data = db_table.key_grab(dbkeys)
+    
+    comp_table = format_for_db_add(dbconn,comp_table)
+
     entries_to_add = listdict_compare(
                          comp_table,
                          dbtable_data,
@@ -644,6 +799,75 @@ def db_round(value_to_round) -> float:
         return round(value_to_round, 4)
     else:
         return round(value_to_round, 5)
+
+
+def condition_processing(samples) -> list:
+    """Parse condition syntax.
+
+    Parameters:
+        pre (list of dicts) :
+            list of dicts from metatable
+
+    Returns:
+        cond_parsed (list of dicts) :
+            list of dicts parsed correctly for database
+    """
+    cond_parsed = []
+    for cond in samples:
+        if cond["treatment"]:
+            cond_types = cond["condition_type"].split(";")
+            treatments = cond["treatment"].split(";")
+            times = cond["times"].split(";")
+
+            # Check if lengths are equivalent
+            if (len(cond_types) != len(treatments)) or (len(cond_types) != len(times)):
+                raise SyntaxError("Treatment parsing error: " + cond["paper_name"])
+
+            for i in range(len(cond_types)):
+                new_cond = dict()
+                new_cond["sample_id"] = cond["sample_id"]
+                treatment = treatments[i].split("(")
+                time = times[i].split(",")
+                new_cond["condition_type"] = cond_types[i]
+                new_cond["treatment"] = treatment[0]
+                if len(treatment) > 1:
+                    new_cond["conc_intens"] = treatment[1].split(")")[0]
+                else:
+                    new_cond["conc_intens"] = None
+
+                if len(time) > 1:
+                    new_cond["start_time"] = int(time[0])
+                    new_cond["end_time"] = int(time[1])
+                    new_cond["time_unit"] = time[2]
+
+                    # Calculate duration and units
+                    duration_list = duration_calc(time)
+                    new_cond["duration"] = int(duration_list[0])
+                    new_cond["duration_unit"] = duration_list[1]
+                else:
+                    new_cond["start_time"] = None
+                    new_cond["end_time"] = None
+                    new_cond["time_unit"] = None
+                    new_cond["duration"] = None
+                    new_cond["duration_unit"] = None
+
+                cond_parsed.append(new_cond)
+
+        # If no treatment, store empty values
+        else:
+            new_cond = dict()
+            new_cond["sample_id"] = cond["sample_id"]
+            new_cond["condition_type"] = "no treatment"
+            new_cond["treatment"] = None
+            new_cond["conc_intens"] = None
+            new_cond["start_time"] = None
+            new_cond["end_time"] = None
+            new_cond["time_unit"] = None
+            new_cond["duration"] = None
+            new_cond["duration_unit"] = None
+            cond_parsed.append(new_cond)
+
+    return cond_parsed
 
 
 def duration_calc(time_list) -> list:
@@ -783,9 +1007,9 @@ def scrape_fastqc(paper_id,
 
     # Determine paths for trim fastQC file to scrape, based on SE/PE
     # and whether reverse complemented or not
-    if str(db_sample["rcomp"]) == '1':
+    if (str(db_sample["rcomp"]) == '1') or (str(db_sample["rcomp"]) == 'True'):
         if db_sample["single_paired"] == "paired":
-            trim_zip = fqc_path + sample_name + "_1.flip.trim_fastqc"
+            trim_zip = fqc_path + sample_name + "_1.trim_fastqc"
         else:
             trim_zip = fqc_path + sample_name + ".flip.trim_fastqc"
     else:
@@ -1071,15 +1295,47 @@ def scrape_pileup(paper_id, sample_name, data_path):
     return pileup_dict
 
 
-def sample_qc_calc(dbconn, db_sample, thresholds) -> dict:
+def scrape_all_qc(sampdict, datapath) -> dict:
+    """Accumulate all scraped qc stats into one dict.
+
+    Parameters:
+        sampdict (dict):
+            sample entry dict from metatable
+
+        datapath (str) :
+            path to data directory
+
+    Returns:
+        qc_all (dict) :
+            calculated sample scores in dict format
+    """
+    ident = sampdict["paper_name"]
+    samp = sampdict["sample_name"]
+    fastqc_dict = scrape_fastqc(ident, samp, datapath, sampdict)
+    picard_dict = scrape_picard(ident, samp, datapath)
+    mapstats_dict = scrape_mapstats(ident, samp, datapath, sampdict)
+    rseqc_dict = scrape_rseqc(ident, samp, datapath)
+    preseq_dict = scrape_preseq(ident, samp, datapath)
+    pileup_dict = scrape_pileup(ident, samp, datapath)
+
+    qc_all = {
+        **fastqc_dict,
+        **picard_dict,
+        **mapstats_dict,
+        **rseqc_dict,
+        **preseq_dict,
+        **pileup_dict,
+    }
+
+    return qc_all
+
+
+def sample_qc_calc(sample, thresholds) -> dict:
     """Calculate sample qc and data scores.
 
     Parameters:
-        dbconn (sqlalchemy database connection) :
-            database connection object
-
-        db_sample (dict) :
-            sample_accum entry dict from db query
+        sample (dict) :
+            sample dict from metatable object
 
         thresholds (dict) :
             dict of thresholds to use for qc and data score calc
@@ -1091,27 +1347,12 @@ def sample_qc_calc(dbconn, db_sample, thresholds) -> dict:
         samp_score (dict) :
             calculated sample scores in dict format
     """
-    samp_score = dict()
-    trimrd = db_sample["trim_read_depth"]
-    dup = db_sample["duplication_picard"]
-    mapped = db_sample["map_prop"]
-    complexity = db_sample["distinct_tenmillion_prop"]
-    genome = db_sample["genome_prop_cov"]
-    exint = db_sample["exint_ratio"]
-
-    # Find bidirSummary data for sample, if present
-    dblink_dump = dbconn.reflect_table(
-                      "linkIDs",
-                      {"sample_id": db_sample["sample_id"]}
-                  )
-    dbbidir_dump = dbconn.reflect_table(
-                       "bidirSummary",
-                       {"bidirsummary_id": dblink_dump[0]["bidirsummary_id"]}
-                   )
-    if len(dbbidir_dump) > 1:
-        raise ValueError(
-            "More than one bidir summary associated with sample_id"
-        )
+    # Define variables for qc score calc
+    scores = dict()
+    trimrd = sample["trim_read_depth"]
+    dup = sample["duplication_picard"]
+    mapped = sample["map_prop"]
+    complexity = sample["distinct_tenmillion_prop"]
 
     # Determine sample QC score
     # All cutoffs based on manual inspection of data
@@ -1121,7 +1362,7 @@ def sample_qc_calc(dbconn, db_sample, thresholds) -> dict:
         or mapped is None
         or complexity is None
     ):
-        samp_score["samp_qc_score"] = 0
+        scores["sample_qc_score"] = 0
 
     elif (
         trimrd <= thresholds["qc5"][0]
@@ -1129,7 +1370,7 @@ def sample_qc_calc(dbconn, db_sample, thresholds) -> dict:
         or (mapped * trimrd) <= thresholds["qc5"][2]
         or complexity < thresholds["qc5"][3]
     ):
-        samp_score["samp_qc_score"] = 5
+        scores["sample_qc_score"] = 5
 
     elif (
         trimrd <= thresholds["qc4"][0]
@@ -1137,7 +1378,7 @@ def sample_qc_calc(dbconn, db_sample, thresholds) -> dict:
         or (mapped * trimrd) <= thresholds["qc4"][2]
         or complexity < thresholds["qc4"][3]
     ):
-        samp_score["samp_qc_score"] = 4
+        scores["sample_qc_score"] = 4
 
     elif (
         trimrd <= thresholds["qc3"][0]
@@ -1145,7 +1386,7 @@ def sample_qc_calc(dbconn, db_sample, thresholds) -> dict:
         or (mapped * trimrd) <= thresholds["qc3"][2]
         or complexity < thresholds["qc3"][3]
     ):
-        samp_score["samp_qc_score"] = 3
+        scores["sample_qc_score"] = 3
 
     elif (
         trimrd <= thresholds["qc2"][0]
@@ -1153,98 +1394,101 @@ def sample_qc_calc(dbconn, db_sample, thresholds) -> dict:
         or (mapped * trimrd) <= thresholds["qc2"][2]
         or complexity < thresholds["qc2"][3]
     ):
-        samp_score["samp_qc_score"] = 2
+        scores["sample_qc_score"] = 2
 
     else:
-        samp_score["samp_qc_score"] = 1
+        scores["sample_qc_score"] = 1
 
-    # Determine sample data score
-    if (exint and dbbidir_dump[0]["tfit_bidir_gc_prop"]):
-        tfitgc = dbbidir_dump[0]["tfit_bidir_gc_prop"]
+    # Find values for NRO score calc
 
+    genome = sample["genome_prop_cov"]
+    exint = sample["exint_ratio"]
+    tfitgc = False
+    if "tfit_bidir_gc_prop" in sample.keys():
+        if sample["tfit_bidir_gc_prop"]:
+            if sample["tfit_bidir_gc_prop"] != "None":
+                tfitgc = float(sample["tfit_bidir_gc_prop"])
+
+    if tfitgc:
         if (
-            exint >= thresholds["data5"][0]
-            or tfitgc <= thresholds["data5"][1]
+            exint >= thresholds["nro5"][0]
+            or tfitgc <= thresholds["nro5"][1]
         ):
-            samp_score["samp_data_score"] = 5
+            scores["sample_nro_score"] = 5
 
         elif (
-            exint >= thresholds["data4"][0]
-            or tfitgc <= thresholds["data4"][1]
+            exint >= thresholds["nro4"][0]
+            or tfitgc <= thresholds["nro4"][1]
         ):
-            samp_score["samp_data_score"] = 4
+            scores["sample_nro_score"] = 4
 
         elif (
-            exint >= thresholds["data3"][0]
-            or tfitgc <= thresholds["data3"][1]
+            exint >= thresholds["nro3"][0]
+            or tfitgc <= thresholds["nro3"][1]
         ):
-            samp_score["samp_data_score"] = 3
+            scores["sample_nro_score"] = 3
 
         elif (
-            exint >= thresholds["data2"][0]
-            or tfitgc <= thresholds["data2"][1]
+            exint >= thresholds["nro2"][0]
+            or tfitgc <= thresholds["nro2"][1]
         ):
-            samp_score["samp_data_score"] = 2
+            scores["sample_nro_score"] = 2
 
         else:
-            samp_score["samp_data_score"] = 1
+            scores["sample_nro_score"] = 1
     elif exint:
-        if (exint >= thresholds["data5"][0]):
-            samp_score["samp_data_score"] = 5
-        elif (exint >= thresholds["data4"][0]):
-            samp_score["samp_data_score"] = 4
-        elif (exint >= thresholds["data3"][0]):
-            samp_score["samp_data_score"] = 3
-        elif (exint >= thresholds["data2"][0]):
-            samp_score["samp_data_score"] = 2
+        if (exint >= thresholds["nro5"][0]):
+            scores["sample_nro_score"] = 5
+        elif (exint >= thresholds["nro4"][0]):
+            scores["sample_nro_score"] = 4
+        elif (exint >= thresholds["nro3"][0]):
+            scores["sample_nro_score"] = 3
+        elif (exint >= thresholds["nro2"][0]):
+            scores["sample_nro_score"] = 2
         else:
-            samp_score["samp_data_score"] = 1
+            scores["sample_nro_score"] = 1
     else:
-        samp_score["samp_data_score"] = 0
+        scores["sample_nro_score"] = 0
 
-    return samp_score
+    return scores
 
 
-def paper_qc_calc(db_samples) -> dict:
+def paper_qc_calc(samples) -> dict:
     """Calculate paper qc and data scores.
 
     Parameters:
         db_samples (list of dicts) :
-            sample_accum entries from same paper from db query
+            sample data from metatable (incl qc and nro scores)
 
     Returns:
         paper_scores (dict) : 
             calculated median scores in dict format
     """
     qc_scores = []
-    data_scores = []
+    nro_scores = []
     paper_scores = {}
 
-    for entry in db_samples:
-        qc_scores.append(int(entry["samp_qc_score"]))
-        data_scores.append(int(entry["samp_data_score"]))
+    for entry in samples:
+        qc_scores.append(int(entry["sample_qc_score"]))
+        nro_scores.append(int(entry["sample_nro_score"]))
 
     paper_scores["paper_qc_score"] = median(qc_scores)
-    paper_scores["paper_data_score"] = median(data_scores)
+    paper_scores["paper_nro_score"] = median(nro_scores)
 
     return paper_scores
 
 
 def add_version_info(
-    dbconn,
-    paper_id,
+    samples,
     data_path,
     vertype,
-    dbver_keys
+    db_keys
 ) -> list:
     """Find nascentflow/bidirflow version info for a paper.
 
     Parameters:
-        dbconn (dbnascentConnection object) :
-            curr db connection
-
-        paper_id (str) :
-            paper identifier
+        samples (list of dicts) :
+            list of samples from metatable
 
         data_path (str) :
             path to dbnascent data
@@ -1267,34 +1511,94 @@ def add_version_info(
             "vertype must be nascent or bidir"
         )
 
-    dblink_dump = dbconn.reflect_table(
-                      "linkIDs",
-                      {"paper_id": paper_id}
-                  )
-    for entry in dblink_dump:
-        del entry["genetic_id"]
-        del entry["expt_id"]
-        ver_path = (data_path + paper_id + "/software_versions/" +
-                    entry["sample_name"] + "_" + vertype + ".yaml")
+    for sample in samples:
+        ver_path = (data_path + sample["paper_name"] + "/software_versions/" +
+                    sample["sample_name"] + "_" + vertype + ".yaml")
 
         if not ((os.path.exists(ver_path) 
                  and os.path.isfile(ver_path))
                ):
-            for key in dbver_keys:
-                entry.update({key: None})
-            ver_table.append(entry)
+            add_entry = dict()
+            add_entry["sample_id"] = sample["sample_id"]
+            for key in db_keys:
+                add_entry.update({key: None})
+            ver_table.append(add_entry)
             continue
 
         with open(ver_path) as f:
             for run in yaml.safe_load_all(f):
                 add_entry = dict()
-                add_entry.update(entry)
+                add_entry["sample_id"] = sample["sample_id"]
                 add_entry.update(run)
-                for key in dbver_keys:
+                for key in db_keys:
                     if not key in add_entry.keys():
                         add_entry.update({key: None})
                 ver_table.append(add_entry)
 
     return ver_table
+
+
+def add_bidir_info(
+    samples,
+    summary_path,
+    caller,
+    merge_ids,
+    dbkeys,
+) -> Metatable:
+    """Find tfit/dreg summary info for a paper.
+
+    Parameters:
+        samples (metatable object):
+            object to which to add bidir summary data
+
+        summary_path (str) :
+            path to paper bidir summary info
+
+        caller (str) :
+            which bidir caller ("tfit" or "dreg")
+
+        merge_ids (list) :
+            list of paper_id values incl in master merges
+
+        dbkeys (list) :
+            db bidir keys
+
+    Returns:
+        samples (metatable object) :
+            object with bidir data appended
+    """
+    if os.path.exists(summary_path):
+        summary = Metatable(summary_path)
+    else:
+        summary = Metatable([])
+
+    for sample in samples.data:
+        key_store_compare(
+            sample,
+            summary.data,
+            ["sample_name",],
+            [
+                "num_" + caller +"_bidir",
+                "num_" + caller +"_bidir_promoter",
+                "num_" + caller +"_bidir_intronic",
+                "num_" + caller +"_bidir_intergenic",
+                caller + "_bidir_gc_prop",
+            ],
+            addnull=True,
+        )
+        # Format proportion correctly
+        if sample[caller + "_bidir_gc_prop"]:
+            sample[caller + "_bidir_gc_prop"] = str(float(sample[caller + "_bidir_gc_prop"]))
+    
+        # Add master file info
+        if sample["paper_name"] in merge_ids:
+            sample[caller + "_master_merge_incl"] = "1"
+        else:
+            sample[caller + "_master_merge_incl"] = "0"
+        for bidirkey in dbkeys:
+            if bidirkey in sample.keys():
+                sample[bidirkey] = str(sample[bidirkey])
+
+    return samples
 
 # dbutils.py ends here

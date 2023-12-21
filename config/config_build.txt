@@ -1,34 +1,40 @@
 [file_locations]
-database = socotra.int.colorado.edu/dbnascent
-credentials = /Users/lysa8537/.mysql_creds
-backup_dir = /Shares/dbnascent/db_backups/
-organism_table = /scratch/Shares/dowell/dbnascent/DBNascent-build/global_files/organisms.txt
-tissue_table = /scratch/Shares/dowell/dbnascent/DBNascent-build/global_files/sample_cell_types.tsv
-searcheq_table = /scratch/Shares/dowell/dbnascent/DBNascent-build/db_build/searcheq.txt
-searcheq_manual = /scratch/Shares/dowell/dbnascent/DBNascent-build/global_files/searcheq_manual.txt
-hg38_tfit_master_merge = /scratch/Shares/dowell/dbnascent/out/meta_analysis/mumerge/conditions_table/qc4_gc50perc_tss50perc_tfit_mumerge_files_hg38_220603.txt
-hg38_dreg_master_merge = /scratch/Shares/dowell/dbnascent/out/meta_analysis/mumerge/conditions_table/qc4_gc50perc_tss50perc_dreg_mumerge_files_hg38_220603.txt
-mm10_tfit_master_merge = /scratch/Shares/dowell/dbnascent/out/meta_analysis/mumerge/conditions_table/qc4_gc50perc_tss50perc_tfit_mumerge_files_mm10_220603.txt
-mm10_dreg_master_merge = /scratch/Shares/dowell/dbnascent/out/meta_analysis/mumerge/conditions_table/qc4_gc50perc_tss50perc_dreg_mumerge_files_mm10_220603.txt
-db_data = /Shares/dbnascent/
+database = localhost/dbnascent
+credentials = /home/lsanford/.localdb_creds
+backup_dir = /home/lsanford/db_backups/
+organism_table = /home/lsanford/DBNascent-build/global_files/organisms.txt
+tissue_table = /home/lsanford/DBNascent-build/global_files/sample_cell_types.tsv
+searcheq_table = /home/lsanford/DBNascent-build/db_build/searcheq.txt
+searcheq_manual = /home/lsanford/DBNascent-build/global_files/searcheq_manual.txt
+hg38_tfit_master_merge = /home/lsanford/dbnascent_data/All_tiers_unfiltered_tfit_mumerge_files_hg38_230601.txt
+hg38_dreg_master_merge = /home/lsanford/dbnascent_data/All_tiers_unfiltered_dreg_mumerge_files_hg38_230601.txt
+mm10_tfit_master_merge = /home/lsanford/dbnascent_data/All_tiers_unfiltered_tfit_mumerge_files_mm10_230601.txt
+mm10_dreg_master_merge = /home/lsanford/dbnascent_data/All_tiers_unfiltered_dreg_mumerge_files_mm10_230601.txt
+db_data = /home/lsanford/dbnascent_data/
 
-[organism keys]
+[organisms]
 organism = organism
 genome_build = build
 genome_bases = total_bases
 
-[searcheq keys]
+[searchequiv]
 search_term = search_term
 db_term = db_term
 search_field = search_field
 
-[expt keys]
+[tissues]
+tissue = tissue
+cell_origin_type = cell_origin_type
+tissue_description = tissue_description
+disease = disease
+
+[papers]
 srp = srp
 protocol = protocol
 organism = organism
 library = library prep
 spikein = spike in
-paper_id = identifier
+paper_name = identifier
 published = published
 year = year
 first_author = author
@@ -43,55 +49,8 @@ chip_seq = chip seq
 three_dim_seq = three d
 other_seq = other seq
 
-[sample keys]
-srr = srr
+[metatable_samples]
 sample_name = srz
-
-[genetic keys]
-organism = organism
-sample_type = sample type
-cell_type = cell type
-clone_individual = clone_individual
-strain = strain
-genotype = genotype
-construct = construct
-
-[tissue type keys]
-tissue = tissue
-cell_origin_type = cell_origin_type
-tissue_description = tissue_description
-disease = disease
-
-[bidirsummary keys]
-num_tfit_bidir = num_tfit_bidir
-num_tfit_bidir_promoter = num_tfit_bidir_promoter
-num_tfit_bidir_intronic = num_tfit_bidir_intronic
-num_tfit_bidir_intergenic = num_tfit_bidir_intergenic
-num_dreg_bidir = num_dreg_bidir
-num_dreg_bidir_promoter = num_dreg_bidir_promoter
-num_dreg_bidir_intronic = num_dreg_bidir_intronic
-num_dreg_bidir_intergenic = num_dreg_bidir_intergenic
-tfit_bidir_gc_prop = tfit_bidir_gc_prop
-dreg_bidir_gc_prop = dreg_bidir_gc_prop
-tfit_master_merge_incl = tfit_master_merge_incl
-dreg_master_merge_incl = dreg_master_merge_incl
-
-[metatable condition keys]
-condition_type = treatment type
-treatment = treatment
-times = times
-
-[condition keys]
-condition_type = condition_type
-treatment = treatment
-conc_intens = conc_intens
-start_time = start_time
-end_time = end_time
-time_unit = time_unit
-duration = duration
-duration_unit = duration_unit
-
-[metatable accum keys]
 replicate = replicate
 single_paired = single_paired
 rcomp = rcomp
@@ -101,8 +60,8 @@ timecourse = timecourse
 control_experimental = control_experimental
 outlier = outlier
 
-[accum keys]
-sample_id = sample_id
+[samples]
+sample_name = sample_name
 replicate = replicate
 single_paired = single_paired
 rcomp = rcomp
@@ -130,10 +89,47 @@ exint_ratio = exint_ratio
 distinct_tenmillion_prop = distinct_tenmillion_prop
 genome_prop_cov = genome_prop_cov
 avg_fold_cov = avg_fold_cov
-samp_qc_score = samp_qc_score
-samp_data_score = samp_data_score
+sample_qc_score = samp_qc_score
+sample_nro_score = samp_data_score
 
-[nascentflow keys]
+[genetics]
+sample_type = sample type
+cell_type = cell type
+clone_individual = clone_individual
+strain = strain
+genotype = genotype
+construct = construct
+
+[bidirs]
+num_tfit_bidir = num_tfit_bidir
+num_tfit_bidir_promoter = num_tfit_bidir_promoter
+num_tfit_bidir_intronic = num_tfit_bidir_intronic
+num_tfit_bidir_intergenic = num_tfit_bidir_intergenic
+num_dreg_bidir = num_dreg_bidir
+num_dreg_bidir_promoter = num_dreg_bidir_promoter
+num_dreg_bidir_intronic = num_dreg_bidir_intronic
+num_dreg_bidir_intergenic = num_dreg_bidir_intergenic
+tfit_bidir_gc_prop = tfit_bidir_gc_prop
+dreg_bidir_gc_prop = dreg_bidir_gc_prop
+tfit_master_merge_incl = tfit_master_merge_incl
+dreg_master_merge_incl = dreg_master_merge_incl
+
+[metatable_conditions]
+condition_type = treatment type
+treatment = treatment
+times = times
+
+[conditions]
+condition_type = condition_type
+treatment = treatment
+conc_intens = conc_intens
+start_time = start_time
+end_time = end_time
+time_unit = time_unit
+duration = duration
+duration_unit = duration_unit
+
+[nascentflow]
 nascentflow_version = nascentflow_version
 downfile_version = downfile_version
 pipeline_revision_hash = pipeline_revision_hash
@@ -163,7 +159,7 @@ gcc_version = gcc_version
 python_version = python_version
 numpy_version = numpy_version
 
-[bidirflow keys]
+[bidirflow]
 bidirflow_version = bidirectionalflow_version
 pipeline_revision_hash = pipeline_revision_hash
 pipeline_hash = pipeline_hash

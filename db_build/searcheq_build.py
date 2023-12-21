@@ -24,14 +24,12 @@ import dbutils
 
 # Load config file
 config = dbutils.load_config(
-    "/scratch/Shares/dowell/dbnascent/DBNascent-build/config/config_build.txt"
+    "/home/lsanford/DBNascent-build/config/config_build.txt"
 )
+files = config["file_locations"]
 
 # Create database connection object
-db_url = config["file_locations"]["database"]
-creds = config["file_locations"]["credentials"]
-
-dbconnect = dbutils.dbnascentConnection(db_url, creds)
+dbconnect = dbutils.dbnascentConnection(files["database"], files["credentials"])
 
 # Delete current searcheq table
 dbconnect.delete_tables([dborm.searchEquiv.__table__,])
@@ -39,13 +37,13 @@ dbconnect.add_tables()
 
 # Reflect database tables and define searchable fields
 dbtables = [
-    "organismInfo",
-    "tissueDetails",
-    "exptMetadata",
-    "sampleID",
-    "geneticInfo",
-    "conditionInfo",
-    "sampleAccum",
+    "organisms",
+    "tissues",
+    "papers",
+    "samples",
+    "sampleEquiv",
+    "genetics",
+    "conditions",
 ]
 
 fields = [
@@ -56,7 +54,7 @@ fields = [
     "protocol",
     "library",
     "spikein",
-    "paper_id",
+    "paper_name",
     "year",
     "first_author",
     "last_author",
@@ -73,8 +71,8 @@ fields = [
     "replicate",
     "single_paired",
     "control_experimental",
-    "samp_qc_score",
-    "samp_data_score",
+    "sample_qc_score",
+    "sample_data_score",
 ]
 
 full_dbdump = []
@@ -96,19 +94,18 @@ for dbentry in full_dbdump:
                 search_table.append(dictentry)
 
 # Read in additional manually curated search terms
-search_keys = list(dict(config["searcheq keys"]).values())
-dbsearch_keys = list(dict(config["searcheq keys"]).keys())
-search_manual_path = config["file_locations"]["searcheq_manual"]
+search_keys = dbutils.load_keys(config,"searchequiv")
+search_manual_path = files["searcheq_manual"]
 searcheqs = dbutils.Metatable(search_manual_path)
-searcheqs.key_replace(search_keys, dbsearch_keys)
+searcheqs.key_replace(search_keys["in"], search_keys["match"])
 
 # Append manual to automatically generated and ensure unique
 for entry in searcheqs.data:
     search_table.append(entry)
 search_table_full = dbutils.Metatable(search_table)
-searcheqs_unique = search_table_full.unique(dbsearch_keys)
+searcheqs_unique = search_table_full.unique(search_keys["db"])
 
-searcheq_full_path = config["file_locations"]["searcheq_table"]
+searcheq_full_path = files["searcheq_table"]
 with open(searcheq_full_path, 'w') as outfile:
     outfile.write('search_term\tdb_term\tsearch_field\n')    
     for entry in searcheqs_unique:
@@ -118,10 +115,11 @@ with open(searcheq_full_path, 'w') as outfile:
 searcheqs_to_add = dbutils.entry_update(
                        dbconnect,
                        "searchEquiv",
-                       dbsearch_keys,
+                       search_keys["db"],
                        searcheqs_unique
                    )
 if len(searcheqs_to_add) > 0:
+    searcheqs_to_add = dbutils.format_for_db_add(dbconnect,searcheqs_to_add)
     dbconnect.engine.execute(
         dborm.searchEquiv.__table__.insert(),
         searcheqs_to_add
