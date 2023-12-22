@@ -1,12 +1,12 @@
 [file_locations]
-database = socotra.int.colorado.edu/dbnascent
-credentials = /Users/lysa8537/.mysql_creds
-backup_dir = /Shares/dbnascent/db_backups/
-organism_table = /scratch/Shares/dowell/dbnascent/DBNascent-build/global_files/organisms.txt
-tissue_table = /scratch/Shares/dowell/dbnascent/DBNascent-build/global_files/sample_cell_types.tsv
-searcheq_table = /scratch/Shares/dowell/dbnascent/DBNascent-build/db_build/searcheq.txt
-searcheq_manual = /scratch/Shares/dowell/dbnascent/DBNascent-build/global_files/searcheq_manual.txt
-db_data = /Shares/dbnascent/
+database = localhost/dbnascent
+credentials = /home/lsanford/.localdb_creds
+backup_dir = /home/lsanford/db_backups/
+organism_table = /home/lsanford/DBNascent-build/global_files/organisms.txt
+tissue_table = /home/lsanford/DBNascent-build/global_files/sample_cell_types.tsv
+searcheq_table = /home/lsanford/DBNascent-build/db_build/searcheq.txt
+searcheq_manual = /home/lsanford/DBNascent-build/global_files/searcheq_manual.txt
+db_data = /home/lsanford/dbnascent_data/
 hg38_tfit_master_merge = /home/lsanford/dbnascent_data/All_tiers_unfiltered_tfit_mumerge_files_hg38_230601.txt
 hg38_dreg_master_merge = /home/lsanford/dbnascent_data/All_tiers_unfiltered_dreg_mumerge_files_hg38_230601.txt
 mm10_tfit_master_merge = /home/lsanford/dbnascent_data/All_tiers_unfiltered_tfit_mumerge_files_mm10_230601.txt
@@ -103,14 +103,16 @@ construct = construct
 [bidirs]
 num_tfit_bidir = num_tfit_bidir
 num_tfit_bidir_promoter = num_tfit_bidir_promoter
+num_tfit_bidir_exonic = num_tfit_bidir_exonic
 num_tfit_bidir_intronic = num_tfit_bidir_intronic
 num_tfit_bidir_intergenic = num_tfit_bidir_intergenic
 num_dreg_bidir = num_dreg_bidir
 num_dreg_bidir_promoter = num_dreg_bidir_promoter
+num_dreg_bidir_exonic = num_dreg_bidir_exonic
 num_dreg_bidir_intronic = num_dreg_bidir_intronic
 num_dreg_bidir_intergenic = num_dreg_bidir_intergenic
-tfit_bidir_gc_prop = tfit_bidir_gc_prop
-dreg_bidir_gc_prop = dreg_bidir_gc_prop
+tfit_bidir_gc = tfit_bidir_gc
+dreg_bidir_gc = dreg_bidir_gc
 tfit_master_merge_incl = tfit_master_merge_incl
 dreg_master_merge_incl = dreg_master_merge_incl
 

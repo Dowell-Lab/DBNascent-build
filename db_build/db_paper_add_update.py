@@ -260,14 +260,13 @@ papers_keys["match"].remove("organism")
 papers_unique = sampmeta.unique(papers_keys["match"])
 
 # Add paper scores and change datatypes for unique calc/db addition
-for paper in papers_unique:
-    paper["paper_qc_score"] = paper_scores["paper_qc_score"]
-    paper["paper_nro_score"] = paper_scores["paper_nro_score"]
-
 papers_to_add = dbutils.entry_update(
     dbconnect, "papers", papers_keys["match"], papers_unique
 )
 if len(papers_to_add) > 0:
+    for paper in papers_to_add:
+        paper["paper_qc_score"] = paper_scores["paper_qc_score"]
+        paper["paper_nro_score"] = paper_scores["paper_nro_score"]
     papers_to_add = dbutils.format_for_db_add(dbconnect,papers_to_add)
     dbconnect.engine.execute(dborm.papers.__table__.insert(), papers_to_add)
 

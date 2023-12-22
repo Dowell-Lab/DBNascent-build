@@ -200,14 +200,20 @@ class dbnascentConnection:
             coltypes[table] = {}
             coltypes[table]["boolean"] = []
             coltypes[table]["string"] = []
-            coltypes[table]["num"] = []
+            coltypes[table]["int"] = []
+            coltypes[table]["float"] = []
+            coltypes[table]["date"] = []
             for col in insp.get_columns(table):
                 if "TINYINT" in str(col["type"]):
                     coltypes[table]["boolean"].append(col["name"])
                 elif "CHAR" in str(col["type"]):
                     coltypes[table]["string"].append(col["name"])
-                else:
-                    coltypes[table]["num"].append(col["name"])
+                elif "DOUBLE" in str(col["type"]):
+                    coltypes[table]["float"].append(col["name"])
+                elif "INT" in str(col["type"]):
+                    coltypes[table]["int"].append(col["name"])
+                elif "DATE" in str(col["type"]):
+                    coltypes[table]["date"].append(col["name"])
 
         return coltypes
 
@@ -729,7 +735,23 @@ def format_for_db_add(dbconn,samples) -> list:
                         sample[field] = True
                     else:
                         sample[field] = False
-            for field in coltypes[table]["num"]:
+            for field in coltypes[table]["int"]:
+                if field in list(sample.keys()):
+                    if str(sample[field]) == "None":
+                        sample[field] = None
+                    elif str(sample[field]) == "":
+                        sample[field] = None
+                    elif type(sample[field]) == str:
+                        sample[field] = int(sample[field])
+            for field in coltypes[table]["float"]:
+                if field in list(sample.keys()):
+                    if str(sample[field]) == "None":
+                        sample[field] = None
+                    elif str(sample[field]) == "":
+                        sample[field] = None
+                    elif type(sample[field]) == str:
+                        sample[field] = float(sample[field])
+            for field in coltypes[table]["date"]:
                 if field in list(sample.keys()):
                     if str(sample[field]) == "None":
                         sample[field] = None
@@ -1404,10 +1426,10 @@ def sample_qc_calc(sample, thresholds) -> dict:
     genome = sample["genome_prop_cov"]
     exint = sample["exint_ratio"]
     tfitgc = False
-    if "tfit_bidir_gc_prop" in sample.keys():
-        if sample["tfit_bidir_gc_prop"]:
-            if sample["tfit_bidir_gc_prop"] != "None":
-                tfitgc = float(sample["tfit_bidir_gc_prop"])
+    if "tfit_bidir_gc" in sample.keys():
+        if sample["tfit_bidir_gc"]:
+            if sample["tfit_bidir_gc"] != "None":
+                tfitgc = float(sample["tfit_bidir_gc"])
 
     if tfitgc:
         if (
@@ -1583,13 +1605,13 @@ def add_bidir_info(
                 "num_" + caller +"_bidir_exonic",
                 "num_" + caller +"_bidir_intronic",
                 "num_" + caller +"_bidir_intergenic",
-                caller + "_bidir_gc_prop",
+                caller + "_bidir_gc",
             ],
             addnull=True,
         )
         # Format proportion correctly
-        if sample[caller + "_bidir_gc_prop"]:
-            sample[caller + "_bidir_gc_prop"] = str(float(sample[caller + "_bidir_gc_prop"]))
+        if sample[caller + "_bidir_gc"]:
+            sample[caller + "_bidir_gc"] = str(float(sample[caller + "_bidir_gc"]))
     
         # Add master file info
         if sample["paper_name"] in merge_ids:

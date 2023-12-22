@@ -205,8 +205,8 @@ class bidirs(Base):
     num_dreg_bidir_exonic = sql.Column(sql.Integer, nullable=True)
     num_dreg_bidir_intronic = sql.Column(sql.Integer, nullable=True)
     num_dreg_bidir_intergenic = sql.Column(sql.Integer, nullable=True)
-    tfit_bidir_gc_prop = sql.Column(sql.Float, nullable=True)
-    dreg_bidir_gc_prop = sql.Column(sql.Float, nullable=True)
+    tfit_bidir_gc = sql.Column(sql.Float, nullable=True)
+    dreg_bidir_gc = sql.Column(sql.Float, nullable=True)
     tfit_master_merge_incl = sql.Column(sql.Boolean)
     dreg_master_merge_incl = sql.Column(sql.Boolean)
 
