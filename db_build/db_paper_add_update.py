@@ -234,11 +234,6 @@ for sample in sampmeta.data:
 
 paper_scores = dbutils.paper_qc_calc(sampmeta.data)
 
-# Add paper scores and change datatypes for unique calc/db addition
-for sample in sampmeta.data:
-    sample["paper_qc_score"] = paper_scores["paper_qc_score"]
-    sample["paper_nro_score"] = paper_scores["paper_nro_score"]
-
 sampmeta.data = dbutils.format_for_db_add(dbconnect,sampmeta.data)
 
 ### Step 6: Add samples, papers, genetics, bidirs to database ###
@@ -262,8 +257,13 @@ if len(samples_to_add) > 0:
 # from comparison due to formatting int/float issues)
 papers_keys["match"].append("organism_id")
 papers_keys["match"].remove("organism")
+papers_unique = sampmeta.unique(papers_keys["match"])
 
-papers_unique = sampmeta.unique(papers_keys["db"])
+# Add paper scores and change datatypes for unique calc/db addition
+for paper in papers_unique:
+    paper["paper_qc_score"] = paper_scores["paper_qc_score"]
+    paper["paper_nro_score"] = paper_scores["paper_nro_score"]
+
 papers_to_add = dbutils.entry_update(
     dbconnect, "papers", papers_keys["match"], papers_unique
 )
@@ -350,8 +350,26 @@ sampmeta = dbutils.bulk_key_store_compare(
 )
 
 # If not already present, add sampleEquiv entries to database
-
 sampleequiv_unique = sampmeta.unique(equiv_keys)
+if paper_id == "Hah2013enhancer":
+    sampleequiv_unique = []
+    equivs = {
+        "SRR653421": ["SRR497904","SRR497905","SRR497906"],
+        "SRR653422": ["SRR497907","SRR497908","SRR497909","SRR497910"],
+        "SRR653423": ["SRR497911"],
+        "SRR653424": ["SRR497912","SRR497913"],
+        "SRR653425": ["SRR497914","SRR497915","SRR497916"],
+        "SRR653426": ["SRR497917","SRR497918","SRR497919","SRR497920"],
+    }
+    for entry in sampmeta.data:
+        if entry["srr"] in equivs.keys():
+            sampleequiv_unique.append(
+                {"sample_id": entry["sample_id"], "srr": entry["srr"]}
+            )
+            for val in equivs[entry["srr"]]:
+                sampleequiv_unique.append(
+                    {"sample_id": entry["sample_id"], "srr": val}
+                )
 sampleequiv_to_add = dbutils.entry_update(
     dbconnect, "sampleEquiv", equiv_keys, sampleequiv_unique
 )

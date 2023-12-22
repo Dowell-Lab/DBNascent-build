@@ -1580,6 +1580,7 @@ def add_bidir_info(
             [
                 "num_" + caller +"_bidir",
                 "num_" + caller +"_bidir_promoter",
+                "num_" + caller +"_bidir_exonic",
                 "num_" + caller +"_bidir_intronic",
                 "num_" + caller +"_bidir_intergenic",
                 caller + "_bidir_gc_prop",

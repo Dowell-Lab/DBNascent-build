@@ -157,7 +157,6 @@ class sampleEquiv(Base):
     )
     srr = sql.Column(
         sql.String(length=50),
-        unique=True,
     )
 
 # Genetic info, including organism, sample type, cell type, and
@@ -198,10 +197,12 @@ class bidirs(Base):
     )
     num_tfit_bidir = sql.Column(sql.Integer, nullable=True)
     num_tfit_bidir_promoter = sql.Column(sql.Integer, nullable=True)
+    num_tfit_bidir_exonic = sql.Column(sql.Integer, nullable=True)
     num_tfit_bidir_intronic = sql.Column(sql.Integer, nullable=True)
     num_tfit_bidir_intergenic = sql.Column(sql.Integer, nullable=True)
     num_dreg_bidir = sql.Column(sql.Integer, nullable=True)
     num_dreg_bidir_promoter = sql.Column(sql.Integer, nullable=True)
+    num_dreg_bidir_exonic = sql.Column(sql.Integer, nullable=True)
     num_dreg_bidir_intronic = sql.Column(sql.Integer, nullable=True)
     num_dreg_bidir_intergenic = sql.Column(sql.Integer, nullable=True)
     tfit_bidir_gc_prop = sql.Column(sql.Float, nullable=True)
