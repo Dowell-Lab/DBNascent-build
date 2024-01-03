@@ -304,14 +304,17 @@ samples_dump = dbutils.format_for_db_add(
     dbconnect,
     dbconnect.reflect_table("samples"),
 )
+
 papers_dump = dbutils.format_for_db_add(
     dbconnect,
     dbconnect.reflect_table("papers"),
 )
+
 genetics_dump = dbutils.format_for_db_add(
     dbconnect,
     dbconnect.reflect_table("genetics"),
 )
+
 bidirs_dump = dbutils.format_for_db_add(
     dbconnect,
     dbconnect.reflect_table("bidirs"),
@@ -326,6 +329,7 @@ sampmeta = dbutils.bulk_key_store_compare(
     ["id"],
     ["sample_id"],
 )
+
 sampmeta = dbutils.bulk_key_store_compare(
     sampmeta,
     papers_dump,
@@ -333,6 +337,7 @@ sampmeta = dbutils.bulk_key_store_compare(
     ["id"],
     ["paper_id"],
 )
+
 sampmeta = dbutils.bulk_key_store_compare(
     sampmeta,
     genetics_dump,
@@ -340,6 +345,7 @@ sampmeta = dbutils.bulk_key_store_compare(
     ["id"],
     ["genetic_id"],
 )
+
 sampmeta = dbutils.bulk_key_store_compare(
     sampmeta,
     bidirs_dump,
@@ -369,6 +375,7 @@ if paper_id == "Hah2013enhancer":
                 sampleequiv_unique.append(
                     {"sample_id": entry["sample_id"], "srr": val}
                 )
+
 sampleequiv_to_add = dbutils.entry_update(
     dbconnect, "sampleEquiv", equiv_keys, sampleequiv_unique
 )
