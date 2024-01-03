@@ -4,9 +4,9 @@ This repository is intended for building, updating, and querying DBNascent. This
 Data in the database pulls from manually curated metadata tables, quality control data, and bidirectional call data from samples. All data is present on the Fiji cluster at CU Boulder.
 
 ## Version 1.2
-Version notes (12/20/2023): 
-The database has been somewhat restructured.
--All table names are different but describe the same fields. The table equivalents are as follows (`linkIDs` and `searchEquiv` are the same):
+Version notes (12/20/2023):
+- The database has been somewhat restructured.
+- All table names are different but describe the same fields. The table equivalents are as follows (`linkIDs` and `searchEquiv` are the same):
 
 |Old table|New table|
 |---------|---------|
@@ -24,7 +24,7 @@ The database has been somewhat restructured.
 |`bidirflowMetadata`|`bidirflowRuns`|
 |`sampleBidirflow`|`bidirflowLink`|
 
--A few fields have changed names. The primary key identifiers for all tables are now simply `id` instead of naming which id it is, whereas tables that link to that id have the field as `<linkedTable>_id` (see fields and linkages in schema). This helps with django's navigation of the database. Other new field names are as follows:
+- A few fields have changed names. The primary key identifiers for all tables are now simply `id` instead of naming which id it is, whereas tables that link to that id have the field as `<linkedTable>_id` (see fields and linkages in schema). This helps with django's navigation of the database. Other new field names are as follows:
 
 |Old field|New field|
 |---------|---------|
@@ -33,7 +33,7 @@ The database has been somewhat restructured.
 |`samp_data_score`|`sample_nro_score`|
 |`paper_data_score`|`paper_nro_score`|
 
--All non-integer identifier table linkages have been removed, so `paper_name` and `sample_name` are no longer in `LinkIDs` and `organisms` is linked to the `papers` and `genetics` tables by a numeric id instead of the organism name. Similarly with the `sampleEquiv` linkage to the `samples` table.
+- All non-integer identifier table linkages have been removed, so `paper_name` and `sample_name` are no longer in `LinkIDs` and `organisms` is linked to the `papers` and `genetics` tables by a numeric id instead of the organism name. Similarly with the `sampleEquiv` linkage to the `samples` table.
 
 ## Dependencies
 The database was built with python 3.6.3. The following packages are required for building OR querying:
