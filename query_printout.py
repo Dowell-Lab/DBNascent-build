@@ -91,7 +91,7 @@ outfile = "/Users/lysa8537/db_query_outputs/23_10_13_hek_samples.tsv"
 
 # Load config file and connect to db
 config = dbutils.load_config(
-    "/scratch/Shares/dowell/dbnascent/DBNascent-build/config/config_query.txt")
+    "/Shares/dbnascent/DBNascent-build/config/config_query.txt")
 db_url = config["file_locations"]["database"]
 creds = config["file_locations"]["credentials"]
 dbconnect = dbutils.dbnascentConnection(db_url, creds)

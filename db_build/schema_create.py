@@ -25,7 +25,7 @@ import dbutils
 
 # Load config file and connect to db
 config = dbutils.load_config(
-    "/home/lsanford/DBNascent-build/config/config_build.txt"
+    "/Shares/dbnascent/DBNascent-build/config/config_build.txt"
 )
 db_url = config["file_locations"]["database"]
 creds = config["file_locations"]["credentials"]
@@ -38,6 +38,6 @@ graph = create_schema_graph(metadata=MetaData(dbconnect.engine),
     rankdir='LR', # From left to right (instead of top to bottom)
     concentrate=False # Don't try to join the relation lines together
 )
-graph.write_png("/home/lsanford/DBNascent-build/dbschema.png")
+graph.write_png("/Shares/dbnascent/DBNascent-build/dbschema.png")
 
 # schema_create.py ends here

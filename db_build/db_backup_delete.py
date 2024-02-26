@@ -21,7 +21,7 @@ import dbutils
 
 # Load config file
 config = dbutils.load_config(
-    "/scratch/Shares/dowell/dbnascent/DBNascent-build/config/config_build.txt"
+    "/Shares/dbnascent/DBNascent-build/config/config_build.txt"
 )
 
 # Create database connection object and database schema
@@ -39,6 +39,6 @@ dbconnect.backup(backupdir, False)
 # Delete tables
 # Can optionally pass a list of tables in the following format:
 #    [dborm.<tablename>.__table__,]
-dbconnect.delete_tables()
+#dbconnect.delete_tables()
 
 # db_backup_delete.py ends here

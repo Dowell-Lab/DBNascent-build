@@ -51,7 +51,7 @@ else:
 
 # Load config file and keys
 config = dbutils.load_config(
-    "/home/lsanford/DBNascent-build/config/config_build.txt"
+    "/Shares/dbnascent/DBNascent-build/config/config_build.txt"
 )
 files = config["file_locations"]
 data_path = files["db_data"]
