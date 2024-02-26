@@ -7,8 +7,8 @@
 #SBATCH --time=01:00:00 # Time limit hrs:min:sec
 #SBATCH -p short
 #SBATCH --mem=8gb # Memory limit
-#SBATCH --output=/scratch/Shares/dowell/dbnascent/DBNascent-build/outerr/searcheq_build.%j.out
-#SBATCH --error=/scratch/Shares/dowell/dbnascent/DBNascent-build/outerr/searcheq_build.%j.err
+#SBATCH --output=/Shares/dbnascent/DBNascent-build/outerr/searcheq_build.%j.out
+#SBATCH --error=/Shares/dbnascent/DBNascent-build/outerr/searcheq_build.%j.err
 
 #################################################################
 module load python/3.6.3

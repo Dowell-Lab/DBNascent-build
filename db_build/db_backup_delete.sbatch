@@ -7,8 +7,8 @@
 #SBATCH --time=02:00:00 # Time limit hrs:min:sec
 #SBATCH -p short
 #SBATCH --mem=8gb # Memory limit
-#SBATCH --output=/scratch/Shares/dowell/dbnascent/DBNascent-build/outerr/dbnascent_backup_delete.%j.out
-#SBATCH --error=/scratch/Shares/dowell/dbnascent/DBNascent-build/outerr/dbnascent_backup_delete.%j.err
+#SBATCH --output=/Shares/dbnascent/DBNascent-build/outerr/dbnascent_backup_delete.%j.out
+#SBATCH --error=/Shares/dbnascent/DBNascent-build/outerr/dbnascent_backup_delete.%j.err
 
 #################################################################
 module load python/3.6.3
