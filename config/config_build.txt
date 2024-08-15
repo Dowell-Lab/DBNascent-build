@@ -6,6 +6,7 @@ organism_table = /Shares/dbnascent/DBNascent-build/global_files/organisms.txt
 tissue_table = /Shares/dbnascent/DBNascent-build/global_files/sample_cell_types.tsv
 searcheq_table = /Shares/dbnascent/DBNascent-build/db_build/searcheq.txt
 searcheq_manual = /Shares/dbnascent/DBNascent-build/global_files/searcheq_manual.txt
+archiveddata_table = /Shares/dbnascent/DBNascent-build/global_files/archived_nascentdb.txt
 hg38_tfit_master_merge = /Shares/dbnascent/meta_analysis/mumerge/conditions_table/All_tiers_unfiltered_tfit_mumerge_files_hg38_230601.txt
 hg38_dreg_master_merge = /Shares/dbnascent/meta_analysis/mumerge/conditions_table/All_tiers_unfiltered_dreg_mumerge_files_hg38_230601.txt
 mm10_tfit_master_merge = /Shares/dbnascent/meta_analysis/mumerge/conditions_table/All_tiers_unfiltered_tfit_mumerge_files_mm10_230601.txt
@@ -21,6 +22,21 @@ genome_bases = total_bases
 search_term = search_term
 db_term = db_term
 search_field = search_field
+
+[archiveddata]
+olddb_srr = srr
+olddb_have_bigwig = bigwig
+olddb_have_tfit = tfit
+olddb_have_mdscore = mdscore
+olddb_paper_name = keyword
+olddb_organism = organism
+olddb_tissue = tissue
+olddb_general_cell_type = general_celltype
+olddb_specific_cell_type = specific_celltype
+olddb_treatment = treatment_code
+olddb_treated = treated_or_like_treated
+olddb_protocol = experiment_type
+olddb_sample_equiv = sample_name
 
 [tissues]
 tissue = tissue
