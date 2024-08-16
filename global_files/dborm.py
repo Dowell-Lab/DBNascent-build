@@ -66,6 +66,30 @@ class tissues(Base):
     tissue_description = sql.Column(sql.String(length=127), nullable=True)
     disease = sql.Column(sql.Boolean)
 
+# Archived data from old NascentDB
+class archive(Base):
+    __tablename__ = "archive"
+    id = sql.Column(
+        sql.Integer,
+        primary_key=True,
+        index=True,
+        unique=True,
+        autoincrement=True,
+    )
+    olddb_srr = sql.Column(sql.String(length=127), nullable=True)
+    olddb_have_bigwig = sql.Column(sql.Boolean)
+    olddb_have_tfit = sql.Column(sql.Boolean)
+    olddb_have_mdscore = sql.Column(sql.Boolean)
+    olddb_paper_name = sql.Column(sql.String(length=127), nullable=True)
+    olddb_organism = sql.Column(sql.String(length=127), nullable=True)
+    olddb_tissue = sql.Column(sql.String(length=127), nullable=True)
+    olddb_general_cell_type = sql.Column(sql.String(length=127), nullable=True)
+    olddb_specific_cell_type = sql.Column(sql.String(length=127), nullable=True)
+    olddb_treatment = sql.Column(sql.String(length=127), nullable=True)
+    olddb_treated = sql.Column(sql.Boolean)
+    olddb_protocol = sql.Column(sql.String(length=127), nullable=True)
+    olddb_sample_equiv = sql.Column(sql.String(length=127), nullable=True)
+
 # Paper-level metadata common to most samples in paper
 class papers(Base):
     __tablename__ = "papers"

@@ -82,4 +82,28 @@ if len(tissues_to_add) > 0:
         tissues_to_add
     )
 
+# Load archived data table keys and external location
+archive_keys = dbutils.load_keys(config,"archiveddata")
+archive_path = files["archiveddata_table"]
+
+# Read in archived data table and make sure entries are unique
+archive = dbutils.Metatable(archive_path)
+archive.key_replace(archive_keys["in"], archive_keys["match"])
+archive.data = dbutils.format_for_db_add(dbconnect,archive.data)
+archive_unique = archive.unique(archive_keys["db"])
+
+# If not already present, add data to database
+archive_to_add = dbutils.entry_update(
+                       dbconnect,
+                       "archive",
+                       archive_keys["db"],
+                       archive_unique
+                   )
+if len(archive_to_add) > 0:
+    archive_to_add = dbutils.format_for_db_add(dbconnect,archive_to_add)
+    dbconnect.engine.execute(
+        dborm.archive.__table__.insert(),
+        archive_to_add
+    )
+
 # db_global_add_update.py ends here
