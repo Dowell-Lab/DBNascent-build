@@ -54,6 +54,7 @@ graph = create_schema_graph(
     show_indexes=False, # ditto for indexes
     rankdir='LR', # From left to right (instead of top to bottom)
     concentrate=False, # Don't try to join the relation lines together
+    relation_options={'fontsize':'10pt'},
 )
 graph.write_png("/home/lsanford/DBNascent-build/dbschema.png")
 
