@@ -31,7 +31,7 @@ user_query_fields = ["sample_name",
 #                     "spikein",
 #                     "sample_type",
                      "cell_type",
-#                     "organism",
+                     "organism",
 #                     "trim_read_depth",
 #                     "exint_ratio",
 #                     "distinct_tenmillion_prop",
@@ -75,15 +75,15 @@ user_query_fields = ["sample_name",
                     ]
 
 user_filter_fields = {
-    "cell_type": ['IN ("HEK293","HEK293T","HEK293 Flp-In","HEK293T Flp-In")'],
-#    "organism": ['= "M. musculus"'],
+#    "cell_type": ['IN ("HEK293","HEK293T","HEK293 Flp-In","HEK293T Flp-In")'],
+    "organism": ['= "M. musculus"'],
 #    "control_experimental": ['= "control"'],
 #    "tfit_date": ['IS NOT NULL'],
 #    "sample_qc_score": ['< 4'],
 #    "treatment": ['= "DRB"'],
 }
 
-outfile = "/Users/lysa8537/db_query_outputs/23_10_13_hek_samples.tsv"
+outfile = "/Users/lysa8537/db_query_outputs/mouse_samples.tsv"
 
 
 ### Determine which search fields are from which tables
@@ -91,7 +91,7 @@ outfile = "/Users/lysa8537/db_query_outputs/23_10_13_hek_samples.tsv"
 
 # Load config file and connect to db
 config = dbutils.load_config(
-    "/Shares/dbnascent/DBNascent-build/config/config_query.txt")
+    "/home/lsanford/DBNascent-build/config/config_query.txt")
 db_url = config["file_locations"]["database"]
 creds = config["file_locations"]["credentials"]
 dbconnect = dbutils.dbnascentConnection(db_url, creds)
@@ -119,7 +119,7 @@ for table in db_tables.keys():
                     elif table == "sampleEquiv":
                         if "samples" not in tables_to_join:
                             tables_to_join.append("samples")
-                    elif table not in query_join_keys["existing"]:
+                    if table not in query_join_keys["existing"]:
                         tables_to_join.append(table)
     for filtkey in user_filter_fields:
         if filtkey in db_tables[table].columns.keys():
@@ -132,7 +132,7 @@ for table in db_tables.keys():
                 elif table == "sampleEquiv":
                     if "samples" not in tables_to_join:
                         tables_to_join.append("samples")
-                elif table not in query_join_keys["existing"]:
+                if table not in query_join_keys["existing"]:
                     tables_to_join.append(table)
 
 ### Build raw SQlite query string
