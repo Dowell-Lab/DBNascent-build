@@ -21,7 +21,7 @@ import dbutils
 
 # Load config file
 config = dbutils.load_config(
-    "/Shares/dbnascent/DBNascent-build/config/config_build.txt"
+    "/home/lsanford/DBNascent-build/config/config_build.txt"
 )
 
 # Create database connection object and database schema
@@ -34,7 +34,15 @@ dbconnect = dbutils.dbnascentConnection(db_url, creds)
 
 # Back up entire database
 backupdir = config["file_locations"]["backup_dir"]
-dbconnect.backup(backupdir, False)
+dbconnect.backup(
+    backupdir, tables = [
+        "organisms", "searchEquiv", "tissues", "archive",
+        "papers", "samples", "sampleEquiv", "genetics",
+        "bidirs", "conditions", "conditionLink",
+        "bidirflowRuns", "nascentflowRuns",
+        "bidirflowLink", "nascentflowLink", "linkIDs"
+    ]
+)
 
 # Delete tables
 # Can optionally pass a list of tables in the following format:

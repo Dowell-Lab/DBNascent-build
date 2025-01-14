@@ -24,7 +24,7 @@ import dbutils
 
 # Load config file
 config = dbutils.load_config(
-    "/Shares/dbnascent/DBNascent-build/config/config_build.txt"
+    "/home/lsanford/DBNascent-build/config/config_build.txt"
 )
 files = config["file_locations"]
 
@@ -59,6 +59,8 @@ fields = [
     "first_author",
     "last_author",
     "srr",
+    "srp",
+    "geo",
     "sample_name",
     "sample_type",
     "cell_type",

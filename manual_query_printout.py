@@ -23,7 +23,7 @@ import dbutils
 
 # Load config file and connect to db
 config = dbutils.load_config(
-    "/Shares/dbnascent/DBNascent-build/config/config_query.txt")
+    "/home/lsanford/DBNascent-build/config/config_query.txt")
 db_url = config["file_locations"]["database"]
 creds = config["file_locations"]["credentials"]
 dbconnect = dbutils.dbnascentConnection(db_url, creds)

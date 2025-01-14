@@ -1,17 +1,17 @@
 [file_locations]
 database = socotra.int.colorado.edu/dbnascent
-credentials = /Users/lysa8537/.mysql_creds
-backup_dir = /Shares/dbnascent/db_backups/
-organism_table = /Shares/dbnascent/DBNascent-build/global_files/organisms.txt
-tissue_table = /Shares/dbnascent/DBNascent-build/global_files/sample_cell_types.tsv
-searcheq_table = /Shares/dbnascent/DBNascent-build/db_build/searcheq.txt
-searcheq_manual = /Shares/dbnascent/DBNascent-build/global_files/searcheq_manual.txt
-archiveddata_table = /Shares/dbnascent/DBNascent-build/global_files/archived_nascentdb.txt
-hg38_tfit_master_merge = /Shares/dbnascent/meta_analysis/mumerge/conditions_table/All_tiers_unfiltered_tfit_mumerge_files_hg38_230601.txt
-hg38_dreg_master_merge = /Shares/dbnascent/meta_analysis/mumerge/conditions_table/All_tiers_unfiltered_dreg_mumerge_files_hg38_230601.txt
-mm10_tfit_master_merge = /Shares/dbnascent/meta_analysis/mumerge/conditions_table/All_tiers_unfiltered_tfit_mumerge_files_mm10_230601.txt
-mm10_dreg_master_merge = /Shares/dbnascent/meta_analysis/mumerge/conditions_table/All_tiers_unfiltered_dreg_mumerge_files_mm10_230601.txt
-db_data = /Shares/dbnascent/
+credentials = /home/lsanford/.dbnascent_creds
+backup_dir = /home/lsanford/db_backups/
+organism_table = /home/lsanford/DBNascent-build/global_files/organisms.txt
+tissue_table = /home/lsanford/DBNascent-build/global_files/sample_cell_types.tsv
+searcheq_table = /home/lsanford/DBNascent-build/db_build/searcheq.txt
+searcheq_manual = /home/lsanford/DBNascent-build/global_files/searcheq_manual.txt
+db_data = /home/lsanford/dbnascent_data/
+archiveddata_table = /home/lsanford/DBNascent-build/global_files/archived_nascentdb.txt
+hg38_tfit_master_merge = /home/lsanford/dbnascent_data/All_tiers_unfiltered_tfit_mumerge_files_hg38_230601.txt
+hg38_dreg_master_merge = /home/lsanford/dbnascent_data/All_tiers_unfiltered_dreg_mumerge_files_hg38_230601.txt
+mm10_tfit_master_merge = /home/lsanford/dbnascent_data/All_tiers_unfiltered_tfit_mumerge_files_mm10_230601.txt
+mm10_dreg_master_merge = /home/lsanford/dbnascent_data/All_tiers_unfiltered_dreg_mumerge_files_mm10_230601.txt
 
 [organisms]
 organism = organism
@@ -46,6 +46,7 @@ disease = disease
 
 [papers]
 srp = srp
+geo = geo
 protocol = protocol
 organism = organism
 library = library prep
@@ -56,6 +57,7 @@ year = year
 first_author = author
 last_author = last author
 doi = doi
+full_citation = full_citation
 curator1 = curator 1
 curator2 = curator 2
 other_sr_data = other data
@@ -81,9 +83,12 @@ sample_name = sample_name
 replicate = replicate
 single_paired = single_paired
 rcomp = rcomp
+raw_strandedness = raw_strandedness
+mapped_strandedness = mapped_strandedness
 unusable = unusable
 timecourse = timecourse
 control_experimental = control_experimental
+wildtype_untreated = wildtype_untreated
 outlier = outlier
 notes = notes
 processing_notes = processing_notes
@@ -107,6 +112,11 @@ genome_prop_cov = genome_prop_cov
 avg_fold_cov = avg_fold_cov
 sample_qc_score = samp_qc_score
 sample_nro_score = samp_data_score
+fcgene_avail = fcgene_avail
+fcbidir_avail = fcbidir_avail
+tfit_avail = tfit_avail
+dreg_avail = dreg_avail
+tdf_avail = tdf_avail
 
 [genetics]
 sample_type = sample type

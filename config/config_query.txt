@@ -1,6 +1,6 @@
 [file_locations]
 database = socotra.int.colorado.edu/dbnascent
-credentials = /Users/lysa8537/.mysql_creds
+credentials = /home/lsanford/.dbnascent_creds
 
 [query_join_keys]
 existing = [linkIDs]

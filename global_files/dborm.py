@@ -100,6 +100,7 @@ class papers(Base):
         autoincrement=True,
     )
     srp = sql.Column(sql.String(length=50))
+    geo = sql.Column(sql.String(length=50))
     protocol = sql.Column(sql.String(length=50))
     organism_id = sql.Column(
         sql.Integer,
@@ -113,6 +114,7 @@ class papers(Base):
     first_author = sql.Column(sql.String(length=127))
     last_author = sql.Column(sql.String(length=127))
     doi = sql.Column(sql.String(length=300), nullable=True)
+    full_citation = sql.Column(sql.String(length=1000), nullable=True)
     curator1 = sql.Column(sql.String(length=50))
     curator2 = sql.Column(sql.String(length=50))
     other_sr_data = sql.Column(sql.Boolean)
@@ -138,9 +140,12 @@ class samples(Base):
     replicate = sql.Column(sql.String(length=50))
     single_paired = sql.Column(sql.String(length=50))
     rcomp = sql.Column(sql.Boolean)
+    raw_strandedness = sql.Column(sql.String(length=50))
+    mapped_strandedness = sql.Column(sql.String(length=50))
     unusable = sql.Column(sql.Boolean)
     timecourse = sql.Column(sql.Boolean)
     control_experimental = sql.Column(sql.String(length=50))
+    wildtype_untreated = sql.Column(sql.Boolean)
     outlier = sql.Column(sql.Boolean)
     notes = sql.Column(sql.String(length=300), nullable=True)
     processing_notes = sql.Column(sql.String(length=300), nullable=True)
@@ -164,6 +169,11 @@ class samples(Base):
     avg_fold_cov = sql.Column(sql.Float, nullable=True)
     sample_qc_score = sql.Column(sql.Integer)
     sample_nro_score = sql.Column(sql.Integer)
+    fcgene_avail = sql.Column(sql.Boolean)
+    fcbidir_avail = sql.Column(sql.Boolean)
+    tfit_avail = sql.Column(sql.Boolean)
+    dreg_avail = sql.Column(sql.Boolean)
+    tdf_avail = sql.Column(sql.Boolean)
 
 # All SRR numbers, and equivalence to SRZ values and sample IDs
 class sampleEquiv(Base):

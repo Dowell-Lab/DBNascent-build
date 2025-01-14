@@ -25,7 +25,7 @@ tables = []
 
 # Load config file
 config = dbutils.load_config(
-    "/Shares/dbnascent/DBNascent-build/config/config_build.txt"
+    "/home/lsanford/DBNascent-build/config/config_build.txt"
 )
 
 # Create database connection object
