@@ -1,39 +1,26 @@
 # DBNascent_build
+For easily accessing DBNascent metadata and data files, please see [nascent.colorado.edu](https://nascent.colorado.edu).
+
 This repository is intended for building, updating, and querying DBNascent. This is a MySQL database cataloguing all nascent sequencing experiments in the SRA through 2020. The database has been built and maintained by the DnA Lab at University of Colorado Boulder.
 
 Data in the database pulls from manually curated metadata tables, quality control data, and bidirectional call data from samples. All data is present on the Fiji cluster at CU Boulder.
 
-## Version 1.2
-Version notes (12/20/2023):
-- The database has been somewhat restructured.
-- All table names are different but describe the same fields. The table equivalents are as follows (`linkIDs` and `searchEquiv` are the same):
+## Version 1.3
+Version notes (01/14/2025):
+- New fields added
 
-|Old table|New table|
-|---------|---------|
-|`sampleAccum`|`samples`|
-|`exptMetadata`|`papers`|
-|`sampleID`|`sampleEquiv`|
-|`geneticInfo`|`genetics`|
-|`organismInfo`|`organisms`|
-|`tissueDetails`|`tissues`|
-|`bidirSummary`|`bidirs`|
-|`conditionInfo`|`conditions`|
-|`sampleCondition`|`conditionLink`|
-|`nascentflowMetadata`|`nascentflowRuns`|
-|`sampleNascentflow`|`nascentflowLink`|
-|`bidirflowMetadata`|`bidirflowRuns`|
-|`sampleBidirflow`|`bidirflowLink`|
-
-- A few fields have changed names. The primary key identifiers for all tables are now simply `id` instead of naming which id it is, whereas tables that link to that id have the field as `<linkedTable>_id` (see fields and linkages in schema). This helps with django's navigation of the database. Other new field names are as follows:
-
-|Old field|New field|
-|---------|---------|
-|`paper_id`|`paper_name`|
-|`samp_qc_score`|`sample_qc_score`|
-|`samp_data_score`|`sample_nro_score`|
-|`paper_data_score`|`paper_nro_score`|
-
-- All non-integer identifier table linkages have been removed, so `paper_name` and `sample_name` are no longer in `LinkIDs` and `organisms` is linked to the `papers` and `genetics` tables by a numeric id instead of the organism name. Similarly with the `sampleEquiv` linkage to the `samples` table.
+|Table|Field|Description|
+|---------|---------|---------|
+|`papers`|`geo`|GEO accession number|
+|`papers`|`full_citation`|Full paper citation|
+|`samples`|`raw_strandedness`|Strandedness of raw FASTQ data|
+|`samples`|`mapped_strandedness`|Strandedness of processed FASTQ data used as input for mapping|
+|`samples`|`wildtype_untreated`|True only if a sample is a wildtype cell and untreated or vehicle-treated|
+|`samples`|`fcgene_avail`|Gene counts available for sample|
+|`samples`|`fcbidir_avail`|Master file bidirectional counts available for sample|
+|`samples`|`tfit_avail`|Tfit bidirectional calls available for sample|
+|`samples`|`dreg_avail`|dREG bidirectional calls available for sample|
+|`samples`|`tdf_avail`|TDF visualization file available for sample|
 
 ## Dependencies
 The database was built with python 3.6.3. The following packages are required for building OR querying:
